@@ -296,5 +296,259 @@ Result: Risk assessment; requested changes for legal review`
       'Audit trail: File access logged to Sentry',
       'Maximum file size: 20MB per file; 100MB per conversation'
     ]
+  },
+  {
+    id: 'vision',
+    name: 'Vision',
+    description: 'Claude analyzes images, screenshots, diagrams, and handwritten notes.',
+    whenToUse: [
+      'Converting whiteboard diagrams to code',
+      'Analyzing UI/UX screenshots',
+      'Extracting text from scanned documents',
+      'Describing complex visual data charts'
+    ],
+    whenNotToUse: [
+      'Images containing PII (faces of customers, ID cards)',
+      'Medical imaging (diagnostic use)',
+      'CAPTCHA solving'
+    ],
+    bestPractices: [
+      {
+        id: 'vis-bp-1',
+        title: 'High Resolution',
+        description: 'Use clear, high-resolution images for best accuracy.',
+        examples: {
+          bad: 'Blurry phone photo of whiteboard from back of room',
+          good: 'Scan or high-quality photo focused on content'
+        }
+      },
+      {
+        id: 'vis-bp-2',
+        title: 'Direct Questions',
+        description: 'Point Claude to specific parts of the image.',
+        examples: {
+          good: '"Focus on the flowchart in the top right. Convert that logic to Python code."'
+        }
+      },
+      {
+        id: 'vis-bp-3',
+        title: 'Security Redaction',
+        description: 'Blur faces and sensitive data before upload.'
+      }
+    ],
+    examples: [
+      {
+        id: 'vis-ex-1',
+        title: 'Whiteboard to Code',
+        description: 'Upload: Photo of system architecture diagram from meeting',
+        output: `• Identifies components (Load Balancer, API Gateway, DB)
+• Describes data flow arrows
+• Generates Terraform code to provision infrastructure`
+      }
+    ],
+    limitations: [
+      'No facial recognition (blocked by safety filters)',
+      'Cannot edit images (only analyze)',
+      'Max 5MB per image file'
+    ]
+  },
+  {
+    id: 'voice-mode',
+    name: 'Voice Mode (Mobile)',
+    description: 'Interact with Claude via natural voice conversation on mobile devices.',
+    whenToUse: [
+      'Brainstorming while commuting',
+      'Dictating complex ideas quickly',
+      'Practicing pitches or difficult conversations',
+      'Hands-free access'
+    ],
+    whenNotToUse: [
+      'Public spaces (confidentiality risk)',
+      'Discussing passwords or secrets aloud',
+      'Code generation (better on desktop)'
+    ],
+    bestPractices: [
+      {
+        id: 'voice-bp-1',
+        title: 'Speak Naturally',
+        description: 'Talk as you would to a colleague. Pause for Claude to respond.',
+      },
+      {
+        id: 'voice-bp-2',
+        title: 'Review Transcripts',
+        description: 'Check the text transcript later for accuracy, especially for technical terms.'
+      },
+      {
+        id: 'voice-bp-3',
+        title: 'Use for Synthesis',
+        description: 'Great for "I have these 3 disjointed thoughts, help me connect them."'
+      }
+    ],
+    examples: [
+      {
+        id: 'voice-ex-1',
+        title: 'Pitch Practice',
+        description: 'Scenario: Sales rep practicing negotiation',
+        output: `User: "I'm going to play the customer objecting to price. You be the sales rep."
+Claude: "Understood. I'll focus on value selling. Go ahead."
+(Conversation proceeds via voice)`
+      }
+    ],
+    limitations: [
+      'Mobile app only',
+      'Requires microphone permission',
+      'Audio data processed briefly for transcription (ZDR applies)'
+    ]
+  },
+  {
+    id: 'projects',
+    name: 'Projects',
+    description: 'Organize related chats and artifacts into a shared context window.',
+    whenToUse: [
+      'Long-running initiatives (e.g., "Q4 Website Redesign")',
+      'Maintaining a shared knowledge base for a specific topic',
+      'Keeping multiple related artifacts together'
+    ],
+    whenNotToUse: [
+      'One-off quick questions',
+      'Highly sensitive compartmentalized projects (check access settings)'
+    ],
+    bestPractices: [
+      {
+        id: 'proj-bp-1',
+        title: 'Seed with Context',
+        description: 'Upload key documents (specs, brand guides) to the Project Knowledge Base first.',
+        examples: {
+          good: 'Upload "Brand_Voice_Guide.pdf" and "Product_Specs.docx" to Project files'
+        }
+      },
+      {
+        id: 'proj-bp-2',
+        title: 'Custom Instructions',
+        description: 'Set project-specific instructions (e.g., "Always use Python 3.11").'
+      },
+      {
+        id: 'proj-bp-3',
+        title: 'Curate Artifacts',
+        description: 'Star/Pin important artifacts so they don\'t get lost in chat history.'
+      }
+    ],
+    examples: [
+      {
+        id: 'proj-ex-1',
+        title: 'Software Migration Project',
+        description: 'Project: "Legacy Auth to OAuth2 Migration"',
+        output: `• Knowledge: Old API docs, New OAuth specs
+• Chats: "Planning Phase", "Implementation - User Service", "Testing Strategy"
+• Artifacts: Migration script, Rollback plan, Test cases`
+      }
+    ],
+    limitations: [
+      'Max 200MB knowledge base per project',
+      'Shared visibility (be careful with permissions)',
+      'Context window limits still apply (though larger)'
+    ]
+  },
+  {
+    id: 'team-collaboration',
+    name: 'Team Collaboration',
+    description: 'Share chats, artifacts, and projects with teammates for joint work.',
+    whenToUse: [
+      'Pair programming asynchronously',
+      'Reviewing output with a manager',
+      'Sharing a successful prompt template',
+      'Handing off work'
+    ],
+    whenNotToUse: [
+      'Sharing chats containing PII/secrets',
+      'Performance reviews or sensitive HR topics'
+    ],
+    bestPractices: [
+      {
+        id: 'collab-bp-1',
+        title: 'Curate Before Sharing',
+        description: 'Clean up a messy conversation before sharing it as a "gold standard" example.'
+      },
+      {
+        id: 'collab-bp-2',
+        title: 'Contextualize Shares',
+        description: 'Add a note when sharing: "Check out how Claude handled the edge cases in the second Artifact."'
+      },
+      {
+        id: 'collab-bp-3',
+        title: 'Use Shared Projects',
+        description: 'For team initiatives, invite members to a Project rather than sharing individual links.'
+      }
+    ],
+    examples: [
+      {
+        id: 'collab-ex-1',
+        title: 'Incident Post-Mortem',
+        description: 'Scenario: SRE team collaborative analysis',
+        output: `• Engineer A starts chat, uploads logs, gets initial analysis
+• Shares chat link in Slack #incidents channel
+• Engineer B picks up, asks specifically about database latency
+• Engineer C uses the artifacts to draft the final report`
+      }
+    ],
+    limitations: [
+      'Access control relies on link sharing (unlisted URL model)',
+      'Enterprise admin can view all shared content',
+      'Cannot revoke access easily once link is distributed (unless project-based)'
+    ]
+  },
+  {
+    id: 'api-integration',
+    name: 'API Integration',
+    description: 'Access Claude programmatically via the Anthropic API for internal tools.',
+    whenToUse: [
+      'Automating high-volume tasks',
+      'Building internal chatbots/tools',
+      'Integrating AI into CI/CD pipelines',
+      'Batch processing data'
+    ],
+    whenNotToUse: [
+      'Customer-facing chatbots (requires special approval)',
+      'Real-time low-latency applications (<500ms)',
+      'Cost-prohibitive high-volume loops'
+    ],
+    bestPractices: [
+      {
+        id: 'api-bp-1',
+        title: 'Handle Rate Limits',
+        description: 'Implement exponential backoff and retry logic.'
+      },
+      {
+        id: 'api-bp-2',
+        title: 'Secure API Keys',
+        description: 'Never commit keys to code. Use secret managers (AWS Secrets Manager, Vault).'
+      },
+      {
+        id: 'api-bp-3',
+        title: 'System Prompts',
+        description: 'Use the "system" parameter to enforce guardrails at the API level.'
+      },
+      {
+        id: 'api-bp-4',
+        title: 'Monitor Costs',
+        description: 'Set budget alerts. API usage bills differently than seat licenses.'
+      }
+    ],
+    examples: [
+      {
+        id: 'api-ex-1',
+        title: 'Automated PR Reviewer',
+        description: 'Internal Tool: "GitClaude"',
+        output: `• GitHub Webhook triggers Lambda function
+• Function calls Claude API with diff
+• Claude analyzes for style and bugs
+• Function posts comments back to PR`
+      }
+    ],
+    limitations: [
+      'Separate billing (usage-based)',
+      'No UI provided (you build the interface)',
+      'Requires engineering effort to maintain'
+    ]
   }
 ];

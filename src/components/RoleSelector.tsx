@@ -1,4 +1,4 @@
-import { Role } from '../App';
+import { Role } from '../types';
 import { User } from 'lucide-react';
 
 interface RoleSelectorProps {
@@ -6,7 +6,21 @@ interface RoleSelectorProps {
   onRoleChange: (role: Role) => void;
 }
 
-const roles: Role[] = ['All', 'Finance', 'Sales', 'Engineering', 'Marketing', 'Operations', 'HR'];
+const roles: Role[] = [
+  'All', 
+  'Finance', 
+  'Sales', 
+  'Engineering', 
+  'Marketing', 
+  'Operations', 
+  'HR',
+  'Product Management',
+  'Legal',
+  'Customer Support',
+  'Data Science',
+  'Executive / Leadership',
+  'QA / Testing'
+];
 
 export function RoleSelector({ selectedRole, onRoleChange }: RoleSelectorProps) {
   return (

@@ -1,4 +1,4 @@
-import { Search, Brain, FileText, Code, Upload } from 'lucide-react';
+import { Search, Brain, FileText, Code, Upload, Eye, Mic, FolderKanban, Users, Webhook } from 'lucide-react';
 import { useState } from 'react';
 import { featuresData } from '../../data/features';
 import { FeatureType } from '../../types';
@@ -8,12 +8,17 @@ import { Badge } from '../ui/Badge';
 export function FeatureGuides() {
   const [activeFeature, setActiveFeature] = useState<FeatureType>('web-search');
 
-  const iconMap = {
+  const iconMap: Record<string, any> = {
     'web-search': Search,
     'memory': Brain,
     'artifacts': FileText,
     'code-execution': Code,
-    'files': Upload
+    'files': Upload,
+    'vision': Eye,
+    'voice-mode': Mic,
+    'projects': FolderKanban,
+    'team-collaboration': Users,
+    'api-integration': Webhook
   };
 
   const activeFeatureData = featuresData.find(f => f.id === activeFeature);

@@ -1,5 +1,32 @@
 // Core Types
-export type Role = 'All' | 'Finance' | 'Sales' | 'Engineering' | 'Marketing' | 'Operations' | 'HR';
+export interface BaselineOption {
+  id: string;
+  name: string;
+  description: string;
+  version: string;
+  date: string;
+  owner: string;
+  sections: {
+    coreDirective: string;
+    identity: string[];
+    notAllowed: string[];
+    allowed: string[];
+    securityBehaviors: {
+      title: string;
+      icon: string;
+      color: string;
+      rules: string[];
+      example?: string;
+    }[];
+    escalationTriggers: {
+      trigger: string;
+      action: string;
+    }[];
+    communicationStandards: string[];
+  };
+}
+
+export type Role = 'All' | 'Finance' | 'Sales' | 'Engineering' | 'Marketing' | 'Operations' | 'HR' | 'Product Management' | 'Legal' | 'Customer Support' | 'Data Science' | 'Executive / Leadership' | 'QA / Testing';
 
 export type Section = 
   | 'overview'
@@ -13,7 +40,7 @@ export type Section =
 
 export type FAQLevel = 'beginner' | 'intermediate' | 'advanced';
 
-export type FeatureType = 'web-search' | 'memory' | 'artifacts' | 'code-execution' | 'files';
+export type FeatureType = 'web-search' | 'memory' | 'artifacts' | 'code-execution' | 'files' | 'vision' | 'voice-mode' | 'projects' | 'team-collaboration' | 'api-integration';
 
 // Content Types
 export interface FAQItem {
@@ -65,7 +92,7 @@ export interface MCPServer {
 
 export interface RoleProfile {
   role: Role;
-  color: 'green' | 'blue' | 'purple' | 'orange' | 'red' | 'indigo';
+  color: 'green' | 'blue' | 'purple' | 'orange' | 'red' | 'indigo' | 'emerald' | 'rose' | 'slate' | 'cyan' | 'zinc' | 'teal' | 'pink';
   responsibilities: string;
   capabilities: string[];
   features: {

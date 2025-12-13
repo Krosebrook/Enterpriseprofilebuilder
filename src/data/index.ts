@@ -5,6 +5,7 @@ import { roleProfilesData } from './role-profiles';
 import { deploymentData } from './deployment';
 import { navigationData } from './navigation';
 import { bestPracticesData } from './best-practices';
+import { governanceData } from './governance';
 
 export {
   faqData,
@@ -13,7 +14,8 @@ export {
   roleProfilesData,
   deploymentData,
   navigationData,
-  bestPracticesData
+  bestPracticesData,
+  governanceData
 };
 
 export * from './constants';

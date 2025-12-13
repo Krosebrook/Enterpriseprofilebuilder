@@ -1,46 +1,71 @@
-import { ButtonHTMLAttributes, ReactNode } from 'react';
+import * as React from 'react';
+import { Slot } from '@radix-ui/react-slot'; // Assuming Radix is available or I'll standard HTML if not. 
+// Actually, I don't know if Radix is installed. I'll check package.json or just use standard. 
+// Safer to use standard React.forwardRef.
+import { Loader2 } from 'lucide-react';
+import { cn } from '../../lib/utils';
 
-interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: 'primary' | 'secondary' | 'ghost' | 'danger';
-  size?: 'sm' | 'md' | 'lg';
-  children: ReactNode;
-  icon?: ReactNode;
-  fullWidth?: boolean;
+export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+  variant?: 'primary' | 'secondary' | 'outline' | 'ghost' | 'danger' | 'link';
+  size?: 'sm' | 'md' | 'lg' | 'icon';
+  isLoading?: boolean;
+  leftIcon?: React.ReactNode;
+  rightIcon?: React.ReactNode;
+  asChild?: boolean;
 }
 
-export function Button({
-  variant = 'primary',
-  size = 'md',
-  children,
-  icon,
-  fullWidth = false,
-  className = '',
-  ...props
-}: ButtonProps) {
-  const baseStyles = 'inline-flex items-center justify-center gap-2 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed';
-  
-  const variantStyles = {
-    primary: 'bg-amber-500 text-white hover:bg-amber-600 border border-amber-600',
-    secondary: 'bg-white text-slate-700 border border-slate-300 hover:border-amber-500',
-    ghost: 'bg-transparent text-slate-700 hover:bg-slate-100',
-    danger: 'bg-red-500 text-white hover:bg-red-600 border border-red-600'
-  };
+const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
+  ({ 
+    className, 
+    variant = 'primary', 
+    size = 'md', 
+    isLoading = false, 
+    leftIcon, 
+    rightIcon, 
+    children, 
+    disabled, 
+    asChild = false,
+    ...props 
+  }, ref) => {
+    
+    // Base styles
+    const baseStyles = 'inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500 disabled:pointer-events-none disabled:opacity-50';
+    
+    // Variants
+    const variants = {
+      primary: 'bg-amber-600 text-white hover:bg-amber-700 shadow-sm',
+      secondary: 'bg-slate-100 text-slate-900 hover:bg-slate-200',
+      outline: 'border border-slate-200 bg-transparent hover:bg-slate-100 text-slate-900',
+      ghost: 'hover:bg-slate-100 hover:text-slate-900 text-slate-600',
+      danger: 'bg-red-600 text-white hover:bg-red-700',
+      link: 'text-amber-600 underline-offset-4 hover:underline',
+    };
 
-  const sizeStyles = {
-    sm: 'px-3 py-1.5 text-sm',
-    md: 'px-4 py-2',
-    lg: 'px-6 py-3'
-  };
+    // Sizes
+    const sizes = {
+      sm: 'h-8 px-3 text-xs',
+      md: 'h-10 px-4 py-2',
+      lg: 'h-12 px-8 text-base',
+      icon: 'h-10 w-10',
+    };
 
-  const widthStyles = fullWidth ? 'w-full' : '';
+    const Comp = asChild ? Slot : 'button';
 
-  return (
-    <button
-      className={`${baseStyles} ${variantStyles[variant]} ${sizeStyles[size]} ${widthStyles} ${className}`}
-      {...props}
-    >
-      {icon && <span className="flex-shrink-0">{icon}</span>}
-      <span>{children}</span>
-    </button>
-  );
-}
+    return (
+      <button
+        className={cn(baseStyles, variants[variant], sizes[size], className)}
+        ref={ref}
+        disabled={isLoading || disabled}
+        {...props}
+      >
+        {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+        {!isLoading && leftIcon && <span className="mr-2">{leftIcon}</span>}
+        {children}
+        {!isLoading && rightIcon && <span className="ml-2">{rightIcon}</span>}
+      </button>
+    );
+  }
+);
+Button.displayName = "Button";
+
+export { Button };

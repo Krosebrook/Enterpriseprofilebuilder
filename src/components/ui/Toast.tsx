@@ -1,64 +1,58 @@
-import { useEffect } from 'react';
-import { CheckCircle, XCircle, AlertTriangle, Info, X } from 'lucide-react';
+import React, { useEffect } from 'react';
+import { X, CheckCircle, AlertCircle, Info, AlertTriangle } from 'lucide-react';
 import { ToastNotification } from '../../types';
 
-interface ToastProps extends ToastNotification {
-  onClose: () => void;
+interface ToastProps {
+  toast: ToastNotification;
+  onRemove: (id: string) => void;
 }
 
-export function Toast({ id, type, message, duration = 5000, onClose }: ToastProps) {
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      onClose();
-    }, duration);
-
-    return () => clearTimeout(timer);
-  }, [duration, onClose]);
-
+export function Toast({ toast, onRemove }: ToastProps) {
   const icons = {
-    success: CheckCircle,
-    error: XCircle,
-    warning: AlertTriangle,
-    info: Info
+    success: <CheckCircle className="w-5 h-5 text-green-500" />,
+    error: <AlertCircle className="w-5 h-5 text-red-500" />,
+    info: <Info className="w-5 h-5 text-blue-500" />,
+    warning: <AlertTriangle className="w-5 h-5 text-amber-500" />,
   };
 
   const styles = {
-    success: 'bg-green-50 border-green-200 text-green-900',
-    error: 'bg-red-50 border-red-200 text-red-900',
-    warning: 'bg-yellow-50 border-yellow-200 text-yellow-900',
-    info: 'bg-blue-50 border-blue-200 text-blue-900'
+    success: "border-green-200 bg-green-50",
+    error: "border-red-200 bg-red-50",
+    info: "border-blue-200 bg-blue-50",
+    warning: "border-amber-200 bg-amber-50",
   };
-
-  const iconColors = {
-    success: 'text-green-600',
-    error: 'text-red-600',
-    warning: 'text-yellow-600',
-    info: 'text-blue-600'
-  };
-
-  const Icon = icons[type];
 
   return (
-    <div className={`flex items-start gap-3 p-4 border rounded-lg shadow-lg ${styles[type]} animate-slide-in`}>
-      <Icon className={`w-5 h-5 mt-0.5 flex-shrink-0 ${iconColors[type]}`} />
-      <p className="flex-1">{message}</p>
-      <button
-        onClick={onClose}
-        className="flex-shrink-0 hover:opacity-70 transition-opacity"
-        aria-label="Close"
+    <div className={`flex items-start gap-3 p-4 rounded-lg border shadow-lg max-w-sm w-full animate-in slide-in-from-right fade-in duration-300 ${styles[toast.type]}`}>
+      <div className="flex-shrink-0 mt-0.5">
+        {icons[toast.type]}
+      </div>
+      <div className="flex-1 text-sm font-medium text-slate-900">
+        {toast.message}
+      </div>
+      <button 
+        onClick={() => onRemove(toast.id)}
+        className="flex-shrink-0 text-slate-400 hover:text-slate-600 transition-colors"
       >
-        <X className="w-5 h-5" />
+        <X className="w-4 h-4" />
       </button>
     </div>
   );
 }
 
-export function ToastContainer({ toasts, onRemove }: { toasts: ToastNotification[]; onRemove: (id: string) => void }) {
+interface ToastContainerProps {
+  toasts: ToastNotification[];
+  onRemove: (id: string) => void;
+}
+
+export function ToastContainer({ toasts, onRemove }: ToastContainerProps) {
   return (
-    <div className="fixed bottom-4 right-4 z-50 space-y-2 max-w-md">
-      {toasts.map((toast) => (
-        <Toast key={toast.id} {...toast} onClose={() => onRemove(toast.id)} />
-      ))}
+    <div className="fixed bottom-4 right-4 z-[100] flex flex-col gap-3 pointer-events-none">
+      <div className="pointer-events-auto flex flex-col gap-2">
+        {toasts.map((toast) => (
+          <Toast key={toast.id} toast={toast} onRemove={onRemove} />
+        ))}
+      </div>
     </div>
   );
 }

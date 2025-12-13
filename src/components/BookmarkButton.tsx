@@ -1,39 +1,44 @@
-import { Bookmark } from 'lucide-react';
-import { isBookmarked, addBookmark, removeBookmark } from '../utils/storage';
-import { trackBookmark } from '../utils/analytics';
-import { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { Bookmark, BookmarkCheck } from 'lucide-react';
+import { isBookmarked, toggleBookmark } from '../utils/storage';
+import { useToast } from '../contexts/ToastContext';
 
 interface BookmarkButtonProps {
   id: string;
   label?: string;
+  className?: string;
 }
 
-export function BookmarkButton({ id, label = 'Bookmark' }: BookmarkButtonProps) {
-  const [bookmarked, setBookmarked] = useState(isBookmarked(id));
+export function BookmarkButton({ id, label = 'Save', className = '' }: BookmarkButtonProps) {
+  const [marked, setMarked] = useState(false);
+  const { addToast } = useToast();
 
-  const handleToggle = () => {
-    if (bookmarked) {
-      removeBookmark(id);
-      trackBookmark('remove', id);
-    } else {
-      addBookmark(id);
-      trackBookmark('add', id);
-    }
-    setBookmarked(!bookmarked);
+  useEffect(() => {
+    setMarked(isBookmarked(id));
+  }, [id]);
+
+  const handleToggle = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    const newState = toggleBookmark(id);
+    setMarked(newState);
+    
+    addToast({
+      type: 'info',
+      message: newState ? 'Added to bookmarks' : 'Removed from bookmarks',
+      duration: 2000
+    });
   };
 
   return (
     <button
       onClick={handleToggle}
-      className={`flex items-center gap-2 px-3 py-2 rounded-lg border transition-colors ${
-        bookmarked
-          ? 'bg-amber-50 border-amber-300 text-amber-700'
-          : 'bg-white border-slate-300 text-slate-700 hover:border-amber-500'
-      }`}
-      aria-label={bookmarked ? 'Remove bookmark' : 'Add bookmark'}
+      className={`flex items-center gap-1.5 text-sm font-medium transition-colors ${
+        marked ? 'text-amber-600 hover:text-amber-700' : 'text-slate-500 hover:text-slate-700'
+      } ${className}`}
+      aria-label={marked ? 'Remove bookmark' : 'Add bookmark'}
     >
-      <Bookmark className={`w-4 h-4 ${bookmarked ? 'fill-current' : ''}`} />
-      {label && <span>{bookmarked ? 'Bookmarked' : label}</span>}
+      {marked ? <BookmarkCheck className="w-4 h-4" /> : <Bookmark className="w-4 h-4" />}
+      {label && <span>{label}</span>}
     </button>
   );
 }

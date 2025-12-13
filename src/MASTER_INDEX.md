@@ -111,6 +111,12 @@
 | [AUDIT_COMPLETION_REPORT.md](AUDIT_COMPLETION_REPORT.md) | **Final audit & certification** | 40 |
 | [docs/IMPLEMENTATION_STATUS.md](docs/IMPLEMENTATION_STATUS.md) | Implementation tracking | 20 |
 
+### 7. BUSINESS & OPERATIONS
+
+| Document | Description | Pages |
+|----------|-------------|-------|
+| [docs/SERVICE_OPERATIONS_MANUAL.md](docs/SERVICE_OPERATIONS_MANUAL.md) | **Service delivery & ROI** | 40 |
+
 ---
 
 ## 🗂️ SOURCE CODE STRUCTURE

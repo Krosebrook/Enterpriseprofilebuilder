@@ -1,25 +1,31 @@
-import { Section, Role, ToastNotification } from '../types';
-import { Overview } from './sections/Overview';
+import React from 'react';
+import { useNavigation } from '../contexts/NavigationContext';
+import { useToast } from '../contexts/ToastContext';
+
+// Legacy Sections (to be refactored later if needed, but keeping for now as they work)
 import { BaselinePrompt } from './sections/BaselinePrompt';
 import { FeatureGuides } from './sections/FeatureGuides';
 import { ToolsConnectors } from './sections/ToolsConnectors';
 import { RoleProfiles } from './sections/RoleProfiles';
 import { BestPractices } from './sections/BestPractices';
 import { FAQ } from './sections/FAQ';
-import { Deployment } from './sections/Deployment';
+import { Governance } from './sections/Governance';
+import { governanceData } from '../data/governance';
 
-interface ContentViewerProps {
-  section: Section;
-  role: Role;
-  searchQuery: string;
-  onAddToast: (toast: Omit<ToastNotification, 'id'>) => void;
-}
+// New Feature Modules (Max Depth Refactor)
+import { Dashboard } from '../features/dashboard/Dashboard';
+import { Deployment } from '../features/deployment/Deployment';
+import { OperationsManual } from '../features/operations/OperationsManual';
+import { ReferenceLibrary } from '../features/library/ReferenceLibrary';
 
-export function ContentViewer({ section, role, searchQuery, onAddToast }: ContentViewerProps) {
+export function ContentViewer() {
+  const { activeSection, selectedRole, searchQuery } = useNavigation();
+  const { addToast } = useToast();
+
   const renderSection = () => {
-    switch (section) {
+    switch (activeSection) {
       case 'overview':
-        return <Overview />;
+        return <Dashboard />;
       case 'baseline':
         return <BaselinePrompt />;
       case 'features':
@@ -27,20 +33,26 @@ export function ContentViewer({ section, role, searchQuery, onAddToast }: Conten
       case 'tools':
         return <ToolsConnectors />;
       case 'roles':
-        return <RoleProfiles selectedRole={role} />;
+        return <RoleProfiles selectedRole={selectedRole} />;
       case 'best-practices':
         return <BestPractices />;
       case 'faq':
         return <FAQ searchQuery={searchQuery} />;
       case 'deployment':
-        return <Deployment onAddToast={onAddToast} />;
+        return <Deployment />;
+      case 'governance':
+        return <Governance data={governanceData} />;
+      case 'operations':
+        return <OperationsManual />;
+      case 'reference':
+        return <ReferenceLibrary />;
       default:
-        return <Overview />;
+        return <Dashboard />;
     }
   };
 
   return (
-    <div className="prose prose-slate max-w-none">
+    <div className="w-full animate-in fade-in duration-300 slide-in-from-bottom-2">
       {renderSection()}
     </div>
   );

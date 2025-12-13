@@ -51,5 +51,11 @@ export const navigationData: NavigationItem[] = [
     label: 'Deployment',
     description: 'Implementation checklist',
     icon: 'CheckSquare'
+  },
+  {
+    id: 'governance',
+    label: 'Governance',
+    description: 'SLA, Risk, Playbooks',
+    icon: 'ShieldAlert'
   }
 ];

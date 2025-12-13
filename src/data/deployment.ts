@@ -2,233 +2,51 @@ import { DeploymentStep } from '../types';
 
 export const deploymentData: DeploymentStep[] = [
   {
-    id: 'deploy-step-1',
-    week: 'Week 1',
-    title: 'Admin Setup',
+    id: 'phase-1',
+    title: 'Phase 1: Foundation & Security',
+    week: 1,
     criticalPath: true,
     tasks: [
-      {
-        id: 'task-1-1',
-        description: 'Enable Claude Enterprise workspace',
-        completed: false,
-        owner: 'CTO'
-      },
-      {
-        id: 'task-1-2',
-        description: 'Configure SAML/OIDC (Okta or Azure AD)',
-        completed: false,
-        owner: 'IT Security'
-      },
-      {
-        id: 'task-1-3',
-        description: 'Set up RBAC (map INT Inc roles to Claude permission levels)',
-        completed: false,
-        owner: 'CTO'
-      },
-      {
-        id: 'task-1-4',
-        description: 'Enable ZDR in settings (no data retention)',
-        completed: false,
-        owner: 'CSO'
-      },
-      {
-        id: 'task-1-5',
-        description: 'Configure audit logging (Sentry integration)',
-        completed: false,
-        owner: 'DevOps'
-      },
-      {
-        id: 'task-1-6',
-        description: 'Test: Can 5 test users login successfully?',
-        completed: false,
-        owner: 'QA'
-      }
+      { id: 'sso-setup', description: 'Configure Okta SSO integration', owner: 'IT Ops' },
+      { id: 'scim-prov', description: 'Enable SCIM provisioning for user sync', owner: 'IT Ops' },
+      { id: 'audit-logs', description: 'Set up audit log export to Splunk', owner: 'SecOps' },
+      { id: 'policy-doc', description: 'Publish Acceptable Use Policy', owner: 'Legal' }
     ]
   },
   {
-    id: 'deploy-step-2',
-    week: 'Week 1-2',
-    title: 'Feature Configuration',
-    criticalPath: true,
-    dependencies: ['deploy-step-1'],
-    tasks: [
-      {
-        id: 'task-2-1',
-        description: 'Enable web search (all roles)',
-        completed: false,
-        owner: 'CTO'
-      },
-      {
-        id: 'task-2-2',
-        description: 'Enable memory (all roles)',
-        completed: false,
-        owner: 'CTO'
-      },
-      {
-        id: 'task-2-3',
-        description: 'Enable artifacts (all roles)',
-        completed: false,
-        owner: 'CTO'
-      },
-      {
-        id: 'task-2-4',
-        description: 'Enable code execution (Engineering only)',
-        completed: false,
-        owner: 'CTO'
-      },
-      {
-        id: 'task-2-5',
-        description: 'Enable files (all roles, with restrictions)',
-        completed: false,
-        owner: 'CTO'
-      },
-      {
-        id: 'task-2-6',
-        description: 'Configure rate limits (20 req/min per role)',
-        completed: false,
-        owner: 'DevOps'
-      },
-      {
-        id: 'task-2-7',
-        description: 'Test: Can users access enabled features?',
-        completed: false,
-        owner: 'QA'
-      }
-    ]
-  },
-  {
-    id: 'deploy-step-3',
-    week: 'Week 2',
-    title: 'Connector Setup',
+    id: 'phase-2',
+    title: 'Phase 2: Pilot Group',
+    week: 2,
     criticalPath: false,
-    dependencies: ['deploy-step-2'],
+    dependencies: ['phase-1'],
     tasks: [
-      {
-        id: 'task-3-1',
-        description: 'Authorize Stripe connector (Finance)',
-        completed: false,
-        owner: 'Finance Lead'
-      },
-      {
-        id: 'task-3-2',
-        description: 'Authorize Vercel connector (Engineering)',
-        completed: false,
-        owner: 'DevOps Lead'
-      },
-      {
-        id: 'task-3-3',
-        description: 'Authorize HubSpot connector (Sales)',
-        completed: false,
-        owner: 'Sales Ops'
-      },
-      {
-        id: 'task-3-4',
-        description: 'Authorize GitHub connector (Engineering)',
-        completed: false,
-        owner: 'DevOps Lead'
-      },
-      {
-        id: 'task-3-5',
-        description: 'Authorize Notion connector (all)',
-        completed: false,
-        owner: 'Ops Manager'
-      },
-      {
-        id: 'task-3-6',
-        description: 'Test: Can each role access their connectors?',
-        completed: false,
-        owner: 'QA'
-      }
+      { id: 'pilot-selection', description: 'Select 50 users from diverse depts', owner: 'Program Mgmt' },
+      { id: 'training-session', description: 'Conduct initial training workshop', owner: 'L&D' },
+      { id: 'feedback-loop', description: 'Establish feedback channel (Slack)', owner: 'Program Mgmt' }
     ]
   },
   {
-    id: 'deploy-step-4',
-    week: 'Week 2-3',
-    title: 'Training',
+    id: 'phase-3',
+    title: 'Phase 3: Integration',
+    week: 3,
     criticalPath: true,
-    dependencies: ['deploy-step-2'],
+    dependencies: ['phase-2'],
     tasks: [
-      {
-        id: 'task-4-1',
-        description: 'Create role-specific guides (Sales, Finance, Engineering, Marketing, Ops)',
-        completed: false,
-        owner: 'Training Team'
-      },
-      {
-        id: 'task-4-2',
-        description: 'Conduct 1-hour all-hands demo',
-        completed: false,
-        owner: 'CTO'
-      },
-      {
-        id: 'task-4-3',
-        description: 'Hold 30-min breakout sessions by role',
-        completed: false,
-        owner: 'Department Leads'
-      },
-      {
-        id: 'task-4-4',
-        description: 'Publish FAQ + troubleshooting guide',
-        completed: false,
-        owner: 'Training Team'
-      },
-      {
-        id: 'task-4-5',
-        description: 'Assign "Claude champions" per department',
-        completed: false,
-        owner: 'HR'
-      },
-      {
-        id: 'task-4-6',
-        description: 'Track: Are >80% of staff trained?',
-        completed: false,
-        owner: 'HR'
-      }
+      { id: 'mcp-github', description: 'Connect GitHub MCP Server', owner: 'Engineering' },
+      { id: 'mcp-notion', description: 'Connect Notion MCP Server', owner: 'IT Ops' },
+      { id: 'data-connectors', description: 'Verify permissions for data connectors', owner: 'SecOps' }
     ]
   },
   {
-    id: 'deploy-step-5',
-    week: 'Week 3+',
-    title: 'Monitoring',
-    criticalPath: false,
-    dependencies: ['deploy-step-4'],
+    id: 'phase-4',
+    title: 'Phase 4: Company-Wide Rollout',
+    week: 4,
+    criticalPath: true,
+    dependencies: ['phase-3'],
     tasks: [
-      {
-        id: 'task-5-1',
-        description: 'Set up cost dashboard (weekly review)',
-        completed: false,
-        owner: 'Finance'
-      },
-      {
-        id: 'task-5-2',
-        description: 'Configure Sentry alerts (security incidents)',
-        completed: false,
-        owner: 'DevOps'
-      },
-      {
-        id: 'task-5-3',
-        description: 'Track adoption metrics (Daily Active Users, feature usage)',
-        completed: false,
-        owner: 'Product Analytics'
-      },
-      {
-        id: 'task-5-4',
-        description: 'Schedule weekly check-ins (first month)',
-        completed: false,
-        owner: 'CTO'
-      },
-      {
-        id: 'task-5-5',
-        description: 'Collect feedback (surveys, interviews)',
-        completed: false,
-        owner: 'HR'
-      },
-      {
-        id: 'task-5-6',
-        description: 'Adjust prompts/features based on feedback',
-        completed: false,
-        owner: 'CTO'
-      }
+      { id: 'full-provision', description: 'Provision licenses for all 200 employees', owner: 'IT Ops' },
+      { id: 'dept-guides', description: 'Distribute department-specific playbooks', owner: 'L&D' },
+      { id: 'town-hall', description: 'CEO announcement at Town Hall', owner: 'Exec Comms' }
     ]
   }
 ];

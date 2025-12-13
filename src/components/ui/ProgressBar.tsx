@@ -1,42 +1,43 @@
+import React from 'react';
+
 interface ProgressBarProps {
-  value: number; // 0-100
-  label?: string;
-  showPercentage?: boolean;
+  value: number; // 0 to 100
   color?: 'primary' | 'success' | 'warning' | 'danger';
+  showPercentage?: boolean;
+  height?: string;
+  className?: string;
 }
 
 export function ProgressBar({ 
   value, 
-  label, 
-  showPercentage = true,
-  color = 'primary' 
+  color = 'primary', 
+  showPercentage = false, 
+  height = 'h-2.5',
+  className = ''
 }: ProgressBarProps) {
-  const colorStyles = {
-    primary: 'bg-amber-500',
-    success: 'bg-green-500',
-    warning: 'bg-yellow-500',
-    danger: 'bg-red-500'
+  
+  const colors = {
+    primary: "bg-amber-600",
+    success: "bg-green-600",
+    warning: "bg-amber-500",
+    danger: "bg-red-600",
   };
 
-  const percentage = Math.min(100, Math.max(0, value));
+  const percentage = Math.min(Math.max(value, 0), 100);
 
   return (
-    <div className="w-full">
-      {(label || showPercentage) && (
-        <div className="flex justify-between items-center mb-2">
-          {label && <span className="text-slate-700">{label}</span>}
-          {showPercentage && <span className="text-slate-600">{percentage}%</span>}
+    <div className={`w-full ${className}`}>
+      {showPercentage && (
+        <div className="flex justify-between mb-1">
+          <span className="text-sm font-medium text-slate-700">Progress</span>
+          <span className="text-sm font-medium text-slate-700">{Math.round(percentage)}%</span>
         </div>
       )}
-      <div className="w-full bg-slate-200 rounded-full h-2 overflow-hidden">
-        <div
-          className={`h-full ${colorStyles[color]} transition-all duration-500 ease-out`}
+      <div className={`w-full bg-slate-200 rounded-full ${height}`}>
+        <div 
+          className={`${colors[color]} ${height} rounded-full transition-all duration-500 ease-out`} 
           style={{ width: `${percentage}%` }}
-          role="progressbar"
-          aria-valuenow={percentage}
-          aria-valuemin={0}
-          aria-valuemax={100}
-        />
+        ></div>
       </div>
     </div>
   );

@@ -1,27 +1,29 @@
-import { ReactNode } from 'react';
+import React from 'react';
 
 interface BadgeProps {
-  children: ReactNode;
-  variant?: 'default' | 'success' | 'warning' | 'danger' | 'info';
+  children: React.ReactNode;
+  variant?: 'default' | 'success' | 'warning' | 'danger' | 'info' | 'outline';
   size?: 'sm' | 'md';
+  className?: string;
 }
 
-export function Badge({ children, variant = 'default', size = 'sm' }: BadgeProps) {
-  const variantStyles = {
-    default: 'bg-slate-100 text-slate-800',
-    success: 'bg-green-100 text-green-800',
-    warning: 'bg-yellow-100 text-yellow-800',
-    danger: 'bg-red-100 text-red-800',
-    info: 'bg-blue-100 text-blue-800'
+export function Badge({ children, variant = 'default', size = 'md', className = '' }: BadgeProps) {
+  const variants = {
+    default: "bg-slate-100 text-slate-700 border-slate-200",
+    success: "bg-green-100 text-green-700 border-green-200",
+    warning: "bg-amber-100 text-amber-700 border-amber-200",
+    danger: "bg-red-100 text-red-700 border-red-200",
+    info: "bg-blue-100 text-blue-700 border-blue-200",
+    outline: "bg-transparent border-slate-300 text-slate-600",
   };
 
-  const sizeStyles = {
-    sm: 'px-2 py-0.5 text-xs',
-    md: 'px-3 py-1 text-sm'
+  const sizes = {
+    sm: "px-2 py-0.5 text-xs",
+    md: "px-2.5 py-0.5 text-sm",
   };
 
   return (
-    <span className={`inline-flex items-center rounded-full uppercase ${variantStyles[variant]} ${sizeStyles[size]}`}>
+    <span className={`inline-flex items-center font-medium rounded border ${variants[variant]} ${sizes[size]} ${className}`}>
       {children}
     </span>
   );

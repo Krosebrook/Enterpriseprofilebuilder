@@ -1,44 +1,32 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { Copy, Check } from 'lucide-react';
-import { Tooltip } from './ui/Tooltip';
 
 interface CopyToClipboardProps {
   text: string;
   label?: string;
+  className?: string;
 }
 
-export function CopyToClipboard({ text, label = 'Copy' }: CopyToClipboardProps) {
+export function CopyToClipboard({ text, label = 'Copy', className = '' }: CopyToClipboardProps) {
   const [copied, setCopied] = useState(false);
 
-  const handleCopy = async () => {
-    try {
-      await navigator.clipboard.writeText(text);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    } catch (err) {
-      console.error('Failed to copy:', err);
-    }
+  const handleCopy = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    navigator.clipboard.writeText(text);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
   };
 
   return (
-    <Tooltip content={copied ? 'Copied!' : 'Copy to clipboard'}>
-      <button
-        onClick={handleCopy}
-        className="flex items-center gap-2 px-3 py-1.5 text-sm bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg transition-colors"
-        aria-label={copied ? 'Copied' : label}
-      >
-        {copied ? (
-          <>
-            <Check className="w-4 h-4 text-green-600" />
-            <span>Copied</span>
-          </>
-        ) : (
-          <>
-            <Copy className="w-4 h-4" />
-            <span>{label}</span>
-          </>
-        )}
-      </button>
-    </Tooltip>
+    <button
+      onClick={handleCopy}
+      className={`flex items-center gap-1.5 text-sm font-medium transition-colors ${
+        copied ? 'text-green-600' : 'text-slate-500 hover:text-slate-700'
+      } ${className}`}
+      aria-label="Copy to clipboard"
+    >
+      {copied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
+      {label && <span>{copied ? 'Copied!' : label}</span>}
+    </button>
   );
 }

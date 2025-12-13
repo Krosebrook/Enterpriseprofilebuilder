@@ -1,11 +1,12 @@
-import { Role } from '../App';
-import { DollarSign, TrendingUp, Code, Megaphone, Settings as SettingsIcon, Users as UsersIcon } from 'lucide-react';
+import { DollarSign, TrendingUp, Code, Megaphone, Settings as SettingsIcon, Users as UsersIcon, Shield } from 'lucide-react';
+import { useNavigation } from '../../contexts/NavigationContext';
+import { Role } from '../../types';
+import { SectionHeader } from '../common/SectionHeader';
+import { Card } from '../ui/Card';
 
-interface RoleProfilesProps {
-  selectedRole: Role;
-}
+export function RoleProfiles() {
+  const { selectedRole } = useNavigation();
 
-export function RoleProfiles({ selectedRole }: RoleProfilesProps) {
   const profiles = [
     {
       role: 'Finance' as Role,
@@ -196,138 +197,154 @@ export function RoleProfiles({ selectedRole }: RoleProfilesProps) {
     : profiles.filter(p => p.role === selectedRole);
 
   return (
-    <div className="space-y-8">
-      <div>
-        <h2 className="text-slate-900 mb-4">Role-Specific Profiles</h2>
-        <p className="text-slate-700">
-          {selectedRole === 'All' 
-            ? 'Tailored guidance for each department at INT Inc.'
-            : `Detailed profile for the ${selectedRole} role.`}
-        </p>
-      </div>
+    <div className="space-y-8 animate-in fade-in duration-500">
+      <SectionHeader 
+        title="Role Profiles" 
+        description={selectedRole === 'All' 
+          ? "Role-specific capabilities, permissions, and workflow templates. Select your role in the top bar to filter."
+          : `Detailed operational profile for the ${selectedRole} role, including permissions, tools, and specific workflows.`}
+        icon={UsersIcon}
+      />
 
-      {filteredProfiles.map((profile) => {
-        const Icon = profile.icon;
-        const colorClasses = {
-          green: 'from-green-50 to-emerald-50 border-green-200',
-          blue: 'from-blue-50 to-cyan-50 border-blue-200',
-          purple: 'from-purple-50 to-indigo-50 border-purple-200',
-          orange: 'from-orange-50 to-amber-50 border-orange-200'
-        };
+      <div className="grid grid-cols-1 gap-12">
+        {filteredProfiles.map((profile) => {
+          const Icon = profile.icon;
+          // Clean dynamic class generation for better stability
+          const themeColor = {
+             green: { bg: 'bg-emerald-50', border: 'border-emerald-200', text: 'text-emerald-700', icon: 'text-emerald-600' },
+             blue: { bg: 'bg-blue-50', border: 'border-blue-200', text: 'text-blue-700', icon: 'text-blue-600' },
+             purple: { bg: 'bg-indigo-50', border: 'border-indigo-200', text: 'text-indigo-700', icon: 'text-indigo-600' },
+             orange: { bg: 'bg-amber-50', border: 'border-amber-200', text: 'text-amber-700', icon: 'text-amber-600' }
+          }[profile.color as string] || { bg: 'bg-slate-50', border: 'border-slate-200', text: 'text-slate-700', icon: 'text-slate-600' };
 
-        return (
-          <div key={profile.role} className="space-y-6">
-            <div className={`bg-gradient-to-r ${colorClasses[profile.color as keyof typeof colorClasses]} border rounded-lg p-6`}>
-              <div className="flex items-center gap-4 mb-4">
-                <div className="w-16 h-16 bg-white rounded-lg flex items-center justify-center shadow-sm">
-                  <Icon className="w-8 h-8 text-slate-900" />
+          return (
+            <div key={profile.role} className="space-y-6">
+              {/* Header Card */}
+              <div className={`${themeColor.bg} ${themeColor.border} border rounded-2xl p-8 flex flex-col md:flex-row gap-6 items-start shadow-sm`}>
+                <div className="bg-white p-4 rounded-xl shadow-sm">
+                  <Icon className={`w-10 h-10 ${themeColor.icon}`} />
                 </div>
                 <div>
-                  <h3 className="text-slate-900">{profile.role} Role Profile</h3>
-                  <p className="text-slate-700">{profile.responsibilities}</p>
+                  <h3 className="text-2xl font-bold text-slate-900 mb-2">{profile.role} Role Profile</h3>
+                  <p className="text-slate-700 text-lg leading-relaxed">{profile.responsibilities}</p>
                 </div>
               </div>
-            </div>
 
-            <div className="bg-white border border-slate-200 rounded-lg p-6">
-              <h4 className="text-slate-900 mb-3">Key Capabilities</h4>
-              <ul className="space-y-2">
-                {profile.capabilities.map((capability, index) => (
-                  <li key={index} className="flex items-start gap-2 text-slate-700">
-                    <span className="text-amber-600 mt-1">•</span>
-                    <span>{capability}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                 {/* Capabilities */}
+                 <Card>
+                   <h4 className="font-bold text-slate-900 mb-4 flex items-center gap-2">
+                      <SettingsIcon className="w-5 h-5 text-slate-400" />
+                      Key Capabilities
+                   </h4>
+                   <ul className="space-y-3">
+                     {profile.capabilities.map((capability, index) => (
+                       <li key={index} className="flex items-start gap-3 text-slate-700 text-sm">
+                         <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-slate-400 flex-shrink-0" />
+                         {capability}
+                       </li>
+                     ))}
+                   </ul>
+                 </Card>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="bg-white border border-slate-200 rounded-lg p-6">
-                <h4 className="text-slate-900 mb-3">Feature Access</h4>
-                <div className="space-y-3">
-                  <div>
-                    <p className="text-slate-700 mb-2">Enabled:</p>
-                    <ul className="space-y-1">
-                      {profile.features.enabled.map((feature, index) => (
-                        <li key={index} className="flex items-start gap-2 text-slate-600">
-                          <span className="text-green-600">✓</span>
-                          <span>{feature}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                  {profile.features.disabled.length > 0 && (
-                    <div>
-                      <p className="text-slate-700 mb-2">Disabled:</p>
-                      <ul className="space-y-1">
-                        {profile.features.disabled.map((feature, index) => (
-                          <li key={index} className="flex items-start gap-2 text-slate-600">
-                            <span className="text-red-600">✗</span>
-                            <span>{feature}</span>
-                          </li>
-                        ))}
-                      </ul>
+                 {/* Permissions */}
+                 <Card>
+                   <h4 className="font-bold text-slate-900 mb-4 flex items-center gap-2">
+                      <Shield className="w-5 h-5 text-slate-400" />
+                      Permissions & Access
+                   </h4>
+                   <div className="space-y-4">
+                     <div>
+                        <div className="text-xs font-bold text-emerald-600 uppercase tracking-wider mb-2">Enabled Features</div>
+                        <div className="flex flex-wrap gap-2">
+                           {profile.features.enabled.map((f, i) => (
+                              <span key={i} className="px-2 py-1 bg-emerald-50 text-emerald-700 rounded text-xs border border-emerald-100 font-medium">
+                                 {f}
+                              </span>
+                           ))}
+                        </div>
+                     </div>
+                     {profile.features.disabled.length > 0 && (
+                        <div>
+                           <div className="text-xs font-bold text-rose-600 uppercase tracking-wider mb-2">Restricted</div>
+                           <div className="flex flex-wrap gap-2">
+                              {profile.features.disabled.map((f, i) => (
+                                 <span key={i} className="px-2 py-1 bg-rose-50 text-rose-700 rounded text-xs border border-rose-100 font-medium">
+                                    {f}
+                                 </span>
+                              ))}
+                           </div>
+                        </div>
+                     )}
+                   </div>
+                 </Card>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                 <div className="md:col-span-1">
+                    <Card className="h-full bg-slate-50 border-slate-200">
+                       <h4 className="font-bold text-slate-900 mb-4 text-sm uppercase tracking-wide">Standard Tools</h4>
+                       <ul className="space-y-2">
+                          {profile.tools.map((tool, i) => (
+                             <li key={i} className="text-sm text-slate-600 flex items-center gap-2">
+                                <Code className="w-3 h-3 text-slate-400" />
+                                {tool}
+                             </li>
+                          ))}
+                       </ul>
+                    </Card>
+                 </div>
+                 
+                 <div className="md:col-span-2">
+                    <div className="bg-rose-50 border border-rose-100 rounded-xl p-6 h-full">
+                       <h4 className="font-bold text-rose-900 mb-4 flex items-center gap-2">
+                          <span className="flex items-center justify-center w-5 h-5 rounded-full bg-rose-200 text-rose-700 text-xs">!</span>
+                          Mandatory Escalation Triggers
+                       </h4>
+                       <ul className="grid grid-cols-1 gap-2">
+                          {profile.escalationRules.map((rule, i) => (
+                             <li key={i} className="text-sm text-rose-800 flex items-start gap-2 bg-white/50 p-2 rounded">
+                                <span className="mt-1.5 w-1 h-1 rounded-full bg-rose-500 shrink-0" />
+                                {rule}
+                             </li>
+                          ))}
+                       </ul>
                     </div>
-                  )}
-                </div>
+                 </div>
               </div>
 
-              <div className="bg-white border border-slate-200 rounded-lg p-6">
-                <h4 className="text-slate-900 mb-3">Tools You Can Access</h4>
-                <ul className="space-y-2">
-                  {profile.tools.map((tool, index) => (
-                    <li key={index} className="flex items-start gap-2 text-slate-700">
-                      <span className="text-amber-600 mt-1">•</span>
-                      <span>{tool}</span>
-                    </li>
-                  ))}
-                </ul>
+              {/* Workflows */}
+              <div>
+                 <h4 className="text-lg font-bold text-slate-900 mb-4">Standard Operating Procedures</h4>
+                 <div className="grid grid-cols-1 gap-4">
+                    {profile.commonRequests.map((req, i) => (
+                       <Card key={i} className="bg-slate-50 border-slate-200">
+                          <div className="mb-4">
+                             <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Trigger Request</span>
+                             <p className="font-medium text-slate-900 mt-1">"{req.request}"</p>
+                          </div>
+                          <div>
+                             <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Execution Steps</span>
+                             <div className="mt-2 flex flex-col md:flex-row gap-4 text-sm text-slate-600 overflow-x-auto">
+                                {req.process.map((step, j) => (
+                                   <div key={j} className="flex-1 min-w-[150px] relative">
+                                      <div className="flex items-center gap-2 mb-1">
+                                         <span className="w-5 h-5 rounded-full bg-slate-200 text-slate-600 flex items-center justify-center text-xs font-bold">{j+1}</span>
+                                         {j < req.process.length - 1 && <div className="h-0.5 flex-1 bg-slate-200 md:block hidden" />}
+                                      </div>
+                                      <p>{step}</p>
+                                   </div>
+                                ))}
+                             </div>
+                          </div>
+                       </Card>
+                    ))}
+                 </div>
               </div>
             </div>
-
-            <div className="bg-red-50 border border-red-200 rounded-lg p-6">
-              <h4 className="text-slate-900 mb-3">Escalation Rules</h4>
-              <ul className="space-y-2">
-                {profile.escalationRules.map((rule, index) => (
-                  <li key={index} className="flex items-start gap-2 text-slate-700">
-                    <span className="text-red-600 mt-1">⚠</span>
-                    <span>{rule}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            <div>
-              <h4 className="text-slate-900 mb-4">Common Request Examples</h4>
-              <div className="space-y-4">
-                {profile.commonRequests.map((example, index) => (
-                  <div key={index} className="bg-slate-50 border border-slate-200 rounded-lg p-6">
-                    <p className="text-slate-900 mb-3">
-                      <strong>Request:</strong> "{example.request}"
-                    </p>
-                    <p className="text-slate-900 mb-2"><strong>Process:</strong></p>
-                    <ol className="space-y-1 ml-4 list-decimal">
-                      {example.process.map((step, stepIndex) => (
-                        <li key={stepIndex} className="text-slate-700">{step}</li>
-                      ))}
-                    </ol>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        );
-      })}
-
-      {selectedRole === 'All' && (
-        <div className="bg-blue-50 border border-blue-200 rounded-lg p-6">
-          <h3 className="text-slate-900 mb-3">Role Selection Tip</h3>
-          <p className="text-slate-700">
-            Use the role selector above to view detailed information for a specific role. Each profile 
-            includes tailored capabilities, feature access, tools, escalation rules, and example workflows.
-          </p>
-        </div>
-      )}
+          );
+        })}
+      </div>
     </div>
   );
 }

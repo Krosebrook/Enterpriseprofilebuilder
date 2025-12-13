@@ -3,6 +3,7 @@ import { LucideIcon } from 'lucide-react';
 
 export type Section = 
   | 'overview'
+  | 'ecosystem'
   | 'baseline'
   | 'features'
   | 'tools'

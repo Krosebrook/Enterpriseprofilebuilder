@@ -3,6 +3,7 @@ import { faqData } from '../data/faq';
 import { featuresData } from '../data/features';
 import { mcpServersData } from '../data/mcp-servers';
 import { roleProfilesData } from '../data/role-profiles';
+import { platforms, models, features as ecosystemFeatures, mcpServers as ecosystemServers, skills } from '../data/ecosystem';
 
 /**
  * Performs a fuzzy search across all content
@@ -89,6 +90,48 @@ export function searchContent(query: string): SearchResult[] {
         content: profile.responsibilities,
         relevance: calculateRelevance(normalizedQuery, profile.role, profile.responsibilities, []),
         path: ['Role Profiles', profile.role]
+      });
+    }
+  });
+
+  // Search Ecosystem Platforms
+  platforms.forEach((platform) => {
+    if (platform.name.toLowerCase().includes(normalizedQuery) || platform.description.toLowerCase().includes(normalizedQuery)) {
+      results.push({
+        id: `ecosystem-platform-${platform.id}`,
+        title: platform.name,
+        section: 'ecosystem',
+        content: platform.description,
+        relevance: calculateRelevance(normalizedQuery, platform.name, platform.description, []),
+        path: ['Ecosystem', 'Platforms', platform.name]
+      });
+    }
+  });
+
+  // Search Ecosystem Models
+  models.forEach((model) => {
+    if (model.name.toLowerCase().includes(normalizedQuery) || model.bestFor.toLowerCase().includes(normalizedQuery)) {
+      results.push({
+        id: `ecosystem-model-${model.id}`,
+        title: `${model.name} ${model.version}`,
+        section: 'ecosystem',
+        content: model.bestFor,
+        relevance: calculateRelevance(normalizedQuery, model.name, model.bestFor, []),
+        path: ['Ecosystem', 'Models', model.name]
+      });
+    }
+  });
+
+  // Search Ecosystem Skills
+  skills.forEach((skill) => {
+    if (skill.name.toLowerCase().includes(normalizedQuery) || skill.description.toLowerCase().includes(normalizedQuery)) {
+      results.push({
+        id: `ecosystem-skill-${skill.id}`,
+        title: skill.name,
+        section: 'ecosystem',
+        content: skill.description,
+        relevance: calculateRelevance(normalizedQuery, skill.name, skill.description, []),
+        path: ['Ecosystem', 'Skills', skill.name]
       });
     }
   });

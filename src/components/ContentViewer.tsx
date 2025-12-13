@@ -17,6 +17,7 @@ import { Dashboard } from '../features/dashboard/Dashboard';
 import { Deployment } from '../features/deployment/Deployment';
 import { OperationsManual } from '../features/operations/OperationsManual';
 import { ReferenceLibrary } from '../features/library/ReferenceLibrary';
+import { EcosystemExplorer } from '../features/ecosystem/EcosystemExplorer';
 
 export function ContentViewer() {
   const { activeSection, selectedRole, searchQuery } = useNavigation();
@@ -26,6 +27,8 @@ export function ContentViewer() {
     switch (activeSection) {
       case 'overview':
         return <Dashboard />;
+      case 'ecosystem':
+        return <EcosystemExplorer />;
       case 'baseline':
         return <BaselinePrompt />;
       case 'features':

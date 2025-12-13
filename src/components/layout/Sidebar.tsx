@@ -10,7 +10,8 @@ import {
   Rocket,
   ChevronLeft,
   FileText, // Icon for Operations Manual
-  Library // Icon for Reference Library
+  Library, // Icon for Reference Library
+  Globe // Icon for Ecosystem Explorer
 } from 'lucide-react';
 import { useNavigation } from '../../contexts/NavigationContext';
 import { Section } from '../../types';
@@ -21,6 +22,7 @@ interface SidebarProps {
 
 const NAV_ITEMS: { id: Section; label: string; icon: React.ElementType }[] = [
   { id: 'overview', label: 'Overview', icon: LayoutDashboard },
+  { id: 'ecosystem', label: 'Ecosystem Explorer', icon: Globe },
   { id: 'baseline', label: 'System Baseline', icon: ShieldCheck },
   { id: 'features', label: 'Feature Guides', icon: Sparkles },
   { id: 'tools', label: 'MCP Tools', icon: Hammer },

@@ -8,6 +8,13 @@ export const navigationData: NavigationItem[] = [
     icon: 'BookOpen'
   },
   {
+    id: 'ecosystem',
+    label: 'Ecosystem Explorer',
+    description: 'Platforms, Models, and Stack Configurator',
+    icon: 'Globe',
+    badge: 'v5.0'
+  },
+  {
     id: 'baseline',
     label: 'Baseline Prompt',
     description: 'Universal system prompt for all users',

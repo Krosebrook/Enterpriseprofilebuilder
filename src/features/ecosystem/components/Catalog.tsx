@@ -3,8 +3,7 @@ import { platforms, models, features, mcpServers, skills, plans } from '../../..
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '../../../components/ui/card';
 import { Badge } from '../../../components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../../components/ui/tabs';
-import { ScrollArea } from '../../../components/ui/scroll-area';
-import { Monitor, Cpu, Layers, Plug, BookOpen, CreditCard } from 'lucide-react';
+import { Monitor, Cpu, Layers, Plug, CreditCard } from 'lucide-react';
 
 export function Catalog() {
   return (
@@ -21,27 +20,38 @@ export function Catalog() {
         <TabsContent value="platforms" className="mt-6">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {platforms.map((platform) => (
-              <Card key={platform.id} className="h-full flex flex-col">
+              <Card key={platform.id} className="h-full flex flex-col border-t-4" style={{ borderTopColor: platform.color }}>
                 <CardHeader>
                   <div className="flex justify-between items-start">
-                    <CardTitle className="text-xl">{platform.name}</CardTitle>
-                    <Badge variant="outline">{platform.type}</Badge>
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-lg flex items-center justify-center text-xl text-white shadow-sm" style={{ backgroundColor: platform.color }}>
+                        {platform.iconChar}
+                      </div>
+                      <div>
+                        <CardTitle className="text-lg">{platform.name}</CardTitle>
+                        <div className="text-xs text-muted-foreground uppercase tracking-wide mt-1">{platform.category}</div>
+                      </div>
+                    </div>
                   </div>
-                  <CardDescription>{platform.description}</CardDescription>
+                  <CardDescription className="mt-2 line-clamp-3">{platform.description}</CardDescription>
                 </CardHeader>
                 <CardContent className="flex-1">
                   <div className="space-y-4">
                     <div>
-                      <h4 className="text-sm font-semibold mb-2">Best For</h4>
-                      <p className="text-sm text-gray-600 dark:text-gray-400">{platform.bestFor}</p>
+                      <h4 className="text-xs font-semibold uppercase text-muted-foreground mb-2">Best For</h4>
+                      <p className="text-sm">{platform.bestFor}</p>
                     </div>
                     <div>
-                      <h4 className="text-sm font-semibold mb-2">Key Features</h4>
+                      <h4 className="text-xs font-semibold uppercase text-muted-foreground mb-2">Key Features</h4>
                       <div className="flex flex-wrap gap-2">
-                        {platform.features.map(f => (
-                          <Badge key={f} variant="secondary" className="text-xs">{f}</Badge>
+                        {platform.features.slice(0, 4).map(f => (
+                          <Badge key={f} variant="secondary" className="text-xs capitalize">{f.replace('-', ' ')}</Badge>
                         ))}
                       </div>
+                    </div>
+                    <div className="pt-2 border-t text-sm font-medium flex justify-between items-center">
+                      <span>ROI</span>
+                      <span className="text-green-600 dark:text-green-400">{platform.roi}</span>
                     </div>
                   </div>
                 </CardContent>
@@ -53,26 +63,34 @@ export function Catalog() {
         <TabsContent value="models" className="mt-6">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {models.map((model) => (
-              <Card key={model.id} className="h-full flex flex-col border-t-4 border-t-primary">
+              <Card key={model.id} className="h-full flex flex-col border-t-4" style={{ borderTopColor: model.color }}>
                 <CardHeader>
                   <div className="flex justify-between items-start">
-                    <CardTitle className="text-xl">{model.name} {model.version}</CardTitle>
-                    <Badge variant={model.id.includes('opus') ? 'default' : 'secondary'}>{model.context}</Badge>
+                    <div>
+                      <div className="text-3xl mb-2">{model.iconChar}</div>
+                      <CardTitle className="text-xl">{model.name} {model.version}</CardTitle>
+                      <div className="text-sm font-medium" style={{ color: model.color }}>{model.tier} Tier</div>
+                    </div>
+                    <Badge variant={model.tier === 'Premium' ? 'default' : 'secondary'}>
+                      ${model.pricing.input} / ${model.pricing.output}
+                    </Badge>
                   </div>
-                  <CardDescription className="flex gap-2 mt-2">
-                    <Badge variant="outline">Speed: {model.speed}</Badge>
-                    <Badge variant="outline">Cost: {model.cost}</Badge>
-                  </CardDescription>
+                  <CardDescription className="mt-2">{model.description}</CardDescription>
                 </CardHeader>
-                <CardContent className="flex-1">
-                  <p className="mb-4 text-sm text-gray-600 dark:text-gray-300">{model.bestFor}</p>
-                  <div className="space-y-2">
-                    {model.capabilities.map(cap => (
-                      <div key={cap} className="flex items-center text-sm">
-                        <span className="w-1.5 h-1.5 rounded-full bg-primary mr-2" />
-                        {cap}
-                      </div>
-                    ))}
+                <CardContent className="flex-1 space-y-4">
+                  <div>
+                    <div className="text-sm font-medium mb-1">Capabilities</div>
+                    <div className="flex flex-wrap gap-1.5">
+                      {model.capabilities.map(cap => (
+                        <Badge key={cap} variant="outline" className="text-xs capitalize">{cap.replace('-', ' ')}</Badge>
+                      ))}
+                    </div>
+                  </div>
+                  <div className="text-sm">
+                    <span className="font-semibold">Context:</span> {model.context}
+                  </div>
+                  <div className="text-sm">
+                    <span className="font-semibold">Best For:</span> {model.useCase}
                   </div>
                 </CardContent>
               </Card>
@@ -81,20 +99,26 @@ export function Catalog() {
         </TabsContent>
 
         <TabsContent value="features" className="mt-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {features.map((feature) => (
               <Card key={feature.id}>
                 <CardHeader>
-                  <CardTitle className="text-lg">{feature.name}</CardTitle>
-                  <CardDescription>{feature.description}</CardDescription>
+                  <div className="flex items-center gap-3 mb-2">
+                    <div className="text-2xl">{feature.iconChar}</div>
+                    <div>
+                      <CardTitle className="text-base">{feature.name}</CardTitle>
+                      <CardDescription className="text-xs">{feature.category}</CardDescription>
+                    </div>
+                  </div>
+                  <p className="text-sm text-muted-foreground">{feature.description}</p>
                 </CardHeader>
-                <CardFooter>
+                <CardContent>
                    <div className="flex flex-wrap gap-1">
-                     {feature.platforms.map(p => (
-                       <Badge key={p} variant="outline" className="text-[10px] uppercase">{p}</Badge>
+                     {feature.valueProps.map(vp => (
+                       <Badge key={vp} variant="secondary" className="text-[10px]">{vp}</Badge>
                      ))}
                    </div>
-                </CardFooter>
+                </CardContent>
               </Card>
             ))}
           </div>
@@ -104,20 +128,26 @@ export function Catalog() {
           <div className="space-y-8">
             <div>
               <h3 className="text-lg font-bold mb-4">Official MCP Servers</h3>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
                 {mcpServers.map((server) => (
                   <Card key={server.id} className="bg-gray-50 dark:bg-gray-900/50">
                     <CardHeader className="pb-2">
-                      <div className="flex justify-between">
-                        <CardTitle className="text-base">{server.name}</CardTitle>
-                        <Badge variant="outline" className="text-xs">{server.category}</Badge>
+                      <div className="flex justify-between items-start">
+                        <CardTitle className="text-sm font-bold">{server.name}</CardTitle>
+                        <Badge variant="outline" className="text-[10px]">{server.category}</Badge>
                       </div>
                     </CardHeader>
                     <CardContent>
-                      <p className="text-sm text-gray-500">{server.description}</p>
+                      <p className="text-xs text-gray-500 line-clamp-2">{server.description}</p>
                     </CardContent>
                   </Card>
                 ))}
+                <Card className="bg-dashed border-dashed flex items-center justify-center p-6 text-center text-muted-foreground">
+                   <div>
+                     <div className="text-2xl mb-2">+300</div>
+                     <div className="text-sm font-medium">Community Servers</div>
+                   </div>
+                </Card>
               </div>
             </div>
             
@@ -129,7 +159,7 @@ export function Catalog() {
                     <CardHeader className="pb-2">
                       <div className="flex justify-between">
                         <CardTitle className="text-base">{skill.name}</CardTitle>
-                        <Badge className="bg-indigo-100 text-indigo-800 dark:bg-indigo-900 dark:text-indigo-200 hover:bg-indigo-200">{skill.type}</Badge>
+                        <Badge className="bg-indigo-100 text-indigo-800 dark:bg-indigo-900 dark:text-indigo-200">{skill.type}</Badge>
                       </div>
                     </CardHeader>
                     <CardContent>
@@ -145,26 +175,28 @@ export function Catalog() {
         <TabsContent value="plans" className="mt-6">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
             {plans.map((plan) => (
-              <Card key={plan.id} className={`flex flex-col ${plan.id === 'enterprise' ? 'border-primary shadow-lg scale-105' : ''}`}>
+              <Card key={plan.id} className={`flex flex-col ${plan.id === 'enterprise' ? 'border-primary shadow-lg relative overflow-hidden' : ''}`}>
+                {plan.id === 'enterprise' && <div className="absolute top-0 right-0 bg-primary text-white text-[10px] px-2 py-1 rounded-bl">RECOMMENDED</div>}
                 <CardHeader>
-                  <CardTitle className="text-2xl">{plan.name}</CardTitle>
-                  <div className="text-3xl font-bold mt-2">{plan.price}</div>
+                  <CardTitle className="text-xl">{plan.name}</CardTitle>
+                  <div className="text-2xl font-bold mt-2">{plan.price}</div>
+                  <CardDescription className="text-xs mt-1">{plan.bestFor}</CardDescription>
                 </CardHeader>
                 <CardContent className="flex-1">
                   <ul className="space-y-3">
-                    {plan.features.map((feature, i) => (
-                      <li key={i} className="flex items-center text-sm">
-                        <span className="text-green-500 mr-2">✓</span>
-                        {feature}
+                    {plan.capabilities.map((cap, i) => (
+                      <li key={i} className="flex items-start text-sm">
+                        <span className="text-green-500 mr-2 mt-0.5">✓</span>
+                        <span className="text-muted-foreground">{cap}</span>
                       </li>
                     ))}
                   </ul>
                 </CardContent>
                 <CardFooter>
-                  <button className={`w-full py-2 px-4 rounded-md font-semibold ${
+                  <button className={`w-full py-2 px-4 rounded-md font-semibold text-sm ${
                     plan.id === 'enterprise' 
-                      ? 'bg-primary text-white hover:bg-primary-hover' 
-                      : 'bg-gray-100 text-gray-900 hover:bg-gray-200 dark:bg-gray-800 dark:text-white'
+                      ? 'bg-primary text-white hover:bg-primary/90' 
+                      : 'bg-secondary text-secondary-foreground hover:bg-secondary/80'
                   }`}>
                     {plan.id === 'enterprise' ? 'Contact Sales' : 'Select Plan'}
                   </button>

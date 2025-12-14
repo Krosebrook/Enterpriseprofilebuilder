@@ -2,11 +2,11 @@ import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '../../components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../components/ui/tabs';
 import { Button } from '../../components/ui/button';
-import { Badge } from '../../components/ui/badge';
 import { EcosystemMap } from './components/EcosystemMap';
 import { SetupWizard } from './components/SetupWizard';
 import { Catalog } from './components/Catalog';
-import { BookOpen, Map, Wand2, Grid } from 'lucide-react';
+import { Comparison } from './components/Comparison';
+import { Map, Wand2, Grid, BarChart3 } from 'lucide-react';
 
 export function EcosystemExplorer() {
   const [activeTab, setActiveTab] = useState('map');
@@ -38,6 +38,10 @@ export function EcosystemExplorer() {
             <Grid className="mr-2 h-4 w-4" />
             Component Catalog
           </TabsTrigger>
+          <TabsTrigger value="comparison" className="data-[state=active]:bg-white dark:data-[state=active]:bg-gray-700 data-[state=active]:shadow-sm">
+            <BarChart3 className="mr-2 h-4 w-4" />
+            Plan Comparison & ROI
+          </TabsTrigger>
           <TabsTrigger value="wizard" className="data-[state=active]:bg-white dark:data-[state=active]:bg-gray-700 data-[state=active]:shadow-sm">
             <Wand2 className="mr-2 h-4 w-4" />
             Stack Configurator
@@ -58,6 +62,10 @@ export function EcosystemExplorer() {
 
         <TabsContent value="catalog" className="space-y-4">
           <Catalog />
+        </TabsContent>
+
+        <TabsContent value="comparison" className="space-y-4">
+          <Comparison />
         </TabsContent>
 
         <TabsContent value="wizard" className="space-y-4">

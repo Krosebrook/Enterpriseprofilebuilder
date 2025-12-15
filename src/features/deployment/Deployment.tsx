@@ -4,6 +4,7 @@ import { SectionHeader } from '../../../components/common/SectionHeader';
 import { Rocket, Filter, AlertTriangle } from 'lucide-react';
 import { PhaseCard } from './components/PhaseCard';
 import { PhaseDetail } from './components/PhaseDetail';
+import { ProgressBar } from '../../../components/ui/ProgressBar';
 import { allDeploymentPhases } from '../../../data/deployment-phases';
 import { DeploymentPhase, DeploymentTask } from '../../../types';
 
@@ -115,12 +116,7 @@ export function Deployment() {
                 <span className="text-slate-500">Overall Completion</span>
                 <span className="font-bold text-slate-900">{stats.progress}%</span>
               </div>
-              <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
-                <div 
-                  className="h-full bg-indigo-600 rounded-full transition-all duration-1000" 
-                  style={{ width: `${stats.progress}%` }}
-                />
-              </div>
+              <ProgressBar value={stats.progress} color="bg-indigo-600" height="h-2" />
             </div>
 
             {/* Stats Grid */}

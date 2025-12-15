@@ -2964,11 +2964,6 @@
     transition-duration: .7s;
   }
 
-  .duration-1000 {
-    --tw-duration: 1s;
-    transition-duration: 1s;
-  }
-
   .ease-in-out {
     --tw-ease: var(--ease-in-out);
     transition-timing-function: var(--ease-in-out);
@@ -3952,6 +3947,12 @@
       .dark\:bg-purple-900\/20 {
         background-color: color-mix(in oklab, var(--color-purple-900) 20%, transparent);
       }
+    }
+  }
+
+  @media (prefers-color-scheme: dark) {
+    .dark\:bg-slate-700 {
+      background-color: var(--color-slate-700);
     }
   }
 

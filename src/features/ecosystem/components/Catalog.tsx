@@ -3,11 +3,29 @@ import { platforms, models, features, mcpServers, skills, plans } from '../../..
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '../../../components/ui/card';
 import { Badge } from '../../../components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../../components/ui/tabs';
-import { Monitor, Cpu, Layers, Plug, CreditCard } from 'lucide-react';
+import { Monitor, Cpu, Layers, Plug, CreditCard, CheckCircle } from 'lucide-react';
+import { useEcosystemStore } from '../hooks/useEcosystemStore';
+import { cn } from '../../../lib/utils';
 
 export function Catalog() {
+  const { 
+    selectedPlatforms, togglePlatform,
+    selectedModels, toggleModel,
+    selectedServers, toggleServer,
+    selectedSkills, toggleSkill
+  } = useEcosystemStore();
+
+  const isSelected = (id: string, list: string[]) => list.includes(id);
+
   return (
     <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <h3 className="text-lg font-semibold">Component Library</h3>
+        <Badge variant="outline" className="text-muted-foreground">
+          {selectedPlatforms.length + selectedModels.length + selectedServers.length} Items Selected
+        </Badge>
+      </div>
+
       <Tabs defaultValue="platforms" className="w-full">
         <TabsList className="w-full justify-start overflow-x-auto">
           <TabsTrigger value="platforms"><Monitor className="mr-2 h-4 w-4"/>Platforms</TabsTrigger>
@@ -19,82 +37,101 @@ export function Catalog() {
 
         <TabsContent value="platforms" className="mt-6">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {platforms.map((platform) => (
-              <Card key={platform.id} className="h-full flex flex-col border-t-4" style={{ borderTopColor: platform.color }}>
-                <CardHeader>
-                  <div className="flex justify-between items-start">
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-lg flex items-center justify-center text-xl text-white shadow-sm" style={{ backgroundColor: platform.color }}>
-                        {platform.iconChar}
+            {platforms.map((platform) => {
+              const selected = isSelected(platform.id, selectedPlatforms);
+              return (
+                <Card 
+                  key={platform.id} 
+                  className={cn(
+                    "h-full flex flex-col border-t-4 transition-all cursor-pointer hover:shadow-md",
+                    selected ? "ring-2 ring-primary ring-offset-2" : ""
+                  )} 
+                  style={{ borderTopColor: platform.color }}
+                  onClick={() => togglePlatform(platform.id)}
+                >
+                  <CardHeader>
+                    <div className="flex justify-between items-start">
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-lg flex items-center justify-center text-xl text-white shadow-sm" style={{ backgroundColor: platform.color }}>
+                          {platform.iconChar}
+                        </div>
+                        <div>
+                          <CardTitle className="text-lg">{platform.name}</CardTitle>
+                          <div className="text-xs text-muted-foreground uppercase tracking-wide mt-1">{platform.category}</div>
+                        </div>
+                      </div>
+                      {selected && <CheckCircle className="h-5 w-5 text-primary" />}
+                    </div>
+                    <CardDescription className="mt-2 line-clamp-3">{platform.description}</CardDescription>
+                  </CardHeader>
+                  <CardContent className="flex-1">
+                    <div className="space-y-4">
+                      <div>
+                        <h4 className="text-xs font-semibold uppercase text-muted-foreground mb-2">Best For</h4>
+                        <p className="text-sm">{platform.bestFor}</p>
                       </div>
                       <div>
-                        <CardTitle className="text-lg">{platform.name}</CardTitle>
-                        <div className="text-xs text-muted-foreground uppercase tracking-wide mt-1">{platform.category}</div>
+                        <h4 className="text-xs font-semibold uppercase text-muted-foreground mb-2">Key Features</h4>
+                        <div className="flex flex-wrap gap-2">
+                          {platform.features.slice(0, 4).map(f => (
+                            <Badge key={f} variant="secondary" className="text-xs capitalize">{f.replace('-', ' ')}</Badge>
+                          ))}
+                        </div>
                       </div>
                     </div>
-                  </div>
-                  <CardDescription className="mt-2 line-clamp-3">{platform.description}</CardDescription>
-                </CardHeader>
-                <CardContent className="flex-1">
-                  <div className="space-y-4">
-                    <div>
-                      <h4 className="text-xs font-semibold uppercase text-muted-foreground mb-2">Best For</h4>
-                      <p className="text-sm">{platform.bestFor}</p>
-                    </div>
-                    <div>
-                      <h4 className="text-xs font-semibold uppercase text-muted-foreground mb-2">Key Features</h4>
-                      <div className="flex flex-wrap gap-2">
-                        {platform.features.slice(0, 4).map(f => (
-                          <Badge key={f} variant="secondary" className="text-xs capitalize">{f.replace('-', ' ')}</Badge>
-                        ))}
-                      </div>
-                    </div>
-                    <div className="pt-2 border-t text-sm font-medium flex justify-between items-center">
-                      <span>ROI</span>
-                      <span className="text-green-600 dark:text-green-400">{platform.roi}</span>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
+                  </CardContent>
+                </Card>
+              );
+            })}
           </div>
         </TabsContent>
 
         <TabsContent value="models" className="mt-6">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {models.map((model) => (
-              <Card key={model.id} className="h-full flex flex-col border-t-4" style={{ borderTopColor: model.color }}>
-                <CardHeader>
-                  <div className="flex justify-between items-start">
+            {models.map((model) => {
+              const selected = isSelected(model.id, selectedModels);
+              return (
+                <Card 
+                  key={model.id} 
+                  className={cn(
+                    "h-full flex flex-col border-t-4 transition-all cursor-pointer hover:shadow-md",
+                    selected ? "ring-2 ring-primary ring-offset-2" : ""
+                  )}
+                  style={{ borderTopColor: model.color }}
+                  onClick={() => toggleModel(model.id)}
+                >
+                  <CardHeader>
+                    <div className="flex justify-between items-start">
+                      <div>
+                        <div className="text-3xl mb-2">{model.iconChar}</div>
+                        <CardTitle className="text-xl">{model.name} {model.version}</CardTitle>
+                        <div className="text-sm font-medium" style={{ color: model.color }}>{model.tier} Tier</div>
+                      </div>
+                      <div className="flex flex-col items-end gap-2">
+                        <Badge variant={model.tier === 'Premium' ? 'default' : 'secondary'}>
+                          ${model.pricing.input} / ${model.pricing.output}
+                        </Badge>
+                        {selected && <CheckCircle className="h-5 w-5 text-primary" />}
+                      </div>
+                    </div>
+                    <CardDescription className="mt-2">{model.description}</CardDescription>
+                  </CardHeader>
+                  <CardContent className="flex-1 space-y-4">
                     <div>
-                      <div className="text-3xl mb-2">{model.iconChar}</div>
-                      <CardTitle className="text-xl">{model.name} {model.version}</CardTitle>
-                      <div className="text-sm font-medium" style={{ color: model.color }}>{model.tier} Tier</div>
+                      <div className="text-sm font-medium mb-1">Capabilities</div>
+                      <div className="flex flex-wrap gap-1.5">
+                        {model.capabilities.map(cap => (
+                          <Badge key={cap} variant="outline" className="text-xs capitalize">{cap.replace('-', ' ')}</Badge>
+                        ))}
+                      </div>
                     </div>
-                    <Badge variant={model.tier === 'Premium' ? 'default' : 'secondary'}>
-                      ${model.pricing.input} / ${model.pricing.output}
-                    </Badge>
-                  </div>
-                  <CardDescription className="mt-2">{model.description}</CardDescription>
-                </CardHeader>
-                <CardContent className="flex-1 space-y-4">
-                  <div>
-                    <div className="text-sm font-medium mb-1">Capabilities</div>
-                    <div className="flex flex-wrap gap-1.5">
-                      {model.capabilities.map(cap => (
-                        <Badge key={cap} variant="outline" className="text-xs capitalize">{cap.replace('-', ' ')}</Badge>
-                      ))}
+                    <div className="text-sm">
+                      <span className="font-semibold">Context:</span> {model.context}
                     </div>
-                  </div>
-                  <div className="text-sm">
-                    <span className="font-semibold">Context:</span> {model.context}
-                  </div>
-                  <div className="text-sm">
-                    <span className="font-semibold">Best For:</span> {model.useCase}
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
+                  </CardContent>
+                </Card>
+              );
+            })}
           </div>
         </TabsContent>
 
@@ -129,25 +166,29 @@ export function Catalog() {
             <div>
               <h3 className="text-lg font-bold mb-4">Official MCP Servers</h3>
               <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                {mcpServers.map((server) => (
-                  <Card key={server.id} className="bg-gray-50 dark:bg-gray-900/50">
-                    <CardHeader className="pb-2">
-                      <div className="flex justify-between items-start">
-                        <CardTitle className="text-sm font-bold">{server.name}</CardTitle>
-                        <Badge variant="outline" className="text-[10px]">{server.category}</Badge>
-                      </div>
-                    </CardHeader>
-                    <CardContent>
-                      <p className="text-xs text-gray-500 line-clamp-2">{server.description}</p>
-                    </CardContent>
-                  </Card>
-                ))}
-                <Card className="bg-dashed border-dashed flex items-center justify-center p-6 text-center text-muted-foreground">
-                   <div>
-                     <div className="text-2xl mb-2">+300</div>
-                     <div className="text-sm font-medium">Community Servers</div>
-                   </div>
-                </Card>
+                {mcpServers.map((server) => {
+                  const selected = isSelected(server.id, selectedServers);
+                  return (
+                    <Card 
+                      key={server.id} 
+                      className={cn(
+                        "bg-gray-50 dark:bg-gray-900/50 cursor-pointer hover:bg-gray-100 transition-colors",
+                        selected ? "ring-2 ring-primary ring-offset-1 bg-white dark:bg-gray-800" : ""
+                      )}
+                      onClick={() => toggleServer(server.id)}
+                    >
+                      <CardHeader className="pb-2">
+                        <div className="flex justify-between items-start">
+                          <CardTitle className="text-sm font-bold">{server.name}</CardTitle>
+                          {selected ? <CheckCircle className="h-4 w-4 text-primary" /> : <Badge variant="outline" className="text-[10px]">{server.category}</Badge>}
+                        </div>
+                      </CardHeader>
+                      <CardContent>
+                        <p className="text-xs text-gray-500 line-clamp-2">{server.description}</p>
+                      </CardContent>
+                    </Card>
+                  );
+                })}
               </div>
             </div>
             

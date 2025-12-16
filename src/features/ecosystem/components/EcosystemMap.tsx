@@ -1,166 +1,106 @@
-import React, { useState } from 'react';
-import { Card } from '../../../components/ui/card';
-import { Globe, Monitor, Smartphone, Terminal, Cloud, Cpu, Grid, Layers, Zap, Database } from 'lucide-react';
-import { platforms, models, features, mcpServers } from '../../../data/ecosystem';
+import React from 'react';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../../components/ui/card';
+import { platforms, models } from '../../../data/ecosystem';
 
 export function EcosystemMap() {
-  const [categoryFilter, setCategoryFilter] = useState('');
-  const [audienceFilter, setAudienceFilter] = useState('');
-
-  // Filtering Logic
-  const filteredPlatforms = platforms.filter(p => 
-    (!categoryFilter || p.category === categoryFilter) &&
-    (!audienceFilter || p.audience.includes(audienceFilter))
-  );
-
   return (
-    <div className="flex flex-col gap-8 p-4 bg-gray-50 dark:bg-gray-900/20 rounded-xl min-h-[600px]">
+    <div className="relative w-full h-[600px] bg-slate-50 dark:bg-slate-900 rounded-xl overflow-hidden border border-slate-200 dark:border-slate-800 p-8">
+      {/* Background Grid */}
+      <div className="absolute inset-0 grid grid-cols-[repeat(20,minmax(0,1fr))] grid-rows-[repeat(20,minmax(0,1fr))] opacity-[0.05] pointer-events-none">
+        {Array.from({ length: 400 }).map((_, i) => (
+          <div key={i} className="border border-slate-900 dark:border-white" />
+        ))}
+      </div>
+
+      {/* Central Hub: Claude Models */}
+      <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-white dark:bg-slate-800 rounded-full shadow-2xl border-4 border-amber-500/20 flex items-center justify-center z-20">
+        <div className="text-center">
+          <div className="text-4xl mb-2">🤖</div>
+          <h3 className="text-xl font-bold text-slate-900 dark:text-white">Claude Models</h3>
+          <div className="flex gap-2 justify-center mt-2">
+            <span className="px-2 py-1 bg-amber-100 text-amber-800 text-xs rounded-full font-bold">Haiku</span>
+            <span className="px-2 py-1 bg-orange-100 text-orange-800 text-xs rounded-full font-bold">Sonnet</span>
+            <span className="px-2 py-1 bg-purple-100 text-purple-800 text-xs rounded-full font-bold">Opus</span>
+          </div>
+        </div>
+      </div>
+
+      {/* Orbit 1: Platforms */}
+      <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[450px] h-[450px] rounded-full border-2 border-dashed border-slate-300 dark:border-slate-700 pointer-events-none z-10" />
       
-      {/* Filters */}
-      <div className="flex flex-wrap gap-4 mb-4">
-        <select 
-          className="p-2 rounded-md border text-sm"
-          value={categoryFilter}
-          onChange={(e) => setCategoryFilter(e.target.value)}
-        >
-          <option value="">All Categories</option>
-          <option value="Consumer">Consumer</option>
-          <option value="Professional">Professional</option>
-          <option value="Developer">Developer</option>
-          <option value="Enterprise">Enterprise</option>
-        </select>
+      {/* Platform Nodes */}
+      {platforms.map((platform, i) => {
+        const angle = (i / platforms.length) * 2 * Math.PI - Math.PI / 2; // Start from top
+        const radius = 225; // Half of 450
+        const x = Math.cos(angle) * radius;
+        const y = Math.sin(angle) * radius;
 
-        <select 
-          className="p-2 rounded-md border text-sm"
-          value={audienceFilter}
-          onChange={(e) => setAudienceFilter(e.target.value)}
-        >
-          <option value="">All Audiences</option>
-          <option value="executives">Executives</option>
-          <option value="it-security">IT/Security</option>
-          <option value="developers">Developers</option>
-          <option value="end-users">End Users</option>
-        </select>
-      </div>
-
-      {/* Level 1: Platforms & Surfaces */}
-      <div className="space-y-4">
-        <h3 className="text-sm font-semibold uppercase tracking-wider text-gray-500 flex items-center gap-2">
-          <Monitor className="w-4 h-4" /> Platforms & Surfaces ({filteredPlatforms.length})
-        </h3>
-        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4">
-          {filteredPlatforms.map(platform => (
-             <MapNode 
-               key={platform.id}
-               icon={platform.iconChar}
-               title={platform.name}
-               desc={platform.category}
-               color={platform.color}
-               onClick={() => alert(`${platform.name}\n\n${platform.description}\n\nROI: ${platform.roi}`)}
-             />
-          ))}
-        </div>
-      </div>
-
-      {/* Connection Lines (Visual only) */}
-      <div className="h-8 border-l-2 border-r-2 border-gray-200 dark:border-gray-700 w-1/2 mx-auto hidden md:block opacity-30" />
-
-      {/* Level 2: Intelligence Layer */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-        
-        {/* Models */}
-        <div className="space-y-4">
-          <h3 className="text-sm font-semibold uppercase tracking-wider text-gray-500 flex items-center gap-2">
-            <Cpu className="w-4 h-4" /> Model Tiers
-          </h3>
-          <div className="flex flex-col gap-3">
-             {models.map(model => (
-                <div key={model.id} className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 border-l-4 transition-transform hover:scale-105 cursor-pointer" style={{ borderLeftColor: model.color }}>
-                  <div className="flex justify-between items-center">
-                    <div className="font-bold text-base">{model.name} {model.version}</div>
-                    <div className="text-xl">{model.iconChar}</div>
-                  </div>
-                  <div className="text-xs text-gray-500 mt-1">{model.bestFor}</div>
-                </div>
-             ))}
-          </div>
-        </div>
-
-        {/* Core Features */}
-        <div className="space-y-4 md:col-span-2">
-          <h3 className="text-sm font-semibold uppercase tracking-wider text-gray-500 flex items-center gap-2">
-            <Zap className="w-4 h-4" /> Core Capabilities
-          </h3>
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-            {features.map(feature => (
-              <FeatureNode key={feature.id} icon={feature.iconChar} title={feature.name} />
-            ))}
-          </div>
-        </div>
-      </div>
-
-      {/* Connection Lines */}
-      <div className="h-8 border-l-2 border-r-2 border-gray-200 dark:border-gray-700 w-3/4 mx-auto hidden md:block opacity-30" />
-
-      {/* Level 3: Extensions */}
-      <div className="space-y-4">
-        <h3 className="text-sm font-semibold uppercase tracking-wider text-gray-500 flex items-center gap-2">
-          <Grid className="w-4 h-4" /> Extension Ecosystem
-        </h3>
-        <div className="bg-white dark:bg-gray-800 p-6 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <div>
-              <h4 className="font-semibold mb-3 flex items-center gap-2 text-indigo-600">
-                <Database className="w-4 h-4" /> MCP Servers
-              </h4>
-              <div className="flex flex-wrap gap-2">
-                {mcpServers.slice(0, 10).map(server => (
-                  <span key={server.id} className="px-2 py-1 bg-indigo-50 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-300 rounded text-xs border border-indigo-100 dark:border-indigo-800 cursor-help" title={server.description}>
-                    {server.name}
-                  </span>
-                ))}
-                <span className="px-2 py-1 text-gray-400 text-xs">+300 Community Servers</span>
+        return (
+          <div 
+            key={platform.id}
+            className="absolute top-1/2 left-1/2 w-32 p-3 bg-white dark:bg-slate-800 rounded-lg shadow-lg border border-slate-200 dark:border-slate-700 hover:scale-105 transition-transform cursor-pointer z-20"
+            style={{ 
+              transform: `translate(calc(-50% + ${x}px), calc(-50% + ${y}px))` 
+            }}
+          >
+            <div className="flex items-center gap-2 mb-1">
+              <div className="w-6 h-6 rounded flex items-center justify-center text-xs text-white" style={{ backgroundColor: platform.color }}>
+                {platform.iconChar}
               </div>
+              <span className="text-xs font-bold truncate">{platform.name}</span>
             </div>
-            <div>
-              <h4 className="font-semibold mb-3 flex items-center gap-2 text-emerald-600">
-                <Layers className="w-4 h-4" /> Use Cases
-              </h4>
-              <div className="flex flex-wrap gap-2">
-                {['Research', 'Coding', 'Analysis', 'Automation', 'Design', 'Architecture'].map(n => (
-                  <span key={n} className="px-2 py-1 bg-emerald-50 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300 rounded text-xs border border-emerald-100 dark:border-emerald-800">
-                    {n}
-                  </span>
-                ))}
-              </div>
+            <div className="text-[10px] text-slate-500 leading-tight">
+              {platform.category}
             </div>
           </div>
+        );
+      })}
+
+      {/* Connections (Visual Lines) */}
+      <svg className="absolute inset-0 w-full h-full pointer-events-none z-0">
+         {/* Lines from Center to Platforms */}
+         {platforms.map((platform, i) => {
+            const angle = (i / platforms.length) * 2 * Math.PI - Math.PI / 2;
+            const radius = 225;
+            const x = Math.cos(angle) * radius;
+            const y = Math.sin(angle) * radius;
+            
+            // Center of container is 50%, 50%
+            // SVG uses absolute coordinates. We need to map relative 0,0 center to svg center.
+            // Let's assume the container is roughly fixed or we use % based lines? 
+            // Better to just draw lines radiating from center 50% 50%
+            
+            return (
+              <line 
+                key={i}
+                x1="50%" 
+                y1="50%" 
+                x2={`calc(50% + ${x*0.9}px)`} // Stop slightly before the card
+                y2={`calc(50% + ${y*0.9}px)`} 
+                stroke="#CBD5E1" 
+                strokeWidth="1" 
+                strokeDasharray="4 4"
+                className="dark:stroke-slate-700"
+              />
+            );
+         })}
+      </svg>
+      
+      {/* Legend / Controls */}
+      <div className="absolute bottom-4 left-4 bg-white/90 dark:bg-slate-900/90 backdrop-blur p-3 rounded-lg border border-slate-200 dark:border-slate-800 shadow-sm z-30">
+        <div className="text-xs font-bold mb-2 uppercase text-slate-500">Legend</div>
+        <div className="space-y-1">
+          <div className="flex items-center gap-2">
+            <div className="w-2 h-2 rounded-full bg-amber-500"></div>
+            <span className="text-xs">Core Models</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <div className="w-2 h-2 rounded-full border border-slate-400 border-dashed"></div>
+            <span className="text-xs">Platform Integration</span>
+          </div>
         </div>
       </div>
 
-    </div>
-  );
-}
-
-function MapNode({ icon, title, desc, color, onClick }: { icon: string, title: string, desc: string, color: string, onClick?: () => void }) {
-  return (
-    <div 
-      onClick={onClick}
-      className="flex flex-col items-center justify-center p-4 bg-white dark:bg-gray-800 rounded-lg shadow-sm border-2 border-transparent hover:border-gray-300 dark:hover:border-gray-600 hover:shadow-md transition-all cursor-pointer relative overflow-hidden group"
-    >
-      <div className="absolute top-0 left-0 w-full h-1" style={{ backgroundColor: color }}></div>
-      <div className="mb-2 text-3xl group-hover:scale-110 transition-transform duration-200">{icon}</div>
-      <div className="font-bold text-sm text-center leading-tight">{title}</div>
-      <div className="text-[10px] text-gray-500 uppercase tracking-wide mt-1">{desc}</div>
-    </div>
-  );
-}
-
-function FeatureNode({ icon, title }: { icon: string, title: string }) {
-  return (
-    <div className="flex items-center gap-3 p-3 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 hover:shadow-sm transition-shadow">
-      <div className="text-xl">{icon}</div>
-      <div className="font-medium text-sm">{title}</div>
     </div>
   );
 }

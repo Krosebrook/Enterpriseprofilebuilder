@@ -18,6 +18,7 @@ import { Deployment } from '../features/deployment/Deployment';
 import { OperationsManual } from '../features/operations/OperationsManual';
 import { ReferenceLibrary } from '../features/library/ReferenceLibrary';
 import { EcosystemExplorer } from '../features/ecosystem/EcosystemExplorer';
+import { IntegrationMarketplace } from '../features/integrations/IntegrationMarketplace';
 
 export function ContentViewer() {
   const { activeSection, selectedRole, searchQuery } = useNavigation();
@@ -49,6 +50,8 @@ export function ContentViewer() {
         return <OperationsManual />;
       case 'reference':
         return <ReferenceLibrary />;
+      case 'integrations': // New Route
+        return <IntegrationMarketplace />;
       default:
         return <Dashboard />;
     }

@@ -11,7 +11,8 @@ import {
   ChevronLeft,
   FileText, // Icon for Operations Manual
   Library, // Icon for Reference Library
-  Globe // Icon for Ecosystem Explorer
+  Globe, // Icon for Ecosystem Explorer
+  Puzzle // Icon for Integrations
 } from 'lucide-react';
 import { useNavigation } from '../../contexts/NavigationContext';
 import { Section } from '../../types';
@@ -20,16 +21,17 @@ interface SidebarProps {
   className?: string;
 }
 
-const NAV_ITEMS: { id: Section; label: string; icon: React.ElementType }[] = [
+const NAV_ITEMS: { id: Section | 'integrations'; label: string; icon: React.ElementType }[] = [
   { id: 'overview', label: 'Overview', icon: LayoutDashboard },
   { id: 'ecosystem', label: 'Ecosystem Explorer', icon: Globe },
+  { id: 'integrations', label: 'App Marketplace', icon: Puzzle }, // Added Integrations
   { id: 'baseline', label: 'System Baseline', icon: ShieldCheck },
   { id: 'features', label: 'Feature Guides', icon: Sparkles },
   { id: 'tools', label: 'MCP Tools', icon: Hammer },
   { id: 'roles', label: 'Role Profiles', icon: Users },
   { id: 'best-practices', label: 'Best Practices', icon: BookOpen },
   { id: 'operations', label: 'Operations Manual', icon: FileText },
-  { id: 'reference', label: 'Reference Library', icon: Library }, // Added Reference Library
+  { id: 'reference', label: 'Reference Library', icon: Library }, 
   { id: 'faq', label: 'FAQ', icon: HelpCircle },
   { id: 'deployment', label: 'Deployment', icon: Rocket },
 ];
@@ -67,7 +69,7 @@ export function Sidebar({ className = '' }: SidebarProps) {
           return (
             <button
               key={item.id}
-              onClick={() => setActiveSection(item.id)}
+              onClick={() => setActiveSection(item.id as Section)}
               className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-200 group relative ${
                 isActive 
                   ? 'bg-amber-600 text-white shadow-md' 

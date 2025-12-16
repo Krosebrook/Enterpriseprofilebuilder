@@ -1,252 +1,152 @@
-import React, { useState, useEffect } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../../components/ui/card';
-import { Button } from '../../../components/ui/button';
+import React from 'react';
+import { useEcosystemStore } from '../hooks/useEcosystemStore';
+import { departments } from '../../../data/ecosystem';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '../../../components/ui/card';
 import { Badge } from '../../../components/ui/badge';
-import { plans, departments } from '../../../data/ecosystem';
-import { Calculator, Check, X, DollarSign, TrendingUp, Clock } from 'lucide-react';
+import { CheckCircle, XCircle, ArrowRight } from 'lucide-react';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../../../components/ui/table';
 
 export function Comparison() {
-  // Calculator State
-  const [numUsers, setNumUsers] = useState(10);
-  const [selectedDeptId, setSelectedDeptId] = useState(departments[0].id);
-  const [avgSalary, setAvgSalary] = useState(75000);
-  const [selectedPlanId, setSelectedPlanId] = useState('team');
-  const [results, setResults] = useState<{
-    annualCost: number;
-    productivityValue: number;
-    netValue: number;
-    roi: number;
-    paybackMonths: number;
-  } | null>(null);
+  const { generatedArchitecture } = useEcosystemStore();
 
-  // Calculate TCO whenever inputs change
-  useEffect(() => {
-    const dept = departments.find(d => d.id === selectedDeptId);
-    const plan = plans.find(p => p.id === selectedPlanId);
-    
-    if (!dept || !plan) return;
-
-    // Calculate costs
-    let monthlyCost = 0;
-    if (plan.id === 'free') monthlyCost = 0;
-    else if (plan.id === 'pro') monthlyCost = 20;
-    else if (plan.id === 'team') monthlyCost = 25 * numUsers;
-    else monthlyCost = 30 * numUsers; // Enterprise estimate
-
-    const annualCost = monthlyCost * 12;
-
-    // Calculate productivity value
-    // Parse ROI string "25% time savings..." -> 0.25
-    const roiMatch = dept.roi.match(/(\d+)%/);
-    const productivityPct = roiMatch ? parseInt(roiMatch[1]) / 100 : 0.25;
-    
-    const hoursPerYear = 2080;
-    const hourlyRate = avgSalary / hoursPerYear;
-    const hoursSaved = hoursPerYear * productivityPct * numUsers;
-    const productivityValue = hoursSaved * hourlyRate;
-
-    const netValue = productivityValue - annualCost;
-    const roi = annualCost > 0 ? ((productivityValue / annualCost - 1) * 100) : 0;
-    const paybackMonths = annualCost > 0 ? (annualCost / (productivityValue / 12)) : 0;
-
-    setResults({
-      annualCost,
-      productivityValue,
-      netValue,
-      roi,
-      paybackMonths
-    });
-  }, [numUsers, selectedDeptId, avgSalary, selectedPlanId]);
-
+  // If we have a generated architecture, show a tailored comparison
+  // Otherwise show a general plan comparison
+  
   return (
-    <div className="space-y-8">
-      <div className="flex flex-col md:flex-row gap-6">
-        {/* Calculator Section */}
-        <Card className="flex-1 shadow-md border-t-4 border-t-[#0066FF]">
-          <CardHeader>
-            <div className="flex items-center gap-2">
-              <Calculator className="w-6 h-6 text-[#0066FF]" />
-              <CardTitle>TCO Calculator</CardTitle>
-            </div>
-            <CardDescription>Estimate total cost of ownership and ROI</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-6">
-            <div className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <label className="text-sm font-medium">Number of Users</label>
-                  <input
-                    type="number"
-                    min="1"
-                    value={numUsers}
-                    onChange={(e) => setNumUsers(parseInt(e.target.value) || 0)}
-                    className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <label className="text-sm font-medium">Department</label>
-                  <select
-                    value={selectedDeptId}
-                    onChange={(e) => setSelectedDeptId(e.target.value)}
-                    className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                  >
-                    {departments.map(d => (
-                      <option key={d.id} value={d.id}>{d.name}</option>
-                    ))}
-                  </select>
-                </div>
-                <div className="space-y-2">
-                  <label className="text-sm font-medium">Average Salary ($)</label>
-                  <input
-                    type="number"
-                    step="1000"
-                    value={avgSalary}
-                    onChange={(e) => setAvgSalary(parseInt(e.target.value) || 0)}
-                    className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <label className="text-sm font-medium">Plan</label>
-                  <select
-                    value={selectedPlanId}
-                    onChange={(e) => setSelectedPlanId(e.target.value)}
-                    className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                  >
-                    {plans.map(p => (
-                      <option key={p.id} value={p.id}>{p.name} - {p.price}</option>
-                    ))}
-                  </select>
-                </div>
-              </div>
-
-              {results && (
-                <div className="bg-gradient-to-br from-green-500 to-emerald-600 rounded-xl p-6 text-white shadow-lg mt-6">
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="space-y-1">
-                      <div className="text-sm opacity-90">Annual Cost</div>
-                      <div className="text-2xl font-bold flex items-center">
-                        <DollarSign className="w-5 h-5 mr-1" />
-                        {results.annualCost.toLocaleString()}
-                      </div>
-                    </div>
-                    <div className="space-y-1">
-                      <div className="text-sm opacity-90">Productivity Gain</div>
-                      <div className="text-2xl font-bold flex items-center">
-                        <TrendingUp className="w-5 h-5 mr-1" />
-                        ${Math.round(results.productivityValue).toLocaleString()}
-                      </div>
-                    </div>
-                    <div className="space-y-1 pt-4 border-t border-white/20">
-                      <div className="text-sm opacity-90">Net Value</div>
-                      <div className="text-2xl font-bold">
-                        ${Math.round(results.netValue).toLocaleString()}
-                      </div>
-                    </div>
-                    <div className="space-y-1 pt-4 border-t border-white/20">
-                      <div className="text-sm opacity-90">Payback Period</div>
-                      <div className="text-2xl font-bold flex items-center">
-                        <Clock className="w-5 h-5 mr-1" />
-                        {results.paybackMonths.toFixed(1)} mo
-                      </div>
-                    </div>
-                  </div>
-                  <div className="mt-4 pt-4 border-t border-white/20 text-center">
-                    <div className="text-sm opacity-90">Return on Investment (ROI)</div>
-                    <div className="text-4xl font-extrabold mt-1">{Math.round(results.roi)}%</div>
-                  </div>
-                </div>
-              )}
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Assumptions Sidebar */}
-        <Card className="md:w-80 shadow-sm bg-gray-50 dark:bg-gray-800/50">
-          <CardHeader>
-            <CardTitle className="text-lg">Assumptions</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <ul className="space-y-3 text-sm text-gray-600 dark:text-gray-400">
-              <li className="flex gap-2">
-                <span className="text-[#0066FF]">•</span>
-                2,080 work hours per year
-              </li>
-              <li className="flex gap-2">
-                <span className="text-[#0066FF]">•</span>
-                Productivity gains vary by department (25%-60%)
-              </li>
-              <li className="flex gap-2">
-                <span className="text-[#0066FF]">•</span>
-                ROI = (Productivity Value / Cost - 1) × 100
-              </li>
-              <li className="flex gap-2">
-                <span className="text-[#0066FF]">•</span>
-                Payback period is time to break even
-              </li>
-            </ul>
-          </CardContent>
-        </Card>
+    <div className="space-y-8 animate-in fade-in duration-500">
+      <div className="text-center max-w-2xl mx-auto mb-8">
+        <h2 className="text-2xl font-bold tracking-tight mb-2">Plan Comparison & ROI Analysis</h2>
+        <p className="text-muted-foreground">
+          Compare features, security controls, and pricing across Claude for Work plans.
+        </p>
       </div>
 
-      {/* Feature Comparison Table */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Plan Comparison</CardTitle>
-          <CardDescription>Detailed feature breakdown across tiers</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm text-left">
-              <thead className="bg-gray-50 dark:bg-gray-800 text-gray-700 dark:text-gray-300">
-                <tr>
-                  <th className="px-4 py-3 font-semibold rounded-tl-lg">Feature</th>
-                  <th className="px-4 py-3 font-semibold">Free</th>
-                  <th className="px-4 py-3 font-semibold">Pro</th>
-                  <th className="px-4 py-3 font-semibold">Team</th>
-                  <th className="px-4 py-3 font-semibold rounded-tr-lg">Enterprise</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-100 dark:divide-gray-800">
-                <tr>
-                  <td className="px-4 py-3 font-medium">All Platforms</td>
-                  <td className="px-4 py-3 text-gray-300"><X className="w-5 h-5"/></td>
-                  <td className="px-4 py-3 text-green-500"><Check className="w-5 h-5"/></td>
-                  <td className="px-4 py-3 text-green-500"><Check className="w-5 h-5"/></td>
-                  <td className="px-4 py-3 text-green-500"><Check className="w-5 h-5"/></td>
-                </tr>
-                <tr>
-                  <td className="px-4 py-3 font-medium">MCP Servers</td>
-                  <td className="px-4 py-3 text-gray-300"><X className="w-5 h-5"/></td>
-                  <td className="px-4 py-3 text-green-500"><Check className="w-5 h-5"/></td>
-                  <td className="px-4 py-3 text-green-500"><Check className="w-5 h-5"/></td>
-                  <td className="px-4 py-3 text-green-500"><Check className="w-5 h-5"/></td>
-                </tr>
-                <tr>
-                  <td className="px-4 py-3 font-medium">Team Workspaces</td>
-                  <td className="px-4 py-3 text-gray-300"><X className="w-5 h-5"/></td>
-                  <td className="px-4 py-3 text-gray-300"><X className="w-5 h-5"/></td>
-                  <td className="px-4 py-3 text-green-500"><Check className="w-5 h-5"/></td>
-                  <td className="px-4 py-3 text-green-500"><Check className="w-5 h-5"/></td>
-                </tr>
-                <tr>
-                  <td className="px-4 py-3 font-medium">SSO Integration</td>
-                  <td className="px-4 py-3 text-gray-300"><X className="w-5 h-5"/></td>
-                  <td className="px-4 py-3 text-gray-300"><X className="w-5 h-5"/></td>
-                  <td className="px-4 py-3 text-gray-300"><X className="w-5 h-5"/></td>
-                  <td className="px-4 py-3 text-green-500"><Check className="w-5 h-5"/></td>
-                </tr>
-                <tr>
-                  <td className="px-4 py-3 font-medium">Zero Data Retention</td>
-                  <td className="px-4 py-3 text-gray-300"><X className="w-5 h-5"/></td>
-                  <td className="px-4 py-3 text-gray-300"><X className="w-5 h-5"/></td>
-                  <td className="px-4 py-3 text-gray-300"><X className="w-5 h-5"/></td>
-                  <td className="px-4 py-3 text-green-500"><Check className="w-5 h-5"/></td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </CardContent>
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        {/* Free / Pro (Lightweight) */}
+        <PricingCard 
+          title="Team" 
+          price="$30" 
+          unit="/user/month"
+          description="For small teams and startups scaling AI adoption."
+          features={[
+            "Claude 3.5 Sonnet access",
+            "Project sharing & collaboration",
+            "Usage limits: Higher than Free",
+            "Admin console"
+          ]}
+          missing={[
+            "SSO / SCIM",
+            "DLP / Audit Logs",
+            "GitHub / Jira Integrations"
+          ]}
+        />
+
+        {/* Enterprise (Highlight) */}
+        <PricingCard 
+          title="Enterprise" 
+          price="Custom" 
+          unit="Volume discounts"
+          isPopular
+          description="For organizations requiring security, scale, and control."
+          features={[
+            "Everything in Team +",
+            "SSO (SAML/OIDC) & SCIM",
+            "Role-Based Access Control (RBAC)",
+            "Audit Logs & DLP Integration",
+            "GitHub / Jira Native Connectors",
+            "Higher Rate Limits"
+          ]}
+        />
+
+        {/* API / Bedrock (Developer) */}
+        <PricingCard 
+          title="API / Bedrock" 
+          price="Usage" 
+          unit="Per 1M tokens"
+          description="For building custom internal tools and applications."
+          features={[
+            "Pay-as-you-go pricing",
+            "Full model availability (Haiku/Sonnet/Opus)",
+            "Private VPC deployment (AWS)",
+            "Fine-tuning options",
+            "Highest throughput"
+          ]}
+        />
+      </div>
+
+      {/* ROI Calculator Preview */}
+      <Card className="bg-slate-50 dark:bg-slate-900 border-dashed border-2">
+         <CardHeader>
+           <CardTitle className="flex items-center gap-2">
+             <span className="text-xl">💰</span>
+             ROI Estimator
+           </CardTitle>
+           <CardDescription>Based on industry averages for {generatedArchitecture?.useCaseName || 'general knowledge work'}.</CardDescription>
+         </CardHeader>
+         <CardContent>
+           <Table>
+             <TableHeader>
+               <TableRow>
+                 <TableHead>Metric</TableHead>
+                 <TableHead>Team Plan</TableHead>
+                 <TableHead className="font-bold text-primary">Enterprise Plan</TableHead>
+               </TableRow>
+             </TableHeader>
+             <TableBody>
+               <TableRow>
+                 <TableCell className="font-medium">Time Saved / Employee</TableCell>
+                 <TableCell>2-3 hours/week</TableCell>
+                 <TableCell className="font-bold text-green-600">4-5 hours/week</TableCell>
+               </TableRow>
+               <TableRow>
+                 <TableCell className="font-medium">Engineering Velocity</TableCell>
+                 <TableCell>+15%</TableCell>
+                 <TableCell className="font-bold text-green-600">+35% (Context Caching)</TableCell>
+               </TableRow>
+               <TableRow>
+                 <TableCell className="font-medium">Risk Reduction</TableCell>
+                 <TableCell>Standard</TableCell>
+                 <TableCell className="font-bold text-green-600">High (DLP + SSO)</TableCell>
+               </TableRow>
+             </TableBody>
+           </Table>
+         </CardContent>
       </Card>
     </div>
+  );
+}
+
+function PricingCard({ title, price, unit, description, features, missing = [], isPopular }: any) {
+  return (
+    <Card className={`relative flex flex-col h-full ${isPopular ? 'border-primary shadow-lg scale-105 z-10' : 'border-slate-200 dark:border-slate-800'}`}>
+      {isPopular && (
+        <div className="absolute top-0 inset-x-0 h-2 bg-primary rounded-t-xl" />
+      )}
+      <CardHeader>
+        {isPopular && <Badge className="w-fit mb-2 bg-primary/10 text-primary border-primary/20">Recommended</Badge>}
+        <CardTitle className="text-2xl">{title}</CardTitle>
+        <div className="mt-2">
+          <span className="text-3xl font-bold">{price}</span>
+          <span className="text-muted-foreground text-sm ml-1">{unit}</span>
+        </div>
+        <CardDescription className="mt-2">{description}</CardDescription>
+      </CardHeader>
+      <CardContent className="flex-1 space-y-4">
+        <ul className="space-y-3">
+          {features.map((f: string, i: number) => (
+            <li key={i} className="flex items-start text-sm">
+              <CheckCircle className="w-5 h-5 text-green-500 mr-2 shrink-0" />
+              <span className="text-slate-700 dark:text-slate-300">{f}</span>
+            </li>
+          ))}
+          {missing.map((m: string, i: number) => (
+            <li key={i} className="flex items-start text-sm text-slate-400">
+              <XCircle className="w-5 h-5 mr-2 shrink-0" />
+              <span>{m}</span>
+            </li>
+          ))}
+        </ul>
+      </CardContent>
+    </Card>
   );
 }

@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '../../../components/ui/card';
 import { Button } from '../../../components/ui/button';
-import { ArrowRight, CheckCircle2, RefreshCw, Briefcase, Building, Target, Zap } from 'lucide-react';
+import { ArrowRight, CheckCircle2, RefreshCw, Briefcase, Building, Target, Zap, Loader2 } from 'lucide-react';
 import { Badge } from '../../../components/ui/badge';
 import { departments, useCases, platforms, models, plans } from '../../../data/ecosystem';
+import { useEcosystemStore } from '../hooks/useEcosystemStore';
 
 interface WizardState {
   role: string | null;
@@ -20,6 +21,7 @@ const INITIAL_STATE: WizardState = {
 export function SetupWizard({ onReset }: { onReset: () => void }) {
   const [step, setStep] = useState(1);
   const [state, setState] = useState<WizardState>(INITIAL_STATE);
+  const { setArchitecture } = useEcosystemStore();
 
   const handleSelection = (key: keyof WizardState, value: string) => {
     setState(prev => ({ ...prev, [key]: value }));
@@ -57,6 +59,13 @@ export function SetupWizard({ onReset }: { onReset: () => void }) {
   };
 
   const rec = getRecommendation();
+
+  // If recommendation is ready, set it in the global store for other components to access
+  React.useEffect(() => {
+    if (rec) {
+      setArchitecture(rec);
+    }
+  }, [rec, setArchitecture]);
 
   if (step === 4 && rec) {
     return (
@@ -124,7 +133,7 @@ export function SetupWizard({ onReset }: { onReset: () => void }) {
               <RefreshCw className="mr-2 h-4 w-4" /> Start Over
             </Button>
             <Button className="bg-primary hover:bg-primary/90 text-white min-w-[200px]">
-              View Comparison Details <ArrowRight className="ml-2 h-4 w-4" />
+              Deploy This Stack <ArrowRight className="ml-2 h-4 w-4" />
             </Button>
           </CardFooter>
         </Card>

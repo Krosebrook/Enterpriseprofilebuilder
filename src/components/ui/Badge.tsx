@@ -35,8 +35,12 @@ function Badge({
   const Comp = asChild ? Slot : "span";
 
   return (
-    <span className={`inline-flex items-center font-medium rounded border ${variants[variant]} ${sizes[size]} ${className}`}>
-      {children}
-    </span>
+    <Comp
+      data-slot="badge"
+      className={cn(badgeVariants({ variant }), className)}
+      {...props}
+    />
   );
 }
+
+export { Badge, badgeVariants };

@@ -1,0 +1,42 @@
+import { DocumentResource } from '../../types';
+
+export const deploymentDocs: DocumentResource[] = [
+  {
+    id: 'v4-deployment-guide',
+    title: 'INT Platform Explorer v4.0 Deployment Guide',
+    description: 'Complete deployment guide for production rollout including Vercel, Cloudflare, and infrastructure setup.',
+    category: 'deployment',
+    fileName: 'INT_PLATFORM_EXPLORER_V4_DEPLOYMENT.md',
+    downloadPath: '/docs/deployment/INT_PLATFORM_EXPLORER_V4_DEPLOYMENT.md',
+    section: 'deployment',
+    tags: ['deployment', 'production', 'vercel', 'cloudflare', 'infrastructure'],
+    lastUpdated: '2025-01-11',
+    order: 1,
+    featured: true,
+  },
+  {
+    id: 'week1-technical-spec',
+    title: 'Week 1 Technical Specification',
+    description: 'Day-by-day execution plan for Week 1 with exact code samples and implementation details.',
+    category: 'deployment',
+    fileName: 'INT_EXPLORER_WEEK1_TECHNICAL_SPEC.md',
+    downloadPath: '/docs/deployment/INT_EXPLORER_WEEK1_TECHNICAL_SPEC.md',
+    section: 'deployment',
+    tags: ['week-1', 'technical', 'implementation', 'code-samples'],
+    lastUpdated: '2025-01-11',
+    order: 2,
+  },
+  {
+    id: 'production-roadmap',
+    title: 'Production Roadmap',
+    description: 'Comprehensive 5-phase blueprint with architecture, code samples, and deployment patterns.',
+    category: 'deployment',
+    fileName: 'INT_PLATFORM_EXPLORER_PRODUCTION_ROADMAP.md',
+    downloadPath: '/docs/deployment/INT_PLATFORM_EXPLORER_PRODUCTION_ROADMAP.md',
+    section: 'deployment',
+    tags: ['roadmap', 'architecture', '5-phase', 'production'],
+    lastUpdated: '2025-01-11',
+    order: 3,
+    featured: true,
+  },
+];

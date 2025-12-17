@@ -1,18 +1,19 @@
 import React from 'react';
-import { 
-  LayoutDashboard, 
-  ShieldCheck, 
-  Sparkles, 
-  Hammer, 
-  Users, 
-  BookOpen, 
-  HelpCircle, 
+import {
+  LayoutDashboard,
+  ShieldCheck,
+  Sparkles,
+  Hammer,
+  Users,
+  BookOpen,
+  HelpCircle,
   Rocket,
   ChevronLeft,
   FileText, // Icon for Operations Manual
   Library, // Icon for Reference Library
   Globe, // Icon for Ecosystem Explorer
-  Puzzle // Icon for Integrations
+  Puzzle, // Icon for Integrations
+  UserCog // Icon for Profile Builder
 } from 'lucide-react';
 import { useNavigation } from '../../contexts/NavigationContext';
 import { Section } from '../../types';
@@ -23,6 +24,7 @@ interface SidebarProps {
 
 const NAV_ITEMS: { id: Section | 'integrations'; label: string; icon: React.ElementType }[] = [
   { id: 'overview', label: 'Overview', icon: LayoutDashboard },
+  { id: 'profile', label: 'Profile Builder', icon: UserCog }, // Profile Builder - prominent placement
   { id: 'ecosystem', label: 'Ecosystem Explorer', icon: Globe },
   { id: 'integrations', label: 'App Marketplace', icon: Puzzle }, // Added Integrations
   { id: 'baseline', label: 'System Baseline', icon: ShieldCheck },
@@ -31,7 +33,7 @@ const NAV_ITEMS: { id: Section | 'integrations'; label: string; icon: React.Elem
   { id: 'roles', label: 'Role Profiles', icon: Users },
   { id: 'best-practices', label: 'Best Practices', icon: BookOpen },
   { id: 'operations', label: 'Operations Manual', icon: FileText },
-  { id: 'reference', label: 'Reference Library', icon: Library }, 
+  { id: 'reference', label: 'Reference Library', icon: Library },
   { id: 'faq', label: 'FAQ', icon: HelpCircle },
   { id: 'deployment', label: 'Deployment', icon: Rocket },
 ];

@@ -9,7 +9,8 @@
       "Bash(npx tsc:*)",
       "Bash(git push:*)",
       "Bash(copy:*)",
-      "Bash(pip install:*)"
+      "Bash(pip install:*)",
+      "Bash(python:*)"
     ]
   }
 }

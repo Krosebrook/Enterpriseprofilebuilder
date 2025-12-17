@@ -1,75 +1,37 @@
-"use client";
+import { ReactNode, useState } from 'react';
 
-import * as React from "react";
-import * as TooltipPrimitive from "@radix-ui/react-tooltip@1.1.8";
-
-import { cn } from "./utils";
-
-function TooltipProvider({
-  delayDuration = 0,
-  ...props
-}: React.ComponentProps<typeof TooltipPrimitive.Provider>) {
-  return (
-    <TooltipPrimitive.Provider
-      data-slot="tooltip-provider"
-      delayDuration={delayDuration}
-      {...props}
-    />
-  );
+interface TooltipProps {
+  content: string;
+  children: ReactNode;
+  position?: 'top' | 'bottom' | 'left' | 'right';
 }
 
-function Tooltip({
-  ...props
-}: React.ComponentProps<typeof TooltipPrimitive.Root>) {
-  return (
-    <TooltipProvider>
-      <TooltipPrimitive.Root data-slot="tooltip" {...props} />
-    </TooltipProvider>
-  );
-}
+export function Tooltip({ content, children, position = 'top' }: TooltipProps) {
+  const [isVisible, setIsVisible] = useState(false);
 
-function TooltipTrigger({
-  ...props
-}: React.ComponentProps<typeof TooltipPrimitive.Trigger>) {
-  return <TooltipPrimitive.Trigger data-slot="tooltip-trigger" {...props} />;
-}
-
-function TooltipContent({
-  className,
-  sideOffset = 4,
-  children,
-  variant = "default",
-  ...props
-}: React.ComponentProps<typeof TooltipPrimitive.Content> & {
-  variant?: "default" | "int";
-}) {
-  const variantClasses = {
-    default: "bg-primary text-primary-foreground",
-    int: "bg-[var(--int-gray-900)] text-white shadow-[var(--int-shadow-md)]",
+  const positionStyles = {
+    top: 'bottom-full left-1/2 -translate-x-1/2 mb-2',
+    bottom: 'top-full left-1/2 -translate-x-1/2 mt-2',
+    left: 'right-full top-1/2 -translate-y-1/2 mr-2',
+    right: 'left-full top-1/2 -translate-y-1/2 ml-2'
   };
 
   return (
-    <TooltipPrimitive.Portal>
-      <TooltipPrimitive.Content
-        data-slot="tooltip-content"
-        sideOffset={sideOffset}
-        className={cn(
-          variantClasses[variant],
-          "animate-in fade-in-0 zoom-in-95 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 z-50 w-fit max-w-xs origin-(--radix-tooltip-content-transform-origin) rounded-[var(--int-radius-md)] px-3 py-1.5 text-xs text-balance",
-          className,
-        )}
-        {...props}
-      >
-        {children}
-        <TooltipPrimitive.Arrow
-          className={cn(
-            variant === "int" ? "fill-[var(--int-gray-900)]" : "bg-primary fill-primary",
-            "z-50 size-2.5 translate-y-[calc(-50%_-_2px)] rotate-45 rounded-[2px]"
-          )}
-        />
-      </TooltipPrimitive.Content>
-    </TooltipPrimitive.Portal>
+    <div
+      className="relative inline-block"
+      onMouseEnter={() => setIsVisible(true)}
+      onMouseLeave={() => setIsVisible(false)}
+    >
+      {children}
+      {isVisible && (
+        <div
+          className={`absolute z-50 px-3 py-2 bg-slate-900 text-white text-sm rounded-lg whitespace-nowrap ${positionStyles[position]}`}
+          role="tooltip"
+        >
+          {content}
+          <div className="absolute w-2 h-2 bg-slate-900 transform rotate-45" />
+        </div>
+      )}
+    </div>
   );
 }
-
-export { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider };

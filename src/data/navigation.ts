@@ -64,12 +64,5 @@ export const navigationData: NavigationItem[] = [
     label: 'Governance',
     description: 'SLA, Risk, Playbooks',
     icon: 'ShieldAlert'
-  },
-  {
-    id: 'profile',
-    label: 'Profile Builder',
-    description: 'Build your Claude profile',
-    icon: 'UserCog',
-    badge: 'New'
   }
 ];

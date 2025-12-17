@@ -20,9 +20,6 @@ import { ReferenceLibrary } from '../features/library/ReferenceLibrary';
 import { EcosystemExplorer } from '../features/ecosystem/EcosystemExplorer';
 import { IntegrationMarketplace } from '../features/integrations/IntegrationMarketplace';
 
-// Profile Builder
-import { ProfileWizard } from './profile/ProfileWizard';
-
 export function ContentViewer() {
   const { activeSection, selectedRole, searchQuery } = useNavigation();
   const { addToast } = useToast();
@@ -55,8 +52,6 @@ export function ContentViewer() {
         return <ReferenceLibrary />;
       case 'integrations': // New Route
         return <IntegrationMarketplace />;
-      case 'profile':
-        return <ProfileWizard />;
       default:
         return <Dashboard />;
     }

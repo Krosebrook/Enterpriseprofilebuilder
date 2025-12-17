@@ -1,43 +1,21 @@
 import { useState } from 'react';
-import { MessageSquare, Shield, Zap, Users, AlertTriangle, PlayCircle, BookOpen, FileText, ArrowRight } from 'lucide-react';
+import { MessageSquare, Shield, Zap, Users, AlertTriangle, PlayCircle, BookOpen } from 'lucide-react';
 import { bestPracticesData } from '../../data/best-practices';
 import { tutorialsData } from '../../data/tutorials';
 import { useNavigation } from '../../contexts/NavigationContext';
-import { GlobalBestPracticeCategory, DocumentResource } from '../../types';
+import { GlobalBestPracticeCategory } from '../../types';
 import { Card } from '../ui/Card';
 import { Button } from '../ui/Button';
-import { Badge } from '../ui/Badge';
 import { SectionHeader } from '../common/SectionHeader';
 import { InteractiveTutorial } from './InteractiveTutorial';
-import { promptingFrameworks } from '../../data/documents/reference-docs';
-import { kyleGuideDocs } from '../../data/documents/kyle-materials';
-import { DocumentCard } from '../documents/DocumentCard';
-import { DocumentViewer } from '../documents/DocumentViewer';
-
-// Get prompting guides from Kyle materials
-const promptingGuides = kyleGuideDocs.filter(d => d.section === 'best-practices');
 
 export function BestPractices() {
   const [activeTutorialId, setActiveTutorialId] = useState<string | null>(null);
-  const [selectedDocument, setSelectedDocument] = useState<DocumentResource | null>(null);
   const { selectedRole } = useNavigation();
 
-  const activeTutorial = activeTutorialId
-    ? tutorialsData.find(t => t.techniqueId === activeTutorialId)
+  const activeTutorial = activeTutorialId 
+    ? tutorialsData.find(t => t.techniqueId === activeTutorialId) 
     : null;
-
-  // If viewing a document, show the viewer
-  if (selectedDocument) {
-    return (
-      <div className="animate-in fade-in duration-300">
-        <DocumentViewer
-          document={selectedDocument}
-          onBack={() => setSelectedDocument(null)}
-          showTableOfContents={true}
-        />
-      </div>
-    );
-  }
 
   const filterByRole = (items: GlobalBestPracticeCategory[] | undefined) => {
     if (!items) return [];
@@ -65,107 +43,15 @@ export function BestPractices() {
         />
       )}
 
-      <SectionHeader
-        title="Best Practices"
+      <SectionHeader 
+        title="Best Practices" 
         description={`Master the art of prompting, secure your workflows, and optimize collaboration. Tailored for: ${selectedRole}`}
         icon={BookOpen}
       />
 
-      {/* Prompting Frameworks - R-I-S-E and F-L-O-W */}
-      <section className="mb-8">
-        <div className="flex items-center gap-3 mb-6 pb-2 border-b border-[var(--int-gray-200)]">
-          <div className="p-2 bg-[var(--int-primary-light)] rounded-lg">
-            <Zap className="w-6 h-6 text-[var(--int-primary)]" />
-          </div>
-          <div>
-            <h3 className="text-xl font-bold text-[var(--int-gray-900)]">Prompting Frameworks</h3>
-            <p className="text-sm text-[var(--int-gray-600)]">Structured approaches for effective prompts</p>
-          </div>
-        </div>
-
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {promptingFrameworks.map((framework) => (
-            <Card key={framework.id} variant="int" padding="int" className="h-full">
-              <div className="flex items-start justify-between mb-4">
-                <div>
-                  <div className="flex items-center gap-2 mb-2">
-                    <Badge variant="intPrimary" size="lg">
-                      {framework.acronym}
-                    </Badge>
-                    <h4 className="text-lg font-bold text-[var(--int-gray-900)]">
-                      {framework.name}
-                    </h4>
-                  </div>
-                  <p className="text-sm text-[var(--int-gray-600)]">
-                    {framework.description}
-                  </p>
-                </div>
-              </div>
-
-              {/* Framework Steps */}
-              <div className="space-y-3 mb-4">
-                {framework.steps.map((step, index) => (
-                  <div
-                    key={step.letter}
-                    className="flex items-start gap-3 bg-[var(--int-gray-50)] rounded-[var(--int-radius-md)] p-3"
-                  >
-                    <div className="flex-shrink-0 w-8 h-8 bg-[var(--int-primary)] text-white rounded-full flex items-center justify-center font-bold text-sm">
-                      {step.letter}
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <h5 className="font-semibold text-[var(--int-gray-900)] text-sm">
-                        {step.name}
-                      </h5>
-                      <p className="text-xs text-[var(--int-gray-600)] mt-0.5">
-                        {step.description}
-                      </p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-
-              {/* Use Cases */}
-              <div className="border-t border-[var(--int-gray-100)] pt-3">
-                <h5 className="text-xs font-semibold text-[var(--int-gray-500)] uppercase mb-2">
-                  Best for
-                </h5>
-                <div className="flex flex-wrap gap-1.5">
-                  {framework.useCases.slice(0, 4).map((useCase, i) => (
-                    <Badge key={i} variant="intNeutral" size="sm">
-                      {useCase}
-                    </Badge>
-                  ))}
-                </div>
-              </div>
-            </Card>
-          ))}
-        </div>
-      </section>
-
-      {/* Prompting Guides Documents */}
-      {promptingGuides.length > 0 && (
-        <section className="mb-8">
-          <div className="flex items-center gap-3 mb-4">
-            <FileText className="w-5 h-5 text-[var(--int-gray-500)]" />
-            <h3 className="font-semibold text-[var(--int-gray-900)]">Prompting Guides</h3>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {promptingGuides.map(doc => (
-              <DocumentCard
-                key={doc.id}
-                document={doc}
-                onView={setSelectedDocument}
-                showDownload={true}
-                compact={false}
-              />
-            ))}
-          </div>
-        </section>
-      )}
-
       {/* Grid Layout for Sections */}
       <div className="grid grid-cols-1 gap-12">
-
+        
         {/* Prompting Best Practices */}
         {promptingPractices.length > 0 && (
           <section>

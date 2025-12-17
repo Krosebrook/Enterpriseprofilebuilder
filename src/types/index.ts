@@ -1,7 +1,7 @@
 // Core Types
 import { LucideIcon } from 'lucide-react';
 
-export type Section =
+export type Section = 
   | 'overview'
   | 'ecosystem'
   | 'baseline'
@@ -13,8 +13,7 @@ export type Section =
   | 'deployment'
   | 'governance'
   | 'operations'
-  | 'reference'
-  | 'profile'; // Added profile builder
+  | 'reference'; // Added reference
 
 export type Role = 
   | 'All' 
@@ -340,134 +339,4 @@ export interface TechniqueTutorial {
   techniqueId: string;
   title: string;
   scenarios: TutorialScenario[];
-}
-
-// Document Resource Types (for integrated documentation)
-export type DocumentCategory =
-  | 'deployment'
-  | 'compliance'
-  | 'guide'
-  | 'kyle'
-  | 'mcp'
-  | 'roles'
-  | 'reference'
-  | 'presentation';
-
-export interface DocumentResource {
-  id: string;
-  title: string;
-  description: string;
-  category: DocumentCategory;
-  fileName: string;
-  downloadPath: string;
-  section: Section;
-  tags: string[];
-  lastUpdated?: string;
-  author?: string;
-  order?: number;
-  featured?: boolean;
-}
-
-// Extended MCP Server type for expanded catalog
-export interface MCPServerExtended {
-  id: string;
-  name: string;
-  description: string;
-  category: 'project-management' | 'crm' | 'payments' | 'automation' | 'developer' | 'design' | 'knowledge' | 'communication' | 'data' | 'development' | 'other';
-  mcpUrl?: string;
-  authType?: 'oauth2' | 'api-key' | 'none';
-  platforms?: ('web' | 'desktop')[];
-  useCases: string[];
-  capabilities?: string[];
-  configExample?: string;
-  securityNotes?: string;
-  roles: Role[];
-}
-
-// Compliance Checklist Types
-export interface ComplianceCheckItem {
-  id: string;
-  category: 'security' | 'data-privacy' | 'access-control' | 'audit' | 'training' | 'technical';
-  title: string;
-  description: string;
-  required: boolean;
-  status?: 'pending' | 'in-progress' | 'completed' | 'not-applicable';
-  notes?: string;
-  assignee?: string;
-  dueDate?: string;
-}
-
-export interface ComplianceChecklist {
-  id: string;
-  name: string;
-  description: string;
-  items: ComplianceCheckItem[];
-  lastUpdated: string;
-  version: string;
-}
-
-// Presentation/Kyle Materials Types
-export interface PresentationPhase {
-  id: string;
-  number: number;
-  title: string;
-  description: string;
-  subPhases: {
-    id: string;
-    title: string;
-    content: string;
-    deliveryNotes?: string;
-  }[];
-  duration?: string;
-  keyPoints?: string[];
-}
-
-export interface KyleMaterial {
-  id: string;
-  title: string;
-  type: 'narrative' | 'roadmap' | 'tracker' | 'quick-reference';
-  description: string;
-  content: string;
-  deliveryTime?: string;
-  audience?: string;
-}
-
-// Framework Types (R-I-S-E, F-L-O-W)
-export interface PromptingFramework {
-  id: string;
-  name: string;
-  acronym: string;
-  description: string;
-  steps: {
-    letter: string;
-    name: string;
-    description: string;
-    examples?: string[];
-  }[];
-  useCases: string[];
-}
-
-// Self-Assessment Quiz Types
-export interface QuizQuestion {
-  id: string;
-  question: string;
-  options: {
-    id: string;
-    text: string;
-    isCorrect: boolean;
-    explanation?: string;
-  }[];
-  category: string;
-  difficulty: 'beginner' | 'intermediate' | 'advanced';
-}
-
-export interface QuizResult {
-  score: number;
-  totalQuestions: number;
-  categoryBreakdown: {
-    category: string;
-    correct: number;
-    total: number;
-  }[];
-  recommendations: string[];
 }

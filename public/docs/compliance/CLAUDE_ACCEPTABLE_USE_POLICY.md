@@ -1,6 +1,13 @@
 # Acceptable Use Policy (AUP)
 ## Claude AI Enterprise Deployment
 
+> **TEMPLATE NOTICE:** This is a template document. Before deployment, organizations must:
+> - Replace all placeholder contact information (email addresses, phone numbers, URLs)
+> - Complete approval signatures and dates in Section 13
+> - Customize organizational-specific details (company name, department names, etc.)
+> - Review and adjust policies to align with specific organizational requirements and applicable regulations
+> - Obtain legal review and approval from appropriate authorities
+
 **Document Version:** 1.0  
 **Effective Date:** December 17, 2025  
 **Last Reviewed:** December 17, 2025  

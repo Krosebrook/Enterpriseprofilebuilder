@@ -1,15 +1,44 @@
 import * as React from "react";
+import { cva, type VariantProps } from "class-variance-authority";
 
 import { cn } from "./utils";
 
-function Card({ className, ...props }: React.ComponentProps<"div">) {
+const cardVariants = cva(
+  "flex flex-col gap-6 border transition-all duration-[var(--int-transition-fast)]",
+  {
+    variants: {
+      variant: {
+        default: "bg-card text-card-foreground rounded-xl",
+        // INT Figma Design System variants
+        int: "bg-[var(--int-bg-card)] text-[var(--int-gray-900)] rounded-[var(--int-radius-lg)] border-[var(--int-gray-200)]",
+        intElevated: "bg-[var(--int-bg-elevated)] text-[var(--int-gray-900)] rounded-[var(--int-radius-lg)] border-[var(--int-gray-200)] shadow-[var(--int-shadow-sm)]",
+        intInteractive: "bg-[var(--int-bg-card)] text-[var(--int-gray-900)] rounded-[var(--int-radius-lg)] border-[var(--int-gray-200)] hover:border-[var(--int-gray-300)] hover:shadow-[var(--int-shadow-md)] cursor-pointer",
+        intSelected: "bg-[var(--int-bg-card)] text-[var(--int-gray-900)] rounded-[var(--int-radius-lg)] border-2 border-[var(--int-primary)] shadow-[var(--int-shadow-lg)]",
+        intPlatform: "bg-[var(--int-bg-card)] text-[var(--int-gray-900)] rounded-[var(--int-radius-lg)] border-[var(--int-gray-200)] hover:border-[var(--int-gray-300)] hover:shadow-[var(--int-shadow-md)] hover:scale-[1.02] cursor-pointer",
+      },
+      padding: {
+        default: "",
+        int: "p-4 md:p-6",
+        none: "p-0",
+      },
+    },
+    defaultVariants: {
+      variant: "default",
+      padding: "default",
+    },
+  }
+);
+
+function Card({
+  className,
+  variant,
+  padding,
+  ...props
+}: React.ComponentProps<"div"> & VariantProps<typeof cardVariants>) {
   return (
     <div
       data-slot="card"
-      className={cn(
-        "bg-card text-card-foreground flex flex-col gap-6 rounded-xl border",
-        className,
-      )}
+      className={cn(cardVariants({ variant, padding, className }))}
       {...props}
     />
   );
@@ -89,4 +118,5 @@ export {
   CardAction,
   CardDescription,
   CardContent,
+  cardVariants,
 };

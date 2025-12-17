@@ -14,6 +14,19 @@ export const roleGuideDocs: DocumentResource[] = [
     order: 1,
     featured: true,
   },
+  {
+    id: 'complete-personas-sample',
+    title: 'Complete Personas Sample',
+    description: 'Comprehensive sample personas for different enterprise roles and use cases.',
+    category: 'roles',
+    fileName: 'INT_Inc_Complete_Personas_Sample.md',
+    downloadPath: '/docs/roles/INT_Inc_Complete_Personas_Sample.md',
+    section: 'roles',
+    tags: ['personas', 'sample', 'roles', 'enterprise', 'use-cases'],
+    lastUpdated: '2025-12-17',
+    order: 2,
+    featured: true,
+  },
 ];
 
 // Role-specific content to be displayed in the Roles section

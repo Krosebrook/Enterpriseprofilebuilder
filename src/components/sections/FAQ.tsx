@@ -1,11 +1,46 @@
 import { useState, useMemo } from 'react';
-import { ChevronDown, ChevronUp, Bookmark as BookmarkIcon, Link as LinkIcon, HelpCircle } from 'lucide-react';
-import { FAQLevel } from '../../types';
+import { ChevronDown, ChevronUp, Bookmark as BookmarkIcon, Link as LinkIcon, HelpCircle, BookOpen, FileText, Lightbulb, Shield, Zap, Users } from 'lucide-react';
+import { FAQLevel, DocumentResource } from '../../types';
 import { faqData } from '../../data/faq';
 import { Badge } from '../ui/Badge';
 import { BookmarkButton } from '../BookmarkButton';
 import { CopyToClipboard } from '../CopyToClipboard';
 import { SectionHeader } from '../common/SectionHeader';
+import { Card } from '../ui/Card';
+import { referenceDocs, bestPracticesContent } from '../../data/documents/reference-docs';
+import { DocumentViewer } from '../documents/DocumentViewer';
+
+// Playbook quick tips content
+const playbookTips = [
+  {
+    id: 'tip-prompting',
+    category: 'Prompting',
+    icon: Lightbulb,
+    color: 'text-amber-600 bg-amber-50',
+    tips: bestPracticesContent.prompting.tips,
+  },
+  {
+    id: 'tip-security',
+    category: 'Security',
+    icon: Shield,
+    color: 'text-red-600 bg-red-50',
+    tips: bestPracticesContent.security.tips,
+  },
+  {
+    id: 'tip-workflow',
+    category: 'Workflow',
+    icon: Zap,
+    color: 'text-blue-600 bg-blue-50',
+    tips: bestPracticesContent.workflow.tips,
+  },
+  {
+    id: 'tip-quality',
+    category: 'Quality',
+    icon: Users,
+    color: 'text-green-600 bg-green-50',
+    tips: bestPracticesContent.quality.tips,
+  },
+];
 
 interface FAQProps {
   searchQuery?: string;
@@ -14,6 +49,9 @@ interface FAQProps {
 export function FAQ({ searchQuery = '' }: FAQProps) {
   const [activeLevel, setActiveLevel] = useState<FAQLevel | 'all'>('all');
   const [expandedIds, setExpandedIds] = useState<string[]>([]);
+  const [activeTab, setActiveTab] = useState<'faq' | 'playbook'>('faq');
+  const [selectedDocument, setSelectedDocument] = useState<DocumentResource | null>(null);
+  const [expandedPlaybookId, setExpandedPlaybookId] = useState<string | null>('tip-prompting');
 
   const toggleExpand = (id: string) => {
     setExpandedIds(prev => 

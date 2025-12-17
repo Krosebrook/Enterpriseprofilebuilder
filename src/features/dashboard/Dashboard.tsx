@@ -1,28 +1,53 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigation } from '../../contexts/NavigationContext';
 import { Card } from '../../components/ui/Card';
 import { SectionHeader } from '../../components/common/SectionHeader';
-import { 
-  LayoutDashboard, 
-  Target, 
-  Zap, 
-  TrendingUp, 
-  ArrowRight, 
-  ShieldCheck, 
-  BookOpen 
+import {
+  LayoutDashboard,
+  Target,
+  Zap,
+  TrendingUp,
+  ArrowRight,
+  ShieldCheck,
+  BookOpen,
+  User,
+  FileText,
+  ChevronRight,
+  Lightbulb,
+  Clock,
+  Users as UsersIcon
 } from 'lucide-react';
 import { getROIAnalytics } from '../../utils/analytics';
 import { allDeploymentPhases } from '../../data/deployment-phases';
+import { kyleNarrativeContent, kyleDocs, kyleGuideDocs } from '../../data/documents/kyle-materials';
+import { DocumentViewer } from '../../components/documents/DocumentViewer';
+import { DocumentResource } from '../../types';
+import { Badge } from '../../components/ui/Badge';
 
 export function Dashboard() {
   const { selectedRole, setActiveSection } = useNavigation();
   const roiStats = getROIAnalytics();
-  
+  const [selectedDocument, setSelectedDocument] = useState<DocumentResource | null>(null);
+  const [showKyleStory, setShowKyleStory] = useState(false);
+
   // Calculate deployment progress
   const totalPhases = allDeploymentPhases.length;
   const completedPhases = allDeploymentPhases.filter(p => p.status === 'completed').length;
   const inProgressPhases = allDeploymentPhases.filter(p => p.status === 'in-progress').length;
   const progressPercent = Math.round((completedPhases / totalPhases) * 100);
+
+  // If viewing a document, show the viewer
+  if (selectedDocument) {
+    return (
+      <div className="animate-in fade-in duration-300">
+        <DocumentViewer
+          document={selectedDocument}
+          onBack={() => setSelectedDocument(null)}
+          showTableOfContents={true}
+        />
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-8 animate-in fade-in duration-500">
@@ -92,6 +117,109 @@ export function Dashboard() {
                    <ArrowRight className="w-4 h-4 text-slate-300 group-hover:text-slate-600 transition-colors" />
                  </button>
                ))}
+            </div>
+          </Card>
+
+          {/* Kyle's Story / Learn from Kyle Section */}
+          <Card variant="int" padding="int" className="border-l-4 border-l-[var(--int-primary)] bg-gradient-to-br from-[var(--int-bg-card)] to-[var(--int-primary-light)]/20">
+            <div className="flex items-start justify-between mb-4">
+              <div className="flex items-center gap-3">
+                <div className="p-2.5 bg-[var(--int-primary)] rounded-full">
+                  <User className="w-6 h-6 text-white" />
+                </div>
+                <div>
+                  <h3 className="font-bold text-lg text-[var(--int-gray-900)]">{kyleNarrativeContent.title}</h3>
+                  <div className="flex items-center gap-3 mt-1">
+                    <span className="flex items-center gap-1 text-xs text-[var(--int-gray-500)]">
+                      <Clock className="w-3 h-3" />
+                      {kyleNarrativeContent.deliveryTime}
+                    </span>
+                    <span className="flex items-center gap-1 text-xs text-[var(--int-gray-500)]">
+                      <UsersIcon className="w-3 h-3" />
+                      {kyleNarrativeContent.audience}
+                    </span>
+                  </div>
+                </div>
+              </div>
+              <Badge variant="intPrimary" size="sm">Featured</Badge>
+            </div>
+
+            <p className="text-[var(--int-gray-600)] text-sm mb-4">
+              {kyleNarrativeContent.description}
+            </p>
+
+            {/* Expandable Content Preview */}
+            {!showKyleStory ? (
+              <button
+                onClick={() => setShowKyleStory(true)}
+                className="w-full text-left p-4 bg-white/70 rounded-lg border border-[var(--int-gray-200)] hover:bg-white transition-colors group"
+              >
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="font-medium text-[var(--int-gray-900)]">Read Kyle's Story</p>
+                    <p className="text-xs text-[var(--int-gray-500)] mt-1">Learn from his journey introducing AI to the organization</p>
+                  </div>
+                  <ChevronRight className="w-5 h-5 text-[var(--int-gray-400)] group-hover:text-[var(--int-primary)] transition-colors" />
+                </div>
+              </button>
+            ) : (
+              <div className="bg-white rounded-lg border border-[var(--int-gray-200)] p-4">
+                <div className="prose prose-sm max-w-none text-[var(--int-gray-700)]">
+                  <div className="space-y-4">
+                    <div>
+                      <h4 className="font-bold text-[var(--int-gray-900)] mb-2">The Beginning</h4>
+                      <p className="text-sm">When I first started exploring AI tools for our organization, I wasn't sure where to begin. Like many of you, I had questions about security, adoption, and real-world applications.</p>
+                    </div>
+                    <div>
+                      <h4 className="font-bold text-[var(--int-gray-900)] mb-2">Key Lessons</h4>
+                      <ul className="space-y-2 text-sm">
+                        <li className="flex items-start gap-2">
+                          <Lightbulb className="w-4 h-4 text-[var(--int-primary)] mt-0.5 flex-shrink-0" />
+                          <span><strong>Start Small, Think Big</strong> - Begin with a specific use case that solves a real problem.</span>
+                        </li>
+                        <li className="flex items-start gap-2">
+                          <Lightbulb className="w-4 h-4 text-[var(--int-primary)] mt-0.5 flex-shrink-0" />
+                          <span><strong>Involve Your Team Early</strong> - The best implementations come from collaborative discovery.</span>
+                        </li>
+                        <li className="flex items-start gap-2">
+                          <Lightbulb className="w-4 h-4 text-[var(--int-primary)] mt-0.5 flex-shrink-0" />
+                          <span><strong>Document Everything</strong> - Keep track of what works and what doesn't.</span>
+                        </li>
+                        <li className="flex items-start gap-2">
+                          <Lightbulb className="w-4 h-4 text-[var(--int-primary)] mt-0.5 flex-shrink-0" />
+                          <span><strong>Security First</strong> - Never compromise on security. The right enterprise tools make this easier.</span>
+                        </li>
+                      </ul>
+                    </div>
+                    <p className="text-sm italic text-[var(--int-gray-600)] border-l-2 border-[var(--int-primary)] pl-3">
+                      "Remember: every expert was once a beginner. Start where you are, use what you have, do what you can."
+                    </p>
+                  </div>
+                </div>
+                <button
+                  onClick={() => setShowKyleStory(false)}
+                  className="mt-4 text-sm text-[var(--int-primary)] font-medium hover:underline"
+                >
+                  Collapse
+                </button>
+              </div>
+            )}
+
+            {/* Quick Links to Kyle's Materials */}
+            <div className="mt-4 pt-4 border-t border-[var(--int-gray-200)]">
+              <p className="text-xs font-bold text-[var(--int-gray-500)] uppercase tracking-wider mb-3">Kyle's Quick References</p>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                {[...kyleDocs.slice(0, 2), ...kyleGuideDocs.slice(0, 2)].map((doc) => (
+                  <button
+                    key={doc.id}
+                    onClick={() => setSelectedDocument(doc)}
+                    className="flex items-center gap-2 p-2.5 bg-white rounded-lg border border-[var(--int-gray-200)] hover:border-[var(--int-primary)] hover:bg-[var(--int-primary-light)]/50 transition-colors text-left group"
+                  >
+                    <FileText className="w-4 h-4 text-[var(--int-gray-400)] group-hover:text-[var(--int-primary)]" />
+                    <span className="text-xs font-medium text-[var(--int-gray-700)] truncate">{doc.title}</span>
+                  </button>
+                ))}
+              </div>
             </div>
           </Card>
 

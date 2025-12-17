@@ -24,7 +24,7 @@ The Claude Champions Program empowers early adopters to drive AI adoption, provi
 
 **What Champions Receive**
 - Priority access to new Claude features (beta testing opportunities)
-- Monthly office hours with AI enablement team (1st Tuesday, 2:00 PM ET)
+- Monthly office hours with AI enablement team (schedule posted in `#claude-champions`)
 - Dedicated Slack channel: `#claude-champions` for peer collaboration
 - Champion toolkit: Templates, presentation decks, FAQ database
 

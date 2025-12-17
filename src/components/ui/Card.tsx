@@ -73,15 +73,20 @@ function CardContent({ className, ...props }: React.ComponentProps<"div">) {
 
 function CardFooter({ className, ...props }: React.ComponentProps<"div">) {
   return (
-    <div 
-      onClick={onClick}
-      className={`
-        bg-white border border-slate-200 rounded-lg p-6 shadow-sm
-        ${hoverable || onClick ? 'hover:shadow-md hover:border-slate-300 transition-all cursor-pointer' : ''}
-        ${className}
-      `}
-    >
-      {children}
-    </div>
+    <div
+      data-slot="card-footer"
+      className={cn("flex items-center px-6 pb-6 [.border-t]:pt-6", className)}
+      {...props}
+    />
   );
 }
+
+export {
+  Card,
+  CardHeader,
+  CardFooter,
+  CardTitle,
+  CardAction,
+  CardDescription,
+  CardContent,
+};

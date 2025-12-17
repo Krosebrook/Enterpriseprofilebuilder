@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>INT Platform Explorer v4.0 | AI Strategy Tool</title>
+    <style>
+        :root {
+            --primary: #E88A1D;
+            --primary-hover: #D07614;
+            --bg: #FFFCF8;
+            --text: #231C19;
+            --border: #E8E0D8;
+            --success: #10B981;
+            --error: #EF4444;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+        }
+        header {
+            background: #FAF8F6;
+            border-bottom: 1px solid var(--border);
+            padding: 1.5rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        }
+        .container { max-width: 1400px; margin: 0 auto; }
+        .logo { font-size: 1.5rem; font-weight: bold; display: flex; gap: 0.5rem; align-items: center; }
+        .nav-tabs { display: flex; gap: 0.5rem; border-bottom: 2px solid var(--border); margin-top: 1rem; }
+        .nav-tab { padding: 0.75rem 1rem; border: none; background: none; cursor: pointer; color: #644E47; font-weight: 500; border-bottom: 2px solid transparent; transition: all 150ms; position: relative; top: 2px; }
+        .nav-tab:hover { color: var(--text); }
+        .nav-tab.active { color: var(--primary); border-bottom-color: var(--primary); }
+        main { padding: 2rem 1.5rem; }
+        .card {
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+            transition: all 200ms;
+        }
+        .card:hover { box-shadow: 0 4px 6px rgba(0,0,0,0.07); border-color: #F5E6D3; }
+        .button {
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            font-weight: 500;
+            font-size: 0.875rem;
+            cursor: pointer;
+            border: 1px solid transparent;
+            transition: all 150ms;
+        }
+        .button-primary { background: var(--primary); color: white; }
+        .button-primary:hover { background: var(--primary-hover); }
+        .button-secondary { background: #F5F0ED; color: var(--text); border: 1px solid var(--border); }
+        .button-secondary:hover { background: #EBE4DD; }
+        .button:disabled { opacity: 0.5; cursor: not-allowed; }
+        .filter-panel {
+            background: #FAF8F6;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        .form-group { display: flex; flex-direction: column; gap: 0.5rem; }
+        .label { font-weight: 500; font-size: 0.875rem; }
+        .input, .select { padding: 0.5rem 0.75rem; border: 1px solid var(--border); border-radius: 6px; font-size: 0.875rem; }
+        .input:focus, .select:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px #F5E6D3; }
+        .platform-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.5rem; }
+        .card-header { display: flex; align-items: flex-start; gap: 1rem; margin-bottom: 1rem; }
+        .card-logo { font-size: 32px; min-width: 40px; text-align: center; }
+        .card-title { font-size: 1.25rem; font-weight: bold; }
+        .card-subtitle { font-size: 0.875rem; color: #644E47; }
+        .badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        .badge-primary { background: #F5E6D3; color: var(--text); }
+        .badge-success { background: #D1FAE5; color: #065F46; }
+        .badge-warning { background: #FEF3C7; color: #92400E; }
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        .modal.visible { display: flex; }
+        .modal-content {
+            background: white;
+            border-radius: 12px;
+            max-width: 90vw;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 25px rgba(0,0,0,0.15);
+        }
+        .modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 2rem;
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            background: white;
+        }
+        .modal-body { padding: 2rem; }
+        .modal-close {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: #F5F0ED;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 200ms;
+        }
+        .modal-close:hover { background: var(--border); transform: rotate(90deg); }
+        .stat-card {
+            background: linear-gradient(135deg, #F5E6D3, white);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            text-align: center;
+        }
+        .stat-value { font-size: 2rem; font-weight: bold; color: var(--primary); }
+        .stat-label { font-size: 0.875rem; color: #644E47; margin-top: 0.5rem; }
+        .table { width: 100%; border-collapse: collapse; font-size: 0.875rem; }
+        .table th {
+            background: #F5F0ED;
+            padding: 0.75rem;
+            text-align: left;
+            font-weight: 600;
+            border-bottom: 2px solid var(--border);
+            position: sticky;
+            top: 0;
+        }
+        .table td { padding: 0.75rem; border-bottom: 1px solid var(--border); }
+        .table tr:hover { background: #FAF8F6; }
+        .tab-content { display: none; }
+        .tab-content.visible { display: block; }
+        .hidden { display: none !important; }
+        .grid { display: grid; gap: 1.5rem; }
+        .grid-2 { grid-template-columns: repeat(2, 1fr); }
+        .flex { display: flex; }
+        .flex-between { display: flex; align-items: center; justify-content: space-between; }
+        .gap-sm { gap: 0.5rem; }
+        .gap-md { gap: 1rem; }
+        @media (max-width: 1024px) {
+            .grid-2, .platform-grid { grid-template-columns: 1fr; }
+            .filter-panel { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="container">
+        <div class="flex-between">
+            <div class="logo">
+                <span>🤖</span>
+                <div>
+                    <div>INT Platform Explorer</div>
+                    <div style="font-size: 0.75rem; font-weight: normal; color: #644E47;">v4.0 • AI Strategy & Selection</div>
+                </div>
+            </div>
+            <div class="flex gap-md">
+                <button class="button button-secondary" onclick="exportData()" title="Export">↓ Export</button>
+            </div>
+        </div>
+        <div class="nav-tabs">
+            <button class="nav-tab active" onclick="switchTab('explorer', this)">🔍 Explorer</button>
+            <button class="nav-tab" onclick="switchTab('comparison', this)">⚖️ Comparison</button>
+            <button class="nav-tab" onclick="switchTab('matrix', this)">📊 Matrix</button>
+            <button class="nav-tab" onclick="switchTab('roi', this)">💰 ROI</button>
+            <button class="nav-tab" onclick="switchTab('strategy', this)">📋 Strategy</button>
+        </div>
+    </div>
+</header>
+
+<main class="container">
+
+<!-- EXPLORER -->
+<section id="tab-explorer" class="tab-content visible">
+    <h1 style="margin-bottom: 1rem; font-size: 2rem;">AI Platform Explorer</h1>
+    <p style="color: #644E47; margin-bottom: 1.5rem;">Compare 16 enterprise AI platforms. Select 2-4 for detailed analysis.</p>
+    
+    <div class="filter-panel">
+        <div class="form-group">
+            <label class="label">Search</label>
+            <input type="text" class="input" id="searchInput" placeholder="Search..." onkeyup="filterPlatforms()">
+        </div>
+        <div class="form-group">
+            <label class="label">Category</label>
+            <select class="select" id="categoryFilter" onchange="filterPlatforms()">
+                <option value="">All</option>
+                <option value="foundation">Foundation</option>
+                <option value="developer">Developer</option>
+                <option value="crm">CRM</option>
+                <option value="research">Research</option>
+                <option value="agentic">Agentic</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label class="label">Priority</label>
+            <select class="select" id="priorityFilter" onchange="filterPlatforms()">
+                <option value="">All</option>
+                <option value="BASELINE">Baseline</option>
+                <option value="HIGH PRIORITY">High</option>
+                <option value="SPECIALIZED">Specialized</option>
+                <option value="OPTIONAL">Optional</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label class="label">Actions</label>
+            <button class="button button-secondary" style="width: 100%;" onclick="clearFilters()">Clear</button>
+        </div>
+    </div>
+    
+    <div id="platformGrid" class="platform-grid"></div>
+</section>
+
+<!-- COMPARISON -->
+<section id="tab-comparison" class="tab-content hidden">
+    <h1 style="margin-bottom: 1rem; font-size: 2rem;">Comparison</h1>
+    <div style="background: #F5E6D3; border-radius: 12px; padding: 1.5rem; margin-bottom: 1.5rem;">
+        <div class="flex-between">
+            <div>
+                <h3 style="margin-bottom: 0.5rem;">Selected</h3>
+                <div id="comparisonList" style="font-size: 0.875rem; color: #644E47;">No platforms selected.</div>
+            </div>
+            <button class="button button-primary" onclick="showComparison()" id="compareBtn" disabled>Compare (0/4)</button>
+        </div>
+    </div>
+    
+    <div id="comparisonModal" class="modal" onclick="if(event.target === this) closeComparison()">
+        <div class="modal-content" style="width: 95vw; max-width: 1200px;">
+            <div class="modal-header">
+                <h2>Platform Comparison</h2>
+                <button class="modal-close" onclick="closeComparison()">✕</button>
+            </div>
+            <div id="comparisonContent" class="modal-body"></div>
+        </div>
+    </div>
+</section>
+
+<!-- MATRIX -->
+<section id="tab-matrix" class="tab-content hidden">
+    <h1 style="margin-bottom: 1rem; font-size: 2rem;">Feature Matrix</h1>
+    <p style="color: #644E47; margin-bottom: 1.5rem;">16 platforms × 25 capabilities</p>
+    <div style="overflow-x: auto; border: 1px solid var(--border); border-radius: 12px; background: white;">
+        <table class="table" id="matrixTable"></table>
+    </div>
+</section>
+
+<!-- ROI -->
+<section id="tab-roi" class="tab-content hidden">
+    <h1 style="margin-bottom: 1rem; font-size: 2rem;">ROI Calculator</h1>
+    <div class="grid grid-2">
+        <div class="card">
+            <h3 style="margin-bottom: 1rem;">Organization Details</h3>
+            <div class="form-group">
+                <label class="label">Employees</label>
+                <input type="number" class="input" id="employeeCount" value="500" oninput="calculateROI()">
+            </div>
+            <div class="form-group">
+                <label class="label">Avg Salary ($)</label>
+                <input type="number" class="input" id="avgSalary" value="80000" oninput="calculateROI()">
+            </div>
+            <div class="form-group">
+                <label class="label">Adoption (%)</label>
+                <input type="range" min="10" max="100" step="10" value="60" id="adoptionRate" oninput="calculateROI(); document.getElementById('adoptionValue').textContent = this.value + '%'">
+                <div style="display: flex; justify-content: space-between; font-size: 0.75rem; color: #644E47;">
+                    <span>10%</span> <span id="adoptionValue">60%</span> <span>100%</span>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="label">Productivity Gain (hrs/week)</label>
+                <input type="number" class="input" id="productivityGain" value="7.5" step="0.5" oninput="calculateROI()">
+            </div>
+            <div class="form-group">
+                <label class="label">Implementation Cost ($)</label>
+                <input type="number" class="input" id="implementationCost" value="50000" oninput="calculateROI()">
+            </div>
+            <div class="form-group">
+                <label class="label">Monthly Cost per User ($)</label>
+                <input type="number" class="input" id="monthlyCost" value="30" step="1" oninput="calculateROI()">
+            </div>
+        </div>
+        <div class="card">
+            <h3 style="margin-bottom: 1rem;">Results</h3>
+            <div class="stat-card" style="margin-bottom: 1rem;">
+                <div class="stat-label">Annual Productivity</div>
+                <div class="stat-value" id="productivityValue">$2.7M</div>
+            </div>
+            <div class="stat-card" style="margin-bottom: 1rem;">
+                <div class="stat-label">Annual AI Cost</div>
+                <div class="stat-value" style="color: #EF4444;" id="investmentValue">-$108K</div>
+            </div>
+            <div class="stat-card" style="margin-bottom: 1rem;">
+                <div class="stat-label">Net Benefit (Year 1)</div>
+                <div class="stat-value" style="color: #10B981;" id="netBenefitValue">$2.6M</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">ROI (Year 1)</div>
+                <div class="stat-value" id="roiValue">4,800%</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- STRATEGY -->
+<section id="tab-strategy" class="tab-content hidden">
+    <h1 style="margin-bottom: 1rem; font-size: 2rem;">Strategy & Research</h1>
+    <div class="grid grid-2">
+        <div class="card">
+            <h3 style="margin-bottom: 1rem;">📊 Key Statistics</h3>
+            <div class="stat-card" style="margin-bottom: 1rem;">
+                <div class="stat-label">F500 ChatGPT Adoption</div>
+                <div class="stat-value">92%</div>
+            </div>
+            <div class="stat-card" style="margin-bottom: 1rem;">
+                <div class="stat-label">SMB AI Growth</div>
+                <div class="stat-value">+65%</div>
+            </div>
+            <div class="stat-card" style="margin-bottom: 1rem;">
+                <div class="stat-label">Productivity Savings</div>
+                <div class="stat-value">$8.7K–$18K</div>
+                <div style="font-size: 0.75rem; color: #644E47; margin-top: 0.5rem;">per employee/year</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">High-Performer Rate</div>
+                <div class="stat-value">6%</div>
+            </div>
+        </div>
+        <div class="card">
+            <h3 style="margin-bottom: 1rem;">🎯 Recommended Strategy</h3>
+            <div style="margin-bottom: 1rem;">
+                <h4 style="margin-bottom: 0.5rem; color: var(--primary);">Tier 1: Foundation</h4>
+                <p style="font-size: 0.875rem; color: #644E47;">Microsoft Copilot or Google Gemini Enterprise. 80% value at 20% complexity.</p>
+            </div>
+            <div style="margin-bottom: 1rem;">
+                <h4 style="margin-bottom: 0.5rem; color: var(--primary);">Tier 2: Specialization</h4>
+                <p style="font-size: 0.875rem; color: #644E47;">Add domain-specific tools (GitHub Copilot, Salesforce Einstein, ServiceNow).</p>
+            </div>
+            <div>
+                <h4 style="margin-bottom: 0.5rem; color: var(--primary);">Tier 3: Advanced</h4>
+                <p style="font-size: 0.875rem; color: #644E47;">Custom AI solutions after validating product-market fit (6-12 months).</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+</main>
+
+<script>
+const PLATFORMS = [
+    { id: 'copilot', name: 'Microsoft Copilot', provider: 'Microsoft', category: 'foundation', logo: '🪟', marketShare: '70-90% F500', pricing: '$30/user/month', contextWindow: '128K tokens', contextTokens: 128000, compliance: ['SOC 2', 'ISO 27001', 'HIPAA', 'FedRAMP'], rating: 9, priority: 'BASELINE', scores: { codeGeneration: 8, creativeWriting: 7, dataAnalysis: 8, customerService: 7, compliance: 9, reasoning: 8, integration: 10, customization: 8, multilingual: 8, cost: 9 }, verdict: 'Best foundation for Microsoft. 80% value at 20% complexity.' },
+    { id: 'gemini', name: 'Google Gemini', provider: 'Google', category: 'foundation', logo: '✨', marketShare: '60-80% F500', pricing: '$30/user/month', contextWindow: '1M tokens', contextTokens: 1000000, compliance: ['SOC 2', 'ISO 27001', 'GDPR'], rating: 9, priority: 'DUAL PLATFORM', scores: { codeGeneration: 8, creativeWriting: 8, dataAnalysis: 9, customerService: 7, compliance: 8, reasoning: 9, integration: 9, customization: 7, multilingual: 9, cost: 9 }, verdict: 'Best context window. Largest document handling.' },
+    { id: 'gpt4', name: 'ChatGPT Enterprise', provider: 'OpenAI', category: 'foundation', logo: '💬', marketShare: '92% F500', pricing: '$60/user/month', contextWindow: '128K tokens', contextTokens: 128000, compliance: ['SOC 2'], rating: 9, priority: 'SPECIALIZED', scores: { codeGeneration: 9, creativeWriting: 9, dataAnalysis: 8, customerService: 8, compliance: 6, reasoning: 9, integration: 7, customization: 6, multilingual: 8, cost: 6 }, verdict: 'Industry standard. Best reasoning.' },
+    { id: 'claude', name: 'Anthropic Claude', provider: 'Anthropic', category: 'foundation', logo: '🧠', marketShare: '40-50%', pricing: '$30/user/month', contextWindow: '200K tokens', contextTokens: 200000, compliance: ['SOC 2', 'ISO 27001'], rating: 9, priority: 'HIGH PRIORITY', scores: { codeGeneration: 8, creativeWriting: 7, dataAnalysis: 8, customerService: 8, compliance: 9, reasoning: 9, integration: 8, customization: 7, multilingual: 7, cost: 9 }, verdict: 'Best long-document analysis. Enterprise safety.' },
+    { id: 'github', name: 'GitHub Copilot', provider: 'GitHub', category: 'developer', logo: '🐙', marketShare: '90% devs', pricing: '$19/user/month', contextWindow: '32K tokens', contextTokens: 32000, compliance: ['SOC 2'], rating: 9, priority: 'SPECIALIZED', scores: { codeGeneration: 10, creativeWriting: 5, dataAnalysis: 6, customerService: 4, compliance: 5, reasoning: 7, integration: 9, customization: 6, multilingual: 6, cost: 9 }, verdict: 'Essential for dev teams. 55% productivity gain.' },
+    { id: 'bedrock', name: 'Amazon Bedrock', provider: 'AWS', category: 'developer', logo: '☁️', marketShare: '29% cloud', pricing: 'Usage-based', contextWindow: '200K tokens', contextTokens: 200000, compliance: ['SOC 2', 'ISO 27001', 'HIPAA', 'FedRAMP', 'PCI DSS'], rating: 8, priority: 'OPTIONAL', scores: { codeGeneration: 8, creativeWriting: 6, dataAnalysis: 8, customerService: 7, compliance: 9, reasoning: 8, integration: 10, customization: 10, multilingual: 7, cost: 7 }, verdict: 'Best for AWS. Highest compliance.' },
+    { id: 'einstein', name: 'Salesforce Einstein', provider: 'Salesforce', category: 'crm', logo: '⚡', marketShare: '75% CRM', pricing: 'Included', contextWindow: '32K tokens', contextTokens: 32000, compliance: ['SOC 2', 'ISO 27001', 'HIPAA', 'GDPR'], rating: 8, priority: 'OPTIONAL', scores: { codeGeneration: 4, creativeWriting: 7, dataAnalysis: 8, customerService: 9, compliance: 8, reasoning: 7, integration: 10, customization: 7, multilingual: 6, cost: 10 }, verdict: 'Best for Salesforce users.' },
+    { id: 'hubspot', name: 'HubSpot AI', provider: 'HubSpot', category: 'crm', logo: '🧡', marketShare: '60% SMB', pricing: 'Included', contextWindow: '8K tokens', contextTokens: 8000, compliance: ['SOC 2', 'GDPR'], rating: 7, priority: 'OPTIONAL', scores: { codeGeneration: 3, creativeWriting: 8, dataAnalysis: 7, customerService: 8, compliance: 7, reasoning: 5, integration: 9, customization: 5, multilingual: 5, cost: 10 }, verdict: 'Best for SMBs. Lowest cost.' },
+    { id: 'watsonx', name: 'IBM watsonx', provider: 'IBM', category: 'crm', logo: '🔵', marketShare: '25% enterprise', pricing: 'Custom', contextWindow: '32K tokens', contextTokens: 32000, compliance: ['SOC 2', 'ISO 27001', 'HIPAA', 'FedRAMP'], rating: 8, priority: 'OPTIONAL', scores: { codeGeneration: 6, creativeWriting: 5, dataAnalysis: 8, customerService: 7, compliance: 9, reasoning: 7, integration: 8, customization: 9, multilingual: 6, cost: 5 }, verdict: 'Best for legacy integration.' },
+    { id: 'perplexity', name: 'Perplexity Enterprise', provider: 'Perplexity', category: 'research', logo: '🔍', marketShare: '15% research', pricing: '$40/user/month', contextWindow: '128K tokens', contextTokens: 128000, compliance: ['SOC 2'], rating: 8, priority: 'OPTIONAL', scores: { codeGeneration: 5, creativeWriting: 7, dataAnalysis: 8, customerService: 6, compliance: 5, reasoning: 8, integration: 6, customization: 4, multilingual: 6, cost: 7 }, verdict: 'Best for real-time research.' },
+    { id: 'notion', name: 'Notion AI', provider: 'Notion', category: 'research', logo: '📝', marketShare: '40% productivity', pricing: '$10/user/month', contextWindow: '8K tokens', contextTokens: 8000, compliance: ['SOC 2', 'GDPR'], rating: 7, priority: 'OPTIONAL', scores: { codeGeneration: 4, creativeWriting: 7, dataAnalysis: 6, customerService: 6, compliance: 7, reasoning: 5, integration: 8, customization: 5, multilingual: 5, cost: 10 }, verdict: 'Best add-on for Notion users.' },
+    { id: 'copilot-studio', name: 'Copilot Studio', provider: 'Microsoft', category: 'agentic', logo: '🎨', marketShare: 'Emerging', pricing: '$200/month', contextWindow: '100K tokens', contextTokens: 100000, compliance: ['SOC 2', 'FedRAMP'], rating: 8, priority: 'EMERGING', scores: { codeGeneration: 6, creativeWriting: 6, dataAnalysis: 7, customerService: 8, compliance: 8, reasoning: 7, integration: 9, customization: 9, multilingual: 7, cost: 8 }, verdict: 'Best for M365 AI agents.' },
+    { id: 'agentforce', name: 'Salesforce Agentforce', provider: 'Salesforce', category: 'agentic', logo: '🤖', marketShare: '75% CRM', pricing: '$2/conversation', contextWindow: '32K tokens', contextTokens: 32000, compliance: ['SOC 2', 'ISO 27001', 'HIPAA', 'GDPR'], rating: 8, priority: 'SPECIALIZED', scores: { codeGeneration: 4, creativeWriting: 6, dataAnalysis: 8, customerService: 10, compliance: 8, reasoning: 7, integration: 10, customization: 8, multilingual: 7, cost: 8 }, verdict: 'Best agentic AI for Salesforce.' },
+    { id: 'now-assist', name: 'ServiceNow Now Assist', provider: 'ServiceNow', category: 'agentic', logo: '🎫', marketShare: 'ITSM leader', pricing: 'Module-based', contextWindow: '32K tokens', contextTokens: 32000, compliance: ['SOC 2', 'ISO 27001', 'HIPAA', 'FedRAMP'], rating: 9, priority: 'SPECIALIZED', scores: { codeGeneration: 5, creativeWriting: 4, dataAnalysis: 7, customerService: 10, compliance: 9, reasoning: 7, integration: 10, customization: 8, multilingual: 6, cost: 7 }, verdict: 'Best ITSM automation.' },
+    { id: 'uipath', name: 'UiPath Autopilot', provider: 'UiPath', category: 'agentic', logo: '🔄', marketShare: 'RPA leader', pricing: '$420/robot/month', contextWindow: '32K tokens', contextTokens: 32000, compliance: ['SOC 2', 'ISO 27001'], rating: 8, priority: 'OPTIONAL', scores: { codeGeneration: 6, creativeWriting: 4, dataAnalysis: 7, customerService: 8, compliance: 7, reasoning: 6, integration: 9, customization: 9, multilingual: 6, cost: 6 }, verdict: 'Best for RPA integration.' },
+    { id: 'automation-anywhere', name: 'Automation Anywhere AI', provider: 'Automation Anywhere', category: 'agentic', logo: '⚙️', marketShare: 'Top 3 RPA', pricing: 'Usage-based', contextWindow: '32K tokens', contextTokens: 32000, compliance: ['SOC 2', 'ISO 27001'], rating: 8, priority: 'OPTIONAL', scores: { codeGeneration: 6, creativeWriting: 4, dataAnalysis: 7, customerService: 8, compliance: 7, reasoning: 6, integration: 9, customization: 9, multilingual: 6, cost: 7 }, verdict: 'Best for scalable automation.' }
+];
+
+let filteredPlatforms = [...PLATFORMS];
+let selectedForComparison = [];
+
+function filterPlatforms() {
+    const search = document.getElementById('searchInput').value.toLowerCase();
+    const category = document.getElementById('categoryFilter').value;
+    const priority = document.getElementById('priorityFilter').value;
+    
+    filteredPlatforms = PLATFORMS.filter(p => {
+        const matchSearch = !search || p.name.toLowerCase().includes(search) || p.provider.toLowerCase().includes(search) || p.verdict.toLowerCase().includes(search);
+        const matchCategory = !category || p.category === category;
+        const matchPriority = !priority || p.priority === priority;
+        return matchSearch && matchCategory && matchPriority;
+    });
+    
+    renderPlatforms();
+}
+
+function renderPlatforms() {
+    const grid = document.getElementById('platformGrid');
+    grid.innerHTML = '';
+    
+    if (filteredPlatforms.length === 0) {
+        grid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: 3rem; color: #644E47;">No platforms match your filters.</div>';
+        return;
+    }
+    
+    filteredPlatforms.forEach(p => {
+        const isSelected = selectedForComparison.includes(p.id);
+        const card = document.createElement('div');
+        card.className = 'card';
+        if (isSelected) card.style.borderColor = 'var(--primary)';
+        
+        card.innerHTML = `
+            <div class="card-header">
+                <div class="card-logo">${p.logo}</div>
+                <div style="flex: 1;">
+                    <div class="card-title">${p.name}</div>
+                    <div class="card-subtitle">${p.provider}</div>
+                </div>
+                <span class="badge badge-primary">${p.priority}</span>
+            </div>
+            <p style="margin-bottom: 1rem; color: #644E47; font-size: 0.875rem;">${p.verdict}</p>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin-bottom: 1rem;">
+                <div style="background: #FAF8F6; padding: 0.5rem; border-radius: 6px;">
+                    <div style="font-size: 0.75rem; color: #644E47;">Market Share</div>
+                    <div style="font-weight: bold; color: var(--primary);">${p.marketShare}</div>
+                </div>
+                <div style="background: #FAF8F6; padding: 0.5rem; border-radius: 6px;">
+                    <div style="font-size: 0.75rem; color: #644E47;">Pricing</div>
+                    <div style="font-weight: bold; color: var(--primary);">${p.pricing}</div>
+                </div>
+            </div>
+            <div style="margin-bottom: 1rem;">
+                <div style="font-size: 0.75rem; font-weight: bold; margin-bottom: 0.5rem; color: #644E47;">Compliance</div>
+                <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                    ${p.compliance.map(c => `<span class="badge badge-success" style="font-size: 0.75rem;">${c}</span>`).join('')}
+                </div>
+            </div>
+            <button class="button ${isSelected ? 'button-primary' : 'button-secondary'}" style="width: 100%; justify-content: center;" onclick="toggleComparison('${p.id}')">
+                ${isSelected ? '✓ Added' : '+ Compare'}
+            </button>
+        `;
+        grid.appendChild(card);
+    });
+}
+
+function toggleComparison(platformId) {
+    const index = selectedForComparison.indexOf(platformId);
+    if (index > -1) {
+        selectedForComparison.splice(index, 1);
+    } else {
+        if (selectedForComparison.length >= 4) {
+            alert('Max 4 platforms');
+            return;
+        }
+        selectedForComparison.push(platformId);
+    }
+    updateComparisonUI();
+    renderPlatforms();
+}
+
+function updateComparisonUI() {
+    const btn = document.getElementById('compareBtn');
+    const list = document.getElementById('comparisonList');
+    btn.disabled = selectedForComparison.length < 2;
+    btn.textContent = `Compare (${selectedForComparison.length}/4)`;
+    if (selectedForComparison.length === 0) {
+        list.innerHTML = 'No platforms selected.';
+    } else {
+        const names = selectedForComparison.map(id => PLATFORMS.find(p => p.id === id).name).join(', ');
+        list.innerHTML = `<strong>${names}</strong>`;
+    }
+}
+
+function showComparison() {
+    if (selectedForComparison.length < 2) {
+        alert('Select 2-4 platforms');
+        return;
+    }
+    
+    const platforms = selectedForComparison.map(id => PLATFORMS.find(p => p.id === id));
+    const modal = document.getElementById('comparisonModal');
+    const content = document.getElementById('comparisonContent');
+    
+    let html = '<h3 style="margin-bottom: 1rem;">Comparison</h3>';
+    html += '<div style="overflow-x: auto; margin-bottom: 2rem;"><table class="table"><thead><tr><th>Attribute</th>';
+    platforms.forEach(p => html += `<th>${p.name}</th>`);
+    html += '</tr></thead><tbody>';
+    
+    const attrs = [
+        { label: 'Provider', key: 'provider' },
+        { label: 'Market Share', key: 'marketShare' },
+        { label: 'Pricing', key: 'pricing' },
+        { label: 'Context', key: 'contextWindow' },
+        { label: 'Rating', key: 'rating' }
+    ];
+    
+    attrs.forEach(attr => {
+        html += '<tr><td style="font-weight: bold;">' + attr.label + '</td>';
+        platforms.forEach(p => {
+            let value = p[attr.key];
+            if (attr.key === 'rating') value = value + '/10 ⭐';
+            html += `<td>${value}</td>`;
+        });
+        html += '</tr>';
+    });
+    
+    html += '</tbody></table></div>';
+    html += '<h4 style="margin-bottom: 1rem; color: var(--primary);">Verdicts</h4>';
+    platforms.forEach(p => {
+        html += `<div style="margin-bottom: 1rem; padding: 1rem; background: #FAF8F6; border-radius: 12px;"><strong>${p.name}</strong><br><em style="color: #644E47;">${p.verdict}</em></div>`;
+    });
+    
+    content.innerHTML = html;
+    modal.classList.add('visible');
+}
+
+function closeComparison() {
+    document.getElementById('comparisonModal').classList.remove('visible');
+}
+
+function switchTab(tabName, btn) {
+    document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('visible'));
+    document.getElementById(`tab-${tabName}`).classList.add('visible');
+    
+    document.querySelectorAll('.nav-tab').forEach(el => el.classList.remove('active'));
+    btn.classList.add('active');
+    
+    if (tabName === 'roi') calculateROI();
+    if (tabName === 'matrix') renderMatrix();
+}
+
+function renderMatrix() {
+    const table = document.getElementById('matrixTable');
+    table.innerHTML = '<thead><tr><th>Feature</th>';
+    PLATFORMS.forEach(p => table.innerHTML += `<th style="text-align: center;">${p.name.split(' ')[0]}</th>`);
+    table.innerHTML += '</tr></thead><tbody>';
+    
+    const features = [
+        { name: 'Code Generation', id: 'codeGeneration' },
+        { name: 'Data Analysis', id: 'dataAnalysis' },
+        { name: 'Customer Service', id: 'customerService' },
+        { name: 'Reasoning', id: 'reasoning' },
+        { name: 'Integration', id: 'integration' },
+        { name: 'Rating', id: 'rating' }
+    ];
+    
+    features.forEach(f => {
+        table.innerHTML += '<tr><td style="font-weight: bold;">' + f.name + '</td>';
+        PLATFORMS.forEach(p => {
+            let score = p.scores[f.id] || p.rating || '—';
+            let bg = 'transparent';
+            if (typeof score === 'number' && f.id !== 'rating') {
+                bg = score <= 4 ? '#FEE2E2' : score <= 6 ? '#FEF3C7' : '#D1FAE5';
+            }
+            table.innerHTML += `<td style="text-align: center; background: ${bg}; font-weight: bold;">${score}</td>`;
+        });
+        table.innerHTML += '</tr>';
+    });
+}
+
+function calculateROI() {
+    const employees = parseInt(document.getElementById('employeeCount').value) || 1;
+    const salary = parseInt(document.getElementById('avgSalary').value) || 80000;
+    const adoption = parseInt(document.getElementById('adoptionRate').value) / 100;
+    const productivityHours = parseFloat(document.getElementById('productivityGain').value) || 7.5;
+    const implCost = parseInt(document.getElementById('implementationCost').value) || 0;
+    const monthlyCost = parseFloat(document.getElementById('monthlyCost').value) || 30;
+    
+    const hourlyRate = salary / 52 / 40;
+    const adoptedEmployees = Math.round(employees * adoption);
+    const hoursPerYear = productivityHours * 52;
+    const totalProductivity = hoursPerYear * hourlyRate * adoptedEmployees;
+    
+    const annualCost = (monthlyCost * adoptedEmployees * 12) + implCost;
+    const netBenefit = totalProductivity - annualCost;
+    const roi = (netBenefit / (implCost || monthlyCost * adoptedEmployees)) * 100;
+    
+    document.getElementById('productivityValue').textContent = '$' + Math.round(totalProductivity).toLocaleString();
+    document.getElementById('investmentValue').textContent = '-$' + Math.round(annualCost).toLocaleString();
+    document.getElementById('netBenefitValue').textContent = '$' + Math.round(netBenefit).toLocaleString();
+    document.getElementById('roiValue').textContent = Math.round(roi).toLocaleString() + '%';
+}
+
+function clearFilters() {
+    document.getElementById('searchInput').value = '';
+    document.getElementById('categoryFilter').value = '';
+    document.getElementById('priorityFilter').value = '';
+    filterPlatforms();
+}
+
+function exportData() {
+    const data = { timestamp: new Date().toISOString(), platforms: PLATFORMS };
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `ai-platforms-${new Date().toISOString().split('T')[0]}.json`;
+    a.click();
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    filterPlatforms();
+    updateComparisonUI();
+    calculateROI();
+    renderMatrix();
+});
+</script>
+
+</body>
+</html>

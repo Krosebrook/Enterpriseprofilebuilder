@@ -90,16 +90,128 @@ export function FAQ({ searchQuery = '' }: FAQProps) {
     advanced: { bg: 'bg-purple-50', border: 'border-purple-200', badge: 'warning' as const }
   };
 
+  // If viewing a document, show the viewer
+  if (selectedDocument) {
+    return (
+      <div className="animate-in fade-in duration-300">
+        <DocumentViewer
+          document={selectedDocument}
+          onBack={() => setSelectedDocument(null)}
+          showTableOfContents={true}
+        />
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-8 animate-in fade-in duration-500">
-      <SectionHeader 
+      <SectionHeader
         title="Frequently Asked Questions"
         description={`${faqData.length} curated questions and answers covering everything from basic access to advanced prompting techniques.`}
         icon={HelpCircle}
       />
 
-      {/* Level Filter */}
-      <div className="flex flex-wrap gap-2 pb-6 border-b border-slate-200">
+      {/* Tabs */}
+      <div className="flex gap-2 border-b border-slate-200 pb-0">
+        <button
+          onClick={() => setActiveTab('faq')}
+          className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors -mb-px ${
+            activeTab === 'faq'
+              ? 'border-[var(--int-primary)] text-[var(--int-primary)]'
+              : 'border-transparent text-slate-600 hover:text-slate-900'
+          }`}
+        >
+          <HelpCircle className="w-4 h-4 inline-block mr-2" />
+          FAQ ({faqData.length})
+        </button>
+        <button
+          onClick={() => setActiveTab('playbook')}
+          className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors -mb-px ${
+            activeTab === 'playbook'
+              ? 'border-[var(--int-primary)] text-[var(--int-primary)]'
+              : 'border-transparent text-slate-600 hover:text-slate-900'
+          }`}
+        >
+          <BookOpen className="w-4 h-4 inline-block mr-2" />
+          Quick Playbook
+        </button>
+      </div>
+
+      {activeTab === 'playbook' && (
+        <div className="space-y-6">
+          <p className="text-slate-600">
+            Quick reference tips and best practices for effective Claude usage.
+          </p>
+
+          {/* Playbook Categories */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {playbookTips.map((category) => {
+              const Icon = category.icon;
+              const isExpanded = expandedPlaybookId === category.id;
+              return (
+                <Card
+                  key={category.id}
+                  variant="int"
+                  padding="int"
+                  className={`cursor-pointer transition-all ${isExpanded ? 'ring-2 ring-[var(--int-primary)]' : ''}`}
+                  onClick={() => setExpandedPlaybookId(isExpanded ? null : category.id)}
+                >
+                  <div className="flex items-center justify-between mb-3">
+                    <div className="flex items-center gap-3">
+                      <div className={`p-2 rounded-lg ${category.color.split(' ')[1]}`}>
+                        <Icon className={`w-5 h-5 ${category.color.split(' ')[0]}`} />
+                      </div>
+                      <h3 className="font-bold text-[var(--int-gray-900)]">{category.category}</h3>
+                    </div>
+                    <Badge variant="intNeutral" size="sm">{category.tips.length} tips</Badge>
+                  </div>
+
+                  {isExpanded && (
+                    <ul className="space-y-2 mt-4 pt-4 border-t border-[var(--int-gray-100)]">
+                      {category.tips.map((tip, i) => (
+                        <li key={i} className="flex items-start gap-2 text-sm text-[var(--int-gray-700)]">
+                          <span className="text-[var(--int-primary)] mt-1">•</span>
+                          {tip}
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </Card>
+              );
+            })}
+          </div>
+
+          {/* Reference Documents */}
+          <div className="mt-8">
+            <h3 className="font-bold text-lg text-slate-900 mb-4 flex items-center gap-2">
+              <FileText className="w-5 h-5 text-[var(--int-primary)]" />
+              Reference Documents
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {referenceDocs.map((doc) => (
+                <button
+                  key={doc.id}
+                  onClick={() => setSelectedDocument(doc)}
+                  className="flex items-start gap-3 p-4 bg-white rounded-xl border border-slate-200 hover:border-[var(--int-primary)] hover:shadow-md transition-all text-left group"
+                >
+                  <div className="p-2 bg-[var(--int-primary-light)] rounded-lg group-hover:bg-[var(--int-primary)] transition-colors">
+                    <FileText className="w-4 h-4 text-[var(--int-primary)] group-hover:text-white" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <h4 className="font-medium text-slate-900 text-sm line-clamp-2">{doc.title}</h4>
+                    <p className="text-xs text-slate-500 mt-1 line-clamp-2">{doc.description}</p>
+                  </div>
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {activeTab === 'faq' && (
+        <>
+          {/* Level Filter */}
+          <div className="flex flex-wrap gap-2 pb-6 border-b border-slate-200">
         {levels.map((level) => (
           <button
             key={level.id}
@@ -213,35 +325,37 @@ export function FAQ({ searchQuery = '' }: FAQProps) {
         })}
       </div>
 
-      {filteredFaqs.length === 0 && (
-        <div className="bg-slate-50 border border-slate-200 rounded-xl p-12 text-center">
-          <HelpCircle className="w-12 h-12 text-slate-300 mx-auto mb-4" />
-          <h3 className="text-lg font-bold text-slate-900 mb-2">No results found</h3>
-          <p className="text-slate-600">
-            {searchQuery ? `We couldn't find any questions matching "${searchQuery}"` : 'No questions found for this category.'}
-          </p>
-          {searchQuery && (
-             <button onClick={() => window.location.reload()} className="mt-4 text-amber-600 hover:text-amber-700 font-medium">
-                Clear search
-             </button>
+          {filteredFaqs.length === 0 && (
+            <div className="bg-slate-50 border border-slate-200 rounded-xl p-12 text-center">
+              <HelpCircle className="w-12 h-12 text-slate-300 mx-auto mb-4" />
+              <h3 className="text-lg font-bold text-slate-900 mb-2">No results found</h3>
+              <p className="text-slate-600">
+                {searchQuery ? `We couldn't find any questions matching "${searchQuery}"` : 'No questions found for this category.'}
+              </p>
+              {searchQuery && (
+                 <button onClick={() => window.location.reload()} className="mt-4 text-amber-600 hover:text-amber-700 font-medium">
+                    Clear search
+                 </button>
+              )}
+            </div>
           )}
-        </div>
-      )}
 
-      {/* Quick Stats */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 pt-8 border-t border-slate-200">
-        {[
-           { label: 'Total Questions', value: faqData.length, color: 'text-slate-900' },
-           { label: 'Beginner', value: faqData.filter(f => f.level === 'beginner').length, color: 'text-emerald-600' },
-           { label: 'Intermediate', value: faqData.filter(f => f.level === 'intermediate').length, color: 'text-blue-600' },
-           { label: 'Advanced', value: faqData.filter(f => f.level === 'advanced').length, color: 'text-purple-600' }
-        ].map((stat, i) => (
-           <div key={i} className="text-center p-4 bg-slate-50 rounded-xl border border-slate-100">
-              <div className={`text-3xl font-bold ${stat.color} mb-1`}>{stat.value}</div>
-              <div className="text-xs text-slate-500 font-medium uppercase tracking-wider">{stat.label}</div>
-           </div>
-        ))}
-      </div>
+          {/* Quick Stats */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 pt-8 border-t border-slate-200">
+            {[
+               { label: 'Total Questions', value: faqData.length, color: 'text-slate-900' },
+               { label: 'Beginner', value: faqData.filter(f => f.level === 'beginner').length, color: 'text-emerald-600' },
+               { label: 'Intermediate', value: faqData.filter(f => f.level === 'intermediate').length, color: 'text-blue-600' },
+               { label: 'Advanced', value: faqData.filter(f => f.level === 'advanced').length, color: 'text-purple-600' }
+            ].map((stat, i) => (
+               <div key={i} className="text-center p-4 bg-slate-50 rounded-xl border border-slate-100">
+                  <div className={`text-3xl font-bold ${stat.color} mb-1`}>{stat.value}</div>
+                  <div className="text-xs text-slate-500 font-medium uppercase tracking-wider">{stat.label}</div>
+               </div>
+            ))}
+          </div>
+        </>
+      )}
     </div>
   );
 }

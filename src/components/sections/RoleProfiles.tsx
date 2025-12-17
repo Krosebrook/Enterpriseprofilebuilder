@@ -1,11 +1,45 @@
-import { DollarSign, TrendingUp, Code, Megaphone, Settings as SettingsIcon, Users as UsersIcon, Shield } from 'lucide-react';
+import { useState } from 'react';
+import { DollarSign, TrendingUp, Code, Megaphone, Settings as SettingsIcon, Users as UsersIcon, Shield, Zap, BookOpen, FileText, Lightbulb, ChevronDown, ChevronUp } from 'lucide-react';
 import { useNavigation } from '../../contexts/NavigationContext';
-import { Role } from '../../types';
+import { Role, DocumentResource } from '../../types';
 import { SectionHeader } from '../common/SectionHeader';
 import { Card } from '../ui/Card';
+import { Badge } from '../ui/Badge';
+import { roleQuickstartContent, roleGuideDocs } from '../../data/documents/role-guides';
+import { DocumentViewer } from '../documents/DocumentViewer';
+
+// Map role names to quickstart content keys
+const roleToQuickstart: Record<string, keyof typeof roleQuickstartContent> = {
+  'Finance': 'finance',
+  'Sales': 'sales',
+  'Engineering': 'engineering',
+  'Marketing': 'marketing',
+  'HR': 'hr',
+  'Customer Support': 'customerSupport',
+  'Product Management': 'productManagement',
+  'Operations': 'operations',
+  'Legal': 'legal',
+  'Data Science': 'dataScience',
+  'Executive': 'executive',
+};
 
 export function RoleProfiles() {
   const { selectedRole } = useNavigation();
+  const [selectedDocument, setSelectedDocument] = useState<DocumentResource | null>(null);
+  const [expandedQuickstart, setExpandedQuickstart] = useState<string | null>(null);
+
+  // If viewing a document, show the viewer
+  if (selectedDocument) {
+    return (
+      <div className="animate-in fade-in duration-300">
+        <DocumentViewer
+          document={selectedDocument}
+          onBack={() => setSelectedDocument(null)}
+          showTableOfContents={true}
+        />
+      </div>
+    );
+  }
 
   const profiles = [
     {
@@ -341,10 +375,113 @@ export function RoleProfiles() {
                     ))}
                  </div>
               </div>
+
+              {/* Quickstart Guide Section */}
+              {roleToQuickstart[profile.role] && roleQuickstartContent[roleToQuickstart[profile.role]] && (
+                <div>
+                  <button
+                    onClick={() => setExpandedQuickstart(
+                      expandedQuickstart === profile.role ? null : profile.role
+                    )}
+                    className="w-full flex items-center justify-between p-4 bg-[var(--int-primary-light)] border border-[var(--int-primary)]/20 rounded-xl hover:bg-[var(--int-primary)]/10 transition-colors"
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className="p-2 bg-[var(--int-primary)] rounded-lg">
+                        <Zap className="w-5 h-5 text-white" />
+                      </div>
+                      <div className="text-left">
+                        <h4 className="font-bold text-[var(--int-gray-900)]">
+                          {roleQuickstartContent[roleToQuickstart[profile.role]].title}
+                        </h4>
+                        <p className="text-sm text-[var(--int-gray-600)]">
+                          {roleQuickstartContent[roleToQuickstart[profile.role]].description}
+                        </p>
+                      </div>
+                    </div>
+                    {expandedQuickstart === profile.role ? (
+                      <ChevronUp className="w-5 h-5 text-[var(--int-primary)]" />
+                    ) : (
+                      <ChevronDown className="w-5 h-5 text-[var(--int-primary)]" />
+                    )}
+                  </button>
+
+                  {expandedQuickstart === profile.role && (
+                    <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-6 animate-in slide-in-from-top-2 fade-in duration-300">
+                      {/* Quick Wins */}
+                      <Card variant="int" padding="int">
+                        <h5 className="font-bold text-[var(--int-gray-900)] mb-3 flex items-center gap-2">
+                          <Lightbulb className="w-4 h-4 text-[var(--int-primary)]" />
+                          Quick Wins
+                        </h5>
+                        <ul className="space-y-2">
+                          {roleQuickstartContent[roleToQuickstart[profile.role]].quickWins.map((win, i) => (
+                            <li key={i} className="flex items-start gap-2 text-sm text-[var(--int-gray-700)]">
+                              <span className="text-[var(--int-primary)] mt-1">•</span>
+                              {win}
+                            </li>
+                          ))}
+                        </ul>
+                      </Card>
+
+                      {/* Best Practices */}
+                      <Card variant="int" padding="int">
+                        <h5 className="font-bold text-[var(--int-gray-900)] mb-3 flex items-center gap-2">
+                          <BookOpen className="w-4 h-4 text-[var(--int-primary)]" />
+                          Best Practices
+                        </h5>
+                        <ul className="space-y-2">
+                          {roleQuickstartContent[roleToQuickstart[profile.role]].bestPractices.map((practice, i) => (
+                            <li key={i} className="flex items-start gap-2 text-sm text-[var(--int-gray-700)]">
+                              <span className="text-emerald-500 mt-1">✓</span>
+                              {practice}
+                            </li>
+                          ))}
+                        </ul>
+                      </Card>
+
+                      {/* Sample Prompts */}
+                      <Card variant="int" padding="int" className="md:col-span-2">
+                        <h5 className="font-bold text-[var(--int-gray-900)] mb-3 flex items-center gap-2">
+                          <FileText className="w-4 h-4 text-[var(--int-primary)]" />
+                          Sample Prompts
+                        </h5>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                          {roleQuickstartContent[roleToQuickstart[profile.role]].samplePrompts.map((prompt, i) => (
+                            <div key={i} className="bg-[var(--int-gray-50)] rounded-lg p-3 text-sm text-[var(--int-gray-700)] font-mono border border-[var(--int-gray-100)]">
+                              "{prompt}"
+                            </div>
+                          ))}
+                        </div>
+                      </Card>
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
           );
         })}
       </div>
+
+      {/* Role Guides Document Link */}
+      {roleGuideDocs.length > 0 && (
+        <div className="mt-8 p-6 bg-[var(--int-primary-light)] rounded-xl border border-[var(--int-primary)]/20">
+          <div className="flex items-center justify-between flex-wrap gap-4">
+            <div className="flex items-center gap-3">
+              <FileText className="w-6 h-6 text-[var(--int-primary)]" />
+              <div>
+                <h4 className="font-bold text-[var(--int-gray-900)]">Complete Role Guides</h4>
+                <p className="text-sm text-[var(--int-gray-600)]">Access the full role-specific quickstart documentation</p>
+              </div>
+            </div>
+            <button
+              onClick={() => setSelectedDocument(roleGuideDocs[0])}
+              className="px-4 py-2 bg-[var(--int-primary)] text-white rounded-lg font-medium hover:bg-[var(--int-primary-hover)] transition-colors"
+            >
+              View Documentation
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -5,7 +5,8 @@
       "Bash(dir:*)",
       "Bash(tree:*)",
       "Bash(powershell:*)",
-      "Bash(npm run build:*)"
+      "Bash(npm run build:*)",
+      "Bash(npx tsc:*)"
     ]
   }
 }

@@ -1,9 +1,21 @@
-import { ReactNode, useState } from 'react';
+"use client";
 
-interface TooltipProps {
-  content: string;
-  children: ReactNode;
-  position?: 'top' | 'bottom' | 'left' | 'right';
+import * as React from "react";
+import * as TooltipPrimitive from "@radix-ui/react-tooltip@1.1.8";
+
+import { cn } from "./utils";
+
+function TooltipProvider({
+  delayDuration = 0,
+  ...props
+}: React.ComponentProps<typeof TooltipPrimitive.Provider>) {
+  return (
+    <TooltipPrimitive.Provider
+      data-slot="tooltip-provider"
+      delayDuration={delayDuration}
+      {...props}
+    />
+  );
 }
 
 export function Tooltip({ content, children, position = 'top' }: TooltipProps) {

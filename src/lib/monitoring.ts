@@ -52,14 +52,14 @@ export class SecurityNotificationService {
   private pagerDutyApiKey?: string;
 
   constructor() {
-    // Load configuration from environment
-    const emailList = process.env.VITE_SECURITY_EMAIL_RECIPIENTS;
+    // Load configuration from environment (Vite uses import.meta.env in browser)
+    const emailList = import.meta.env.VITE_SECURITY_EMAIL_RECIPIENTS as string | undefined;
     if (emailList) {
       this.emailRecipients = emailList.split(',').map(e => e.trim());
     }
     
-    this.slackWebhookUrl = process.env.VITE_SLACK_SECURITY_WEBHOOK;
-    this.pagerDutyApiKey = process.env.VITE_PAGERDUTY_API_KEY;
+    this.slackWebhookUrl = import.meta.env.VITE_SLACK_SECURITY_WEBHOOK as string | undefined;
+    this.pagerDutyApiKey = import.meta.env.VITE_PAGERDUTY_API_KEY as string | undefined;
   }
 
   /**
@@ -226,7 +226,7 @@ Action Required: Review the security dashboard for details.
    * Send webhook notification
    */
   private async sendWebhook(message: string, metadata: SecurityEventMetadata): Promise<void> {
-    const webhookUrl = process.env.VITE_SECURITY_WEBHOOK_URL;
+    const webhookUrl = import.meta.env.VITE_SECURITY_WEBHOOK_URL as string | undefined;
     
     if (!webhookUrl) {
       logger.debug('Webhook notification skipped: No URL configured');

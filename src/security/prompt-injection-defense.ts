@@ -613,21 +613,14 @@ Your response:`.trim();
         maxTokens: 4096,
       });
 
-      if (response.body) {
-        const reader = response.body.getReader();
-        const decoder = new TextDecoder();
-        let result = '';
-
-        while (true) {
-          const { done, value } = await reader.read();
-          if (done) break;
-          result += decoder.decode(value, { stream: true });
-        }
-
-        return result;
+      // Parse JSON response
+      const data = await response.json() as { text?: string; content?: string; error?: string };
+      
+      if (data.error) {
+        throw new Error(data.error);
       }
 
-      return 'No response received from API';
+      return data.text || data.content || 'No response content';
     } catch (error) {
       logger.error('Failed to execute Claude API request', error as Error);
       throw new AppError(

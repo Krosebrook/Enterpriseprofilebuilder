@@ -162,14 +162,18 @@ Action Required: Review the security dashboard for details.
       subject: `Security Alert: ${metadata.riskLevel || 'Unknown'}`,
     });
 
-    // TODO: Implement actual email sending
+    // TODO (Q1 2026): Implement email service integration
+    // Recommended: SendGrid, AWS SES, or Mailgun
     // Example with SendGrid:
-    // await sendgrid.send({
+    // import sgMail from '@sendgrid/mail'
+    // sgMail.setApiKey(import.meta.env.VITE_SENDGRID_API_KEY)
+    // await sgMail.send({
     //   to: this.emailRecipients,
     //   from: 'security@enterpriseprofilebuilder.com',
     //   subject: `Security Alert: ${metadata.riskLevel || 'Unknown'}`,
     //   text: message,
-    // });
+    //   html: formatAsHtml(message)
+    // })
   }
 
   /**
@@ -218,7 +222,27 @@ Action Required: Review the security dashboard for details.
       return;
     }
 
-    // TODO: Implement PagerDuty integration
+    // TODO (Q1 2026): Implement PagerDuty Events API v2 integration
+    // Documentation: https://developer.pagerduty.com/docs/events-api-v2/overview/
+    // Required fields:
+    // - routing_key: Integration key from PagerDuty service
+    // - event_action: "trigger" for new incidents
+    // - payload: { summary, severity, source, custom_details }
+    // Example:
+    // await fetch('https://events.pagerduty.com/v2/enqueue', {
+    //   method: 'POST',
+    //   headers: { 'Content-Type': 'application/json' },
+    //   body: JSON.stringify({
+    //     routing_key: this.pagerDutyApiKey,
+    //     event_action: 'trigger',
+    //     payload: {
+    //       summary: message,
+    //       severity: this.getSeverity(eventType).toLowerCase(),
+    //       source: 'enterprise-profile-builder',
+    //       custom_details: metadata
+    //     }
+    //   })
+    // })
     logger.info('PagerDuty notification would be sent', { metadata });
   }
 

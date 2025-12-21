@@ -114,7 +114,7 @@ export function ThemeToggle({
     try {
       // Validate input
       if (!['light', 'dark', 'system'].includes(newTheme)) {
-        throw new AppError('Invalid theme value', ErrorCode.INVALID_INPUT);
+        throw new AppError('Invalid theme value', ErrorCode.VALIDATION);
       }
 
       // Check rate limit
@@ -272,7 +272,7 @@ export function ThemeToggle({
       {/* Error Message */}
       {error && (
         <div 
-          className="absolute right-0 top-12 bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 text-xs p-2 rounded-md shadow-lg z-50 animate-in fade-in slide-in-from-top-2"
+          className="absolute right-0 top-12 bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 text-xs p-2 rounded-md shadow-lg z-50 animate-pulse"
           role="alert"
         >
           {error}

@@ -37,12 +37,12 @@ export function searchContent(query: string): SearchResult[] {
   // Search Features
   featuresData.forEach((feature) => {
     const nameMatch = feature.name.toLowerCase().includes(normalizedQuery);
-    const descMatch = feature.description.toLowerCase().includes(normalizedQuery);
+    const descriptionMatch = feature.description.toLowerCase().includes(normalizedQuery);
     const useCaseMatch = [...feature.whenToUse, ...feature.whenNotToUse].some(
       item => item.toLowerCase().includes(normalizedQuery)
     );
 
-    if (nameMatch || descMatch || useCaseMatch) {
+    if (nameMatch || descriptionMatch || useCaseMatch) {
       results.push({
         id: feature.id,
         title: feature.name,
@@ -57,12 +57,12 @@ export function searchContent(query: string): SearchResult[] {
   // Search MCP Servers
   mcpServersData.forEach((server) => {
     const nameMatch = server.name.toLowerCase().includes(normalizedQuery);
-    const descMatch = server.description.toLowerCase().includes(normalizedQuery);
+    const descriptionMatch = server.description.toLowerCase().includes(normalizedQuery);
     const useCaseMatch = server.useCases.some(
       useCase => useCase.toLowerCase().includes(normalizedQuery)
     );
 
-    if (nameMatch || descMatch || useCaseMatch) {
+    if (nameMatch || descriptionMatch || useCaseMatch) {
       results.push({
         id: server.id,
         title: server.name,
@@ -77,12 +77,12 @@ export function searchContent(query: string): SearchResult[] {
   // Search Role Profiles
   roleProfilesData.forEach((profile) => {
     const roleMatch = profile.role.toLowerCase().includes(normalizedQuery);
-    const respMatch = profile.responsibilities.toLowerCase().includes(normalizedQuery);
-    const capMatch = profile.capabilities.some(
-      cap => cap.toLowerCase().includes(normalizedQuery)
+    const responsibilitiesMatch = profile.responsibilities.toLowerCase().includes(normalizedQuery);
+    const capabilitiesMatch = profile.capabilities.some(
+      capability => capability.toLowerCase().includes(normalizedQuery)
     );
 
-    if (roleMatch || respMatch || capMatch) {
+    if (roleMatch || responsibilitiesMatch || capabilitiesMatch) {
       results.push({
         id: profile.role,
         title: `${profile.role} Role Profile`,

@@ -616,11 +616,11 @@ function TeamView() {
     return Array.from(assigneeMap.entries()).map(([name, tasks]) => ({
       name,
       tasks,
-      completed: tasks.filter(t => t.status === 'completed').length,
-      inProgress: tasks.filter(t => t.status === 'in-progress').length,
-      pending: tasks.filter(t => t.status === 'pending').length,
-      estimatedHours: tasks.reduce((sum, t) => sum + t.estimatedHours, 0),
-      actualHours: tasks.reduce((sum, t) => sum + t.actualHours, 0)
+      completed: tasks.filter(task => task.status === 'completed').length,
+      inProgress: tasks.filter(task => task.status === 'in-progress').length,
+      pending: tasks.filter(task => task.status === 'pending').length,
+      estimatedHours: tasks.reduce((sum, task) => sum + task.estimatedHours, 0),
+      actualHours: tasks.reduce((sum, task) => sum + task.actualHours, 0)
     }));
   }, []);
 

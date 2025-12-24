@@ -36,7 +36,7 @@ export const markTaskIncomplete = (taskId: string): void => {
 export const addToViewHistory = (section: Section): void => {
   if (typeof window === 'undefined') return;
   const history = getViewHistory();
-  const updated = [section, ...history.filter(s => s !== section)].slice(0, 10);
+  const updated = [section, ...history.filter(historySection => historySection !== section)].slice(0, 10);
   localStorage.setItem(STORAGE_KEYS.VIEW_HISTORY, JSON.stringify(updated));
 };
 
@@ -59,7 +59,7 @@ export const toggleBookmark = (id: string): boolean => {
   let updated;
   
   if (isBookmarked) {
-    updated = bookmarks.filter(b => b !== id);
+    updated = bookmarks.filter(bookmarkId => bookmarkId !== id);
   } else {
     updated = [...bookmarks, id];
   }

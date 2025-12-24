@@ -193,7 +193,7 @@ export function ExecutiveDashboard() {
           {/* Critical Path Items */}
           <div>
             <h2 className="text-2xl text-slate-900 mb-4">
-              Critical Path Items ({status.criticalItems.filter(i => i.status !== 'done').length} Active)
+              Critical Path Items ({status.criticalItems.filter(item => item.status !== 'done').length} Active)
             </h2>
             <div className="space-y-3">
               {status.criticalItems.map(item => (

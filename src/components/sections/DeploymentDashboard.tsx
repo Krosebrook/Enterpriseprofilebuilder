@@ -141,10 +141,10 @@ export function DeploymentDashboard() {
 
     const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `deployment-status-${new Date().toISOString().split('T')[0]}.json`;
-    a.click();
+    const anchorElement = document.createElement('a');
+    anchorElement.href = url;
+    anchorElement.download = `deployment-status-${new Date().toISOString().split('T')[0]}.json`;
+    anchorElement.click();
     URL.revokeObjectURL(url);
   };
 
@@ -616,11 +616,11 @@ function TeamView() {
     return Array.from(assigneeMap.entries()).map(([name, tasks]) => ({
       name,
       tasks,
-      completed: tasks.filter(t => t.status === 'completed').length,
-      inProgress: tasks.filter(t => t.status === 'in-progress').length,
-      pending: tasks.filter(t => t.status === 'pending').length,
-      estimatedHours: tasks.reduce((sum, t) => sum + t.estimatedHours, 0),
-      actualHours: tasks.reduce((sum, t) => sum + t.actualHours, 0)
+      completed: tasks.filter(task => task.status === 'completed').length,
+      inProgress: tasks.filter(task => task.status === 'in-progress').length,
+      pending: tasks.filter(task => task.status === 'pending').length,
+      estimatedHours: tasks.reduce((sum, task) => sum + task.estimatedHours, 0),
+      actualHours: tasks.reduce((sum, task) => sum + task.actualHours, 0)
     }));
   }, []);
 

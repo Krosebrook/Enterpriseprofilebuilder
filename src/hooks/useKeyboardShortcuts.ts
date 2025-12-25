@@ -17,15 +17,15 @@ export function useKeyboardShortcuts(shortcuts: Shortcut[]) {
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       shortcuts.forEach(({ key, ctrl, alt, shift, handler }) => {
-        const ctrlMatch = ctrl ? event.ctrlKey || event.metaKey : !event.ctrlKey && !event.metaKey;
-        const altMatch = alt ? event.altKey : !event.altKey;
-        const shiftMatch = shift ? event.shiftKey : !event.shiftKey;
+        const isCtrlPressed = ctrl ? event.ctrlKey || event.metaKey : !event.ctrlKey && !event.metaKey;
+        const isAltPressed = alt ? event.altKey : !event.altKey;
+        const isShiftPressed = shift ? event.shiftKey : !event.shiftKey;
 
         if (
           event.key.toLowerCase() === key.toLowerCase() &&
-          ctrlMatch &&
-          altMatch &&
-          shiftMatch
+          isCtrlPressed &&
+          isAltPressed &&
+          isShiftPressed
         ) {
           event.preventDefault();
           handler();

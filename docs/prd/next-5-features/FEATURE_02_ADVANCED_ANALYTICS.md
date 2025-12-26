@@ -244,7 +244,7 @@ interface BusinessImpactMetrics {
   };
   productivity: {
     tasksAutomated: number;
-    hoursS saved: number;
+    hoursSaved: number;
     costSavings: number;
     efficiencyGain: number;      // % improvement
   };

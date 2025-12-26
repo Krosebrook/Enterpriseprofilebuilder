@@ -32,7 +32,7 @@ describe('Search Utilities', () => {
       const results = searchContent('ai');
       if (results.length > 1) {
         for (let i = 0; i < results.length - 1; i++) {
-          expect(results[i].relevance).toBeGreaterThanOrEqual(results[i + 1].relevance);
+          expect(results[i]?.relevance || 0).toBeGreaterThanOrEqual(results[i + 1]?.relevance || 0);
         }
       }
     });

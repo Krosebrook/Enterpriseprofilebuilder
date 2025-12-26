@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Shield, AlertTriangle, CheckCircle, DollarSign, Lock, Sparkles, Terminal, ArrowRight } from 'lucide-react';
 import { baselineOptionsData } from '../../data/baseline-options';
 import { useNavigation } from '../../contexts/NavigationContext';

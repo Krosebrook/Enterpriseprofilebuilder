@@ -15,7 +15,7 @@
  * @since 2025-12-21
  */
 
-import React, { ReactNode } from 'react';
+import { type ReactNode } from 'react';
 import { ThemeProvider as NextThemesProvider } from 'next-themes';
 import type { ThemeProviderProps as NextThemesProviderProps } from 'next-themes';
 

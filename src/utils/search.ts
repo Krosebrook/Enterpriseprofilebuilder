@@ -3,7 +3,7 @@ import { faqData } from '../data/faq';
 import { featuresData } from '../data/features';
 import { mcpServersData } from '../data/mcp-servers';
 import { roleProfilesData } from '../data/role-profiles';
-import { platforms, models, features as ecosystemFeatures, mcpServers as ecosystemServers, skills } from '../data/ecosystem';
+import { platforms, models, skills } from '../data/ecosystem';
 
 /**
  * Performs a fuzzy search across all content
@@ -20,7 +20,7 @@ export function searchContent(query: string): SearchResult[] {
   faqData.forEach((faq) => {
     const questionMatch = faq.question.toLowerCase().includes(normalizedQuery);
     const answerMatch = faq.answer.toLowerCase().includes(normalizedQuery);
-    const tagMatch = faq.tags.some(tag => tag.toLowerCase().includes(normalizedQuery));
+    const tagMatch = faq.tags.some((tag: string) => tag.toLowerCase().includes(normalizedQuery));
 
     if (questionMatch || answerMatch || tagMatch) {
       results.push({
@@ -59,7 +59,7 @@ export function searchContent(query: string): SearchResult[] {
     const nameMatch = server.name.toLowerCase().includes(normalizedQuery);
     const descriptionMatch = server.description.toLowerCase().includes(normalizedQuery);
     const useCaseMatch = server.useCases.some(
-      useCase => useCase.toLowerCase().includes(normalizedQuery)
+      (useCase: string) => useCase.toLowerCase().includes(normalizedQuery)
     );
 
     if (nameMatch || descriptionMatch || useCaseMatch) {
@@ -124,13 +124,13 @@ export function searchContent(query: string): SearchResult[] {
 
   // Search Ecosystem Skills
   skills.forEach((skill) => {
-    if (skill.name.toLowerCase().includes(normalizedQuery) || skill.description.toLowerCase().includes(normalizedQuery)) {
+    if (skill.name.toLowerCase().includes(normalizedQuery) || (skill.description && skill.description.toLowerCase().includes(normalizedQuery))) {
       results.push({
         id: `ecosystem-skill-${skill.id}`,
         title: skill.name,
         section: 'ecosystem',
-        content: skill.description,
-        relevance: calculateRelevance(normalizedQuery, skill.name, skill.description, []),
+        content: skill.description || '',
+        relevance: calculateRelevance(normalizedQuery, skill.name, skill.description || '', []),
         path: ['Ecosystem', 'Skills', skill.name]
       });
     }

@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Menu, Search, X } from 'lucide-react';
+import { useState } from 'react';
+import { Menu } from 'lucide-react';
 import { useNavigation } from '../../contexts/NavigationContext';
 import { useSearch } from '../../hooks/useSearch';
 import { RoleSelector } from '../controls/RoleSelector';
@@ -65,7 +65,7 @@ export function TopBar() {
                  <SearchResults
                     results={searchResults}
                     query={searchQuery}
-                    onResultClick={(section) => {
+                    onResultClick={(_section) => {
                        // Handled by context in SearchResults usually, or we pass a handler
                        // Existing SearchResults calls onResultClick(section)
                        // We need to bridge this to context

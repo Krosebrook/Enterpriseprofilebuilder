@@ -2,7 +2,7 @@ import { DollarSign, TrendingUp, Code, Megaphone, Settings as SettingsIcon, User
 import { useNavigation } from '../../contexts/NavigationContext';
 import { Role } from '../../types';
 import { SectionHeader } from '../common/SectionHeader';
-import { Card } from '../ui/Card';
+import { Card } from '../ui/card';
 
 export function RoleProfiles() {
   const { selectedRole } = useNavigation();
@@ -215,7 +215,7 @@ export function RoleProfiles() {
              blue: { bg: 'bg-blue-50', border: 'border-blue-200', text: 'text-blue-700', icon: 'text-blue-600' },
              purple: { bg: 'bg-indigo-50', border: 'border-indigo-200', text: 'text-indigo-700', icon: 'text-indigo-600' },
              orange: { bg: 'bg-amber-50', border: 'border-amber-200', text: 'text-amber-700', icon: 'text-amber-600' }
-          }[profile.color as string] || { bg: 'bg-slate-50', border: 'border-slate-200', text: 'text-slate-700', icon: 'text-slate-600' };
+          }[profile.color] || { bg: 'bg-slate-50', border: 'border-slate-200', text: 'text-slate-700', icon: 'text-slate-600' };
 
           return (
             <div key={profile.role} className="space-y-6">

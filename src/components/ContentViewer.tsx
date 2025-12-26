@@ -1,6 +1,4 @@
-import React from 'react';
 import { useNavigation } from '../contexts/NavigationContext';
-import { useToast } from '../contexts/ToastContext';
 
 // Legacy Sections (to be refactored later if needed, but keeping for now as they work)
 import { BaselinePrompt } from './sections/BaselinePrompt';
@@ -22,7 +20,6 @@ import { IntegrationMarketplace } from '../features/integrations/IntegrationMark
 
 export function ContentViewer() {
   const { activeSection, selectedRole, searchQuery } = useNavigation();
-  const { addToast } = useToast();
 
   const renderSection = () => {
     switch (activeSection) {

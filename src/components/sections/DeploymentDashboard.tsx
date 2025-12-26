@@ -30,9 +30,9 @@ import {
   ChevronDown,
   ChevronRight
 } from 'lucide-react';
-import { Badge } from '../ui/Badge';
+import { Badge } from '../ui/badge';
 import { Button } from '../ui/Button';
-import { Card } from '../ui/Card';
+import { Card } from '../ui/card';
 import { ProgressBar } from '../ui/ProgressBar';
 import {
   deploymentPhases,

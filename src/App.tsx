@@ -1,4 +1,3 @@
-import React from 'react';
 import { AppProvider } from './providers/AppProvider';
 import { useToast } from './contexts/ToastContext';
 import { MainLayout } from './components/layout/MainLayout';

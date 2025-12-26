@@ -4,7 +4,7 @@ import { baselineOptionsData } from '../../data/baseline-options';
 import { useNavigation } from '../../contexts/NavigationContext';
 import { Button } from '../ui/Button';
 import { SectionHeader } from '../common/SectionHeader';
-import { Card } from '../ui/Card';
+import { Card } from '../ui/card';
 
 export function BaselinePrompt() {
   const { selectedRole } = useNavigation();

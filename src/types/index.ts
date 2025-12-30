@@ -1,7 +1,7 @@
 // Core Types
 import { LucideIcon } from 'lucide-react';
 
-export type Section = 
+export type Section =
   | 'overview'
   | 'ecosystem'
   | 'baseline'
@@ -13,7 +13,8 @@ export type Section =
   | 'deployment'
   | 'governance'
   | 'operations'
-  | 'reference'; // Added reference
+  | 'reference'
+  | 'integrations';
 
 export type Role = 
   | 'All' 

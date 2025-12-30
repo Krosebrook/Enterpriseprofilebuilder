@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, ReactNode } from 'react';
+import { createContext, useContext, useState, type ReactNode } from 'react';
 import { Section, Role } from '../types';
 import { useLocalStorage } from '../hooks/useLocalStorage';
 import { trackPageView } from '../utils/analytics';

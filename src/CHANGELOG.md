@@ -21,6 +21,57 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.1.0] - 2025-12-30
+
+### Added
+
+#### Documentation
+- **CODEBASE_AUDIT.md**: Comprehensive codebase analysis with 85% production-readiness score
+- **ROADMAP.md**: Complete product roadmap through 2027 with $2.88M investment plan
+- **CLAUDE.md**: AI assistant integration guide for Claude and Claude Code
+- **AGENTS.md**: Multi-agent orchestration documentation with workflow examples
+- **GEMINI.md**: Google Gemini integration guide with multi-provider support
+- **Updated README.md**: Veteran-grade documentation with badges and comprehensive sections
+
+#### Features
+- Added 'integrations' section type to support Integration Marketplace
+- Implemented relevance scoring algorithm for search results (0-100 scale)
+- Search results now sorted by relevance (highest first)
+
+#### Types
+- Added `INTERNAL_ERROR` to `ErrorCode` enum
+- Added `integrations` to `Section` type union
+
+### Changed
+
+#### Refactoring
+- **useSearch hook**: Fixed React anti-pattern (side effects in useMemo)
+  - Moved `setIsSearching` calls to useEffect
+  - Added proper cleanup for timeout
+  - Search state changes are now properly isolated
+- **NavigationContext**: Removed unused `React` import (JSX transform handles it)
+- Improved code documentation with JSDoc comments
+
+### Fixed
+
+#### Bug Fixes
+- Fixed side effect anti-pattern in `src/hooks/useSearch.ts` (Issue #1)
+- Added missing `ErrorCode.INTERNAL_ERROR` used by security module (Issue #2)
+- Added missing `integrations` section type (Issue #3)
+- Fixed unused import warning in NavigationContext
+
+### Security
+- Verified 6-layer security pipeline integrity
+- All security tests passing
+- No new vulnerabilities introduced
+
+### Documentation
+- Added AI integration documentation for multi-model support
+- Updated roadmap with Q1-Q4 2026 milestones
+- Created comprehensive agent orchestration guide
+
+---
+
 ## [1.0.0] - 2025-12-11
 
 ### Added

@@ -2,7 +2,7 @@ import React from 'react';
 
 interface BadgeProps {
   children: React.ReactNode;
-  variant?: 'default' | 'success' | 'warning' | 'danger' | 'info' | 'outline' | 'secondary' | 'destructive' | 'error';
+  variant?: 'default' | 'success' | 'warning' | 'danger' | 'info' | 'outline';
   size?: 'sm' | 'md';
   className?: string;
 }
@@ -15,9 +15,6 @@ export function Badge({ children, variant = 'default', size = 'md', className = 
     danger: "bg-red-100 text-red-700 border-red-200",
     info: "bg-blue-100 text-blue-700 border-blue-200",
     outline: "bg-transparent border-slate-300 text-slate-600",
-    secondary: "bg-slate-200 text-slate-800 border-slate-300",
-    destructive: "bg-rose-100 text-rose-700 border-rose-200",
-    error: "bg-rose-100 text-rose-700 border-rose-200",
   };
 
   const sizes = {

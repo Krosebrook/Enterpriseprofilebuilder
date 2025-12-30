@@ -20,6 +20,9 @@ import { ReferenceLibrary } from '../features/library/ReferenceLibrary';
 import { EcosystemExplorer } from '../features/ecosystem/EcosystemExplorer';
 import { IntegrationMarketplace } from '../features/integrations/IntegrationMarketplace';
 
+// Profile Builder
+import { ProfileWizard } from './profile';
+
 export function ContentViewer() {
   const { activeSection, selectedRole, searchQuery } = useNavigation();
   const { addToast } = useToast();
@@ -28,6 +31,8 @@ export function ContentViewer() {
     switch (activeSection) {
       case 'overview':
         return <Dashboard />;
+      case 'profile':
+        return <ProfileWizard />;
       case 'ecosystem':
         return <EcosystemExplorer />;
       case 'baseline':
@@ -50,7 +55,7 @@ export function ContentViewer() {
         return <OperationsManual />;
       case 'reference':
         return <ReferenceLibrary />;
-      case 'integrations': // New Route
+      case 'integrations':
         return <IntegrationMarketplace />;
       default:
         return <Dashboard />;

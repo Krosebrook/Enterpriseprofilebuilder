@@ -2,7 +2,7 @@ import { useState, useMemo } from 'react';
 import { ChevronDown, ChevronUp, Bookmark as BookmarkIcon, Link as LinkIcon, HelpCircle } from 'lucide-react';
 import { FAQLevel } from '../../types';
 import { faqData } from '../../data/faq';
-import { Badge } from '../ui/Badge';
+import { Badge } from '../ui/badge';
 import { BookmarkButton } from '../BookmarkButton';
 import { CopyToClipboard } from '../CopyToClipboard';
 import { SectionHeader } from '../common/SectionHeader';

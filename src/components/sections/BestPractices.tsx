@@ -4,7 +4,7 @@ import { bestPracticesData } from '../../data/best-practices';
 import { tutorialsData } from '../../data/tutorials';
 import { useNavigation } from '../../contexts/NavigationContext';
 import { GlobalBestPracticeCategory } from '../../types';
-import { Card } from '../ui/Card';
+import { Card } from '../ui/card';
 import { Button } from '../ui/Button';
 import { SectionHeader } from '../common/SectionHeader';
 import { InteractiveTutorial } from './InteractiveTutorial';

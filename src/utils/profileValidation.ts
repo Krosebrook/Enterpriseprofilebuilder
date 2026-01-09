@@ -154,12 +154,12 @@ export function isProfileReadyForExport(profile: ClaudeProfile): boolean {
  * @param fallback - Fallback value if field is null/undefined
  * @returns The field value or fallback
  */
-export function safeGetProfileField<T>(
+export function safeGetProfileField<K extends keyof ClaudeProfile>(
   profile: ClaudeProfile | null | undefined,
-  field: keyof ClaudeProfile,
-  fallback: T
-): T {
+  field: K,
+  fallback: ClaudeProfile[K]
+): ClaudeProfile[K] {
   if (!profile) return fallback;
   const value = profile[field];
-  return value !== null && value !== undefined ? (value as unknown as T) : fallback;
+  return value !== null && value !== undefined ? value : fallback;
 }

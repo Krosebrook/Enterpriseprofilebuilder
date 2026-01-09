@@ -62,12 +62,7 @@ export function ProfileExport() {
   };
 
   const handleSave = () => {
-    // Validate before saving
-    const validation = validateProfile(currentProfile);
-    if (!validation.isValid) {
-      // Show validation errors - in production, you might show a toast/modal
-      console.warn('Profile validation errors:', validation.errors);
-    }
+    // Validation errors are displayed in the UI, no need for console warnings
     saveProfile(profileName);
     completeWizard();
   };

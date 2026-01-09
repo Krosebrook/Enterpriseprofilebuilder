@@ -76,6 +76,10 @@ function calculateCompleteness(profile: ClaudeProfile): CompletionItem[] {
   ];
 }
 
+// Completion scoring weights
+const REQUIRED_FIELD_WEIGHT = 70; // Required fields worth 70% of total score
+const OPTIONAL_FIELD_WEIGHT = 30; // Optional fields worth 30% of total score
+
 export function ProfileCompletenessIndicator({
   profile,
   showDetails = true,
@@ -92,9 +96,13 @@ export function ProfileCompletenessIndicator({
   ).length;
   const totalOptional = completionItems.filter((item) => !item.required).length;
 
-  // Weight required items more heavily (70% of score)
-  const requiredScore = totalRequired > 0 ? (completedRequired / totalRequired) * 70 : 70;
-  const optionalScore = totalOptional > 0 ? (completedOptional / totalOptional) * 30 : 0;
+  // Weight required items more heavily
+  const requiredScore =
+    totalRequired > 0
+      ? (completedRequired / totalRequired) * REQUIRED_FIELD_WEIGHT
+      : REQUIRED_FIELD_WEIGHT;
+  const optionalScore =
+    totalOptional > 0 ? (completedOptional / totalOptional) * OPTIONAL_FIELD_WEIGHT : 0;
   const completionPercentage = Math.round(requiredScore + optionalScore);
 
   const isComplete = completedRequired === totalRequired;

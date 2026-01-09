@@ -58,7 +58,7 @@ export function ProfileIconSelector({ currentIcon, onIconChange }: ProfileIconSe
       return `Invalid file type. Please upload PNG, JPEG, WebP, or SVG images.`;
     }
     if (file.size > MAX_FILE_SIZE) {
-      return `File size must be less than 2MB. Current size: ${(file.size / 1024 / 1024).toFixed(2)}MB`;
+      return `File size must be less than 2MB. Current size: ${(file.size / FILE_SIZE_DISPLAY_UNIT).toFixed(2)}MB`;
     }
     return null;
   }, []);
@@ -185,7 +185,7 @@ export function ProfileIconSelector({ currentIcon, onIconChange }: ProfileIconSe
                 key={emoji}
                 onClick={() => handleEmojiSelect(emoji)}
                 className={`
-                  h-10 rounded-lg border-2 transition-all
+                  relative h-10 rounded-lg border-2 transition-all
                   flex items-center justify-center text-2xl
                   hover:border-amber-400 hover:bg-amber-50
                   ${
@@ -197,7 +197,9 @@ export function ProfileIconSelector({ currentIcon, onIconChange }: ProfileIconSe
               >
                 {emoji}
                 {selectedEmoji === emoji && (
-                  <Check className="absolute w-4 h-4 text-amber-600 ml-6 mt-6" />
+                  <div className="absolute inset-0 flex items-end justify-end p-1">
+                    <Check className="w-4 h-4 text-amber-600" />
+                  </div>
                 )}
               </button>
             ))}

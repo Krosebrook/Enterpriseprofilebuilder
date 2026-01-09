@@ -4,6 +4,7 @@
  */
 
 import { logger } from './logger';
+import { getEnv } from './env';
 
 /**
  * Security event types for monitoring
@@ -53,13 +54,13 @@ export class SecurityNotificationService {
 
   constructor() {
     // Load configuration from environment (Vite uses import.meta.env in browser)
-    const emailList = import.meta.env.VITE_SECURITY_EMAIL_RECIPIENTS as string | undefined;
+    const emailList = getEnv('VITE_SECURITY_EMAIL_RECIPIENTS');
     if (emailList) {
       this.emailRecipients = emailList.split(',').map(e => e.trim());
     }
     
-    this.slackWebhookUrl = import.meta.env.VITE_SLACK_SECURITY_WEBHOOK as string | undefined;
-    this.pagerDutyApiKey = import.meta.env.VITE_PAGERDUTY_API_KEY as string | undefined;
+    this.slackWebhookUrl = getEnv('VITE_SLACK_SECURITY_WEBHOOK');
+    this.pagerDutyApiKey = getEnv('VITE_PAGERDUTY_API_KEY');
   }
 
   /**
@@ -150,16 +151,16 @@ Action Required: Review the security dashboard for details.
   /**
    * Send email notification
    */
-  private async sendEmail(message: string, metadata: SecurityEventMetadata): Promise<void> {
+  private sendEmail(_message: string, _metadata: SecurityEventMetadata): Promise<void> {
     if (this.emailRecipients.length === 0) {
       logger.debug('Email notification skipped: No recipients configured');
-      return;
+      return Promise.resolve();
     }
 
     // In production, integrate with email service (SendGrid, AWS SES, etc.)
     logger.info('Email notification would be sent', {
       recipients: this.emailRecipients,
-      subject: `Security Alert: ${metadata.riskLevel || 'Unknown'}`,
+      subject: `Security Alert: ${_metadata.riskLevel || 'Unknown'}`,
     });
 
     // TODO (Q1 2026): Implement email service integration
@@ -174,12 +175,14 @@ Action Required: Review the security dashboard for details.
     //   text: message,
     //   html: formatAsHtml(message)
     // })
+    
+    return Promise.resolve();
   }
 
   /**
    * Send Slack notification
    */
-  private async sendSlack(message: string, metadata: SecurityEventMetadata): Promise<void> {
+  private async sendSlack(message: string, _metadata: SecurityEventMetadata): Promise<void> {
     if (!this.slackWebhookUrl) {
       logger.debug('Slack notification skipped: No webhook configured');
       return;
@@ -216,10 +219,10 @@ Action Required: Review the security dashboard for details.
   /**
    * Send PagerDuty notification
    */
-  private async sendPagerDuty(message: string, metadata: SecurityEventMetadata): Promise<void> {
+  private sendPagerDuty(_message: string, _metadata: SecurityEventMetadata): Promise<void> {
     if (!this.pagerDutyApiKey) {
       logger.debug('PagerDuty notification skipped: No API key configured');
-      return;
+      return Promise.resolve();
     }
 
     // TODO (Q1 2026): Implement PagerDuty Events API v2 integration
@@ -243,14 +246,16 @@ Action Required: Review the security dashboard for details.
     //     }
     //   })
     // })
-    logger.info('PagerDuty notification would be sent', { metadata });
+    logger.info('PagerDuty notification would be sent', { metadata: _metadata });
+    
+    return Promise.resolve();
   }
 
   /**
    * Send webhook notification
    */
   private async sendWebhook(message: string, metadata: SecurityEventMetadata): Promise<void> {
-    const webhookUrl = import.meta.env.VITE_SECURITY_WEBHOOK_URL as string | undefined;
+    const webhookUrl = getEnv('VITE_SECURITY_WEBHOOK_URL');
     
     if (!webhookUrl) {
       logger.debug('Webhook notification skipped: No URL configured');

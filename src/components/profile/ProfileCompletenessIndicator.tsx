@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useMemo, memo } from 'react';
 import { CheckCircle2, Circle, AlertCircle } from 'lucide-react';
 import { ClaudeProfile } from '../../stores/profileStore';
 import { Card } from '../ui/Card';
@@ -194,3 +194,6 @@ export function ProfileCompletenessIndicator({
     </Card>
   );
 }
+
+// Memoize component to prevent unnecessary re-renders
+export const MemoizedProfileCompletenessIndicator = memo(ProfileCompletenessIndicator);

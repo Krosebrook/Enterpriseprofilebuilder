@@ -1,4 +1,4 @@
-import { useState, useRef, ChangeEvent } from 'react';
+import { useState, useRef, ChangeEvent, memo, useCallback } from 'react';
 import { Upload, Image as ImageIcon, X, Check } from 'lucide-react';
 import { Button } from '../ui/button';
 import { Card } from '../ui/Card';
@@ -53,7 +53,7 @@ export function ProfileIconSelector({ currentIcon, onIconChange }: ProfileIconSe
   /**
    * Validates uploaded file for size and type
    */
-  const validateFile = (file: File): string | null => {
+  const validateFile = useCallback((file: File): string | null => {
     if (!ALLOWED_TYPES.includes(file.type)) {
       return `Invalid file type. Please upload PNG, JPEG, WebP, or SVG images.`;
     }
@@ -61,46 +61,52 @@ export function ProfileIconSelector({ currentIcon, onIconChange }: ProfileIconSe
       return `File size must be less than 2MB. Current size: ${(file.size / 1024 / 1024).toFixed(2)}MB`;
     }
     return null;
-  };
+  }, []);
 
   /**
    * Handles file upload and converts to base64 for preview and storage
    */
-  const handleFileUpload = (event: ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (!file) return;
+  const handleFileUpload = useCallback(
+    (event: ChangeEvent<HTMLInputElement>) => {
+      const file = event.target.files?.[0];
+      if (!file) return;
 
-    setError(null);
+      setError(null);
 
-    // Validate file
-    const validationError = validateFile(file);
-    if (validationError) {
-      setError(validationError);
-      return;
-    }
+      // Validate file
+      const validationError = validateFile(file);
+      if (validationError) {
+        setError(validationError);
+        return;
+      }
 
-    // Convert to base64 for preview and storage
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      const result = e.target?.result as string;
-      setUploadedImage(result);
-      setSelectedEmoji(null);
-      onIconChange(result);
-    };
-    reader.onerror = () => {
-      setError('Failed to read file. Please try again.');
-    };
-    reader.readAsDataURL(file);
-  };
+      // Convert to base64 for preview and storage
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const result = e.target?.result as string;
+        setUploadedImage(result);
+        setSelectedEmoji(null);
+        onIconChange(result);
+      };
+      reader.onerror = () => {
+        setError('Failed to read file. Please try again.');
+      };
+      reader.readAsDataURL(file);
+    },
+    [validateFile, onIconChange]
+  );
 
-  const handleEmojiSelect = (emoji: string) => {
-    setSelectedEmoji(emoji);
-    setUploadedImage(null);
-    setError(null);
-    onIconChange(emoji);
-  };
+  const handleEmojiSelect = useCallback(
+    (emoji: string) => {
+      setSelectedEmoji(emoji);
+      setUploadedImage(null);
+      setError(null);
+      onIconChange(emoji);
+    },
+    [onIconChange]
+  );
 
-  const handleRemove = () => {
+  const handleRemove = useCallback(() => {
     setUploadedImage(null);
     setSelectedEmoji(null);
     setError(null);
@@ -108,7 +114,7 @@ export function ProfileIconSelector({ currentIcon, onIconChange }: ProfileIconSe
     if (fileInputRef.current) {
       fileInputRef.current.value = '';
     }
-  };
+  }, [onIconChange]);
 
   return (
     <Card className="p-4">
@@ -201,3 +207,6 @@ export function ProfileIconSelector({ currentIcon, onIconChange }: ProfileIconSe
     </Card>
   );
 }
+
+// Memoize component to prevent unnecessary re-renders
+export const MemoizedProfileIconSelector = memo(ProfileIconSelector);

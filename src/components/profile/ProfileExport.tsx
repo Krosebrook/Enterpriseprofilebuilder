@@ -1,6 +1,17 @@
 import { useState } from 'react';
-import { Download, Copy, Check, FileJson, FileText, Eye, AlertTriangle, Save, Trash2 } from 'lucide-react';
+import {
+  Download,
+  Copy,
+  Check,
+  FileJson,
+  FileText,
+  Eye,
+  AlertTriangle,
+  Save,
+  Trash2,
+} from 'lucide-react';
 import { useProfileStore } from '../../stores/profileStore';
+import { validateProfile, isProfileReadyForExport } from '../../utils/profileValidation';
 import { Card } from '../ui/Card';
 import { Badge } from '../ui/Badge';
 import { Button } from '../ui/button';
@@ -26,9 +37,15 @@ export function ProfileExport() {
 
   const handleCopy = () => {
     const content = exportFormat === 'json' ? exportProfileAsJSON() : exportProfileAsYAML();
-    navigator.clipboard.writeText(content);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
+    void navigator.clipboard
+      .writeText(content)
+      .then(() => {
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2000);
+      })
+      .catch((err) => {
+        console.error('Failed to copy to clipboard:', err);
+      });
   };
 
   const handleDownload = () => {
@@ -45,15 +62,20 @@ export function ProfileExport() {
   };
 
   const handleSave = () => {
+    // Validation errors are displayed in the UI, no need for console warnings
     saveProfile(profileName);
     completeWizard();
   };
+
+  // Get validation results
+  const validation = validateProfile(currentProfile);
+  const canExport = isProfileReadyForExport(currentProfile);
 
   const getProfileCompleteness = () => {
     let score = 0;
     if (currentProfile.role) score += 20;
     if (currentProfile.enabledFeatures.length > 0) score += 20;
-    if (currentProfile.connectedTools.some(t => t.connected)) score += 20;
+    if (currentProfile.connectedTools.some((t) => t.connected)) score += 20;
     if (currentProfile.escalationRules.length > 0) score += 20;
     if (currentProfile.baselinePrompt) score += 20;
     return score;
@@ -70,12 +92,48 @@ export function ProfileExport() {
         </p>
       </div>
 
+      {/* Validation Errors */}
+      {!canExport && validation.errors.length > 0 && (
+        <Card className="p-4 border-red-200 bg-red-50">
+          <div className="flex items-start gap-3">
+            <AlertTriangle className="w-5 h-5 text-red-600 mt-0.5 shrink-0" />
+            <div className="flex-1">
+              <h3 className="font-semibold text-red-900 mb-2">Profile Incomplete</h3>
+              <ul className="space-y-1 text-sm text-red-700">
+                {validation.errors.map((error, i) => (
+                  <li key={i}>• {error.message}</li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        </Card>
+      )}
+
+      {/* Validation Warnings */}
+      {validation.warnings.length > 0 && (
+        <Card className="p-4 border-yellow-200 bg-yellow-50">
+          <div className="flex items-start gap-3">
+            <AlertTriangle className="w-5 h-5 text-yellow-600 mt-0.5 shrink-0" />
+            <div className="flex-1">
+              <h3 className="font-semibold text-yellow-900 mb-2">Recommendations</h3>
+              <ul className="space-y-1 text-sm text-yellow-700">
+                {validation.warnings.map((warning, i) => (
+                  <li key={i}>• {warning.message}</li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        </Card>
+      )}
+
       {/* Completeness Score */}
       <Card className="p-6">
         <div className="flex items-center justify-between mb-4">
           <h3 className="font-semibold text-slate-900">Profile Completeness</h3>
           <Badge
-            variant={completeness === 100 ? 'default' : completeness >= 60 ? 'secondary' : 'destructive'}
+            variant={
+              completeness === 100 ? 'default' : completeness >= 60 ? 'secondary' : 'destructive'
+            }
             className={completeness === 100 ? 'bg-emerald-500' : ''}
           >
             {completeness}%
@@ -85,7 +143,11 @@ export function ProfileExport() {
         <div className="w-full bg-slate-200 rounded-full h-3">
           <div
             className={`h-3 rounded-full transition-all ${
-              completeness === 100 ? 'bg-emerald-500' : completeness >= 60 ? 'bg-amber-500' : 'bg-rose-500'
+              completeness === 100
+                ? 'bg-emerald-500'
+                : completeness >= 60
+                  ? 'bg-amber-500'
+                  : 'bg-rose-500'
             }`}
             style={{ width: `${completeness}%` }}
           />
@@ -95,14 +157,43 @@ export function ProfileExport() {
           <div className={currentProfile.role ? 'text-emerald-600' : 'text-slate-400'}>
             {currentProfile.role ? <Check className="w-4 h-4 mx-auto" /> : '○'} Role
           </div>
-          <div className={currentProfile.enabledFeatures.length > 0 ? 'text-emerald-600' : 'text-slate-400'}>
-            {currentProfile.enabledFeatures.length > 0 ? <Check className="w-4 h-4 mx-auto" /> : '○'} Features
+          <div
+            className={
+              currentProfile.enabledFeatures.length > 0 ? 'text-emerald-600' : 'text-slate-400'
+            }
+          >
+            {currentProfile.enabledFeatures.length > 0 ? (
+              <Check className="w-4 h-4 mx-auto" />
+            ) : (
+              '○'
+            )}{' '}
+            Features
           </div>
-          <div className={currentProfile.connectedTools.some(t => t.connected) ? 'text-emerald-600' : 'text-slate-400'}>
-            {currentProfile.connectedTools.some(t => t.connected) ? <Check className="w-4 h-4 mx-auto" /> : '○'} Tools
+          <div
+            className={
+              currentProfile.connectedTools.some((t) => t.connected)
+                ? 'text-emerald-600'
+                : 'text-slate-400'
+            }
+          >
+            {currentProfile.connectedTools.some((t) => t.connected) ? (
+              <Check className="w-4 h-4 mx-auto" />
+            ) : (
+              '○'
+            )}{' '}
+            Tools
           </div>
-          <div className={currentProfile.escalationRules.length > 0 ? 'text-emerald-600' : 'text-slate-400'}>
-            {currentProfile.escalationRules.length > 0 ? <Check className="w-4 h-4 mx-auto" /> : '○'} Rules
+          <div
+            className={
+              currentProfile.escalationRules.length > 0 ? 'text-emerald-600' : 'text-slate-400'
+            }
+          >
+            {currentProfile.escalationRules.length > 0 ? (
+              <Check className="w-4 h-4 mx-auto" />
+            ) : (
+              '○'
+            )}{' '}
+            Rules
           </div>
           <div className={currentProfile.baselinePrompt ? 'text-emerald-600' : 'text-slate-400'}>
             {currentProfile.baselinePrompt ? <Check className="w-4 h-4 mx-auto" /> : '○'} Prompt
@@ -123,21 +214,27 @@ export function ProfileExport() {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
           <div className="p-3 bg-slate-50 rounded-lg">
             <p className="text-xs text-slate-500 uppercase font-medium">Role</p>
-            <p className="font-semibold text-slate-900 truncate">{currentProfile.role || 'Not set'}</p>
+            <p className="font-semibold text-slate-900 truncate">
+              {currentProfile.role || 'Not set'}
+            </p>
           </div>
           <div className="p-3 bg-slate-50 rounded-lg">
             <p className="text-xs text-slate-500 uppercase font-medium">Features</p>
-            <p className="font-semibold text-slate-900">{currentProfile.enabledFeatures.length} enabled</p>
+            <p className="font-semibold text-slate-900">
+              {currentProfile.enabledFeatures.length} enabled
+            </p>
           </div>
           <div className="p-3 bg-slate-50 rounded-lg">
             <p className="text-xs text-slate-500 uppercase font-medium">Tools</p>
             <p className="font-semibold text-slate-900">
-              {currentProfile.connectedTools.filter(t => t.connected).length} connected
+              {currentProfile.connectedTools.filter((t) => t.connected).length} connected
             </p>
           </div>
           <div className="p-3 bg-slate-50 rounded-lg">
             <p className="text-xs text-slate-500 uppercase font-medium">Security</p>
-            <p className="font-semibold text-slate-900 capitalize">{currentProfile.securityLevel}</p>
+            <p className="font-semibold text-slate-900 capitalize">
+              {currentProfile.securityLevel}
+            </p>
           </div>
         </div>
 
@@ -174,7 +271,8 @@ export function ProfileExport() {
           <div className="mt-4 flex items-start gap-2 p-3 bg-amber-50 border border-amber-200 rounded-lg">
             <AlertTriangle className="w-4 h-4 text-amber-500 mt-0.5" />
             <p className="text-sm text-amber-700">
-              Your profile is {completeness}% complete. Consider filling in all sections for best results.
+              Your profile is {completeness}% complete. Consider filling in all sections for best
+              results.
             </p>
           </div>
         )}
@@ -212,15 +310,22 @@ export function ProfileExport() {
         </div>
 
         <div className="flex gap-2">
-          <Button variant="outline" onClick={handleCopy} className="flex-1">
+          <Button variant="outline" onClick={handleCopy} className="flex-1" disabled={!canExport}>
             {copied ? <Check className="w-4 h-4 mr-1" /> : <Copy className="w-4 h-4 mr-1" />}
             {copied ? 'Copied!' : 'Copy to Clipboard'}
           </Button>
-          <Button onClick={handleDownload} className="flex-1 bg-amber-500 hover:bg-amber-600">
+          <Button
+            onClick={handleDownload}
+            className="flex-1 bg-amber-500 hover:bg-amber-600"
+            disabled={!canExport}
+          >
             <Download className="w-4 h-4 mr-1" />
             Download
           </Button>
         </div>
+        {!canExport && (
+          <p className="text-xs text-red-600 mt-2">Please fix validation errors before exporting</p>
+        )}
       </Card>
 
       {/* Saved Profiles */}

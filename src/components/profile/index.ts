@@ -5,3 +5,4 @@ export { ToolIntegrationSetup } from './ToolIntegrationSetup';
 export { EscalationRulesEditor } from './EscalationRulesEditor';
 export { BaselinePromptBuilder } from './BaselinePromptBuilder';
 export { ProfileExport } from './ProfileExport';
+export { default as UserProfile } from './UserProfile';

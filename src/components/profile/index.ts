@@ -5,5 +5,4 @@ export { ToolIntegrationSetup } from './ToolIntegrationSetup';
 export { EscalationRulesEditor } from './EscalationRulesEditor';
 export { BaselinePromptBuilder } from './BaselinePromptBuilder';
 export { ProfileExport } from './ProfileExport';
-export { ProfileCompletenessIndicator } from './ProfileCompletenessIndicator';
-export { ProfileIconSelector } from './ProfileIconSelector';
+export { default as UserProfile } from './UserProfile';

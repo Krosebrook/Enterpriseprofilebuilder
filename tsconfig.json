@@ -38,5 +38,5 @@
   },
   "include": ["src"],
   "exclude": ["src/supabase/**", "src/tests/**"],
-  "references": [{ "path": "./tsconfig.node.json" }]
+  "references": [{ "path": "./tsconfig.node.json" }, { "path": "./tsconfig.test.json" }]
 }

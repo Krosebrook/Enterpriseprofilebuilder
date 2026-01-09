@@ -49,6 +49,7 @@ export interface ClaudeProfile {
   version: string;
   createdAt: Date;
   updatedAt: Date;
+  icon?: string; // Profile icon: emoji or base64 image
 
   // Core Settings
   role: Role | null;
@@ -87,6 +88,7 @@ interface ProfileState {
   // Actions
   setRole: (role: Role) => void;
   setResponsibilities: (responsibilities: string[]) => void;
+  setIcon: (icon: string | null) => void;
   toggleFeature: (feature: FeatureType) => void;
   setEnabledFeatures: (features: FeatureType[]) => void;
 
@@ -159,226 +161,257 @@ export const useProfileStore = create<ProfileState>()(
       savedProfiles: [],
 
       // Role & Responsibilities
-      setRole: (role) => set((state) => ({
-        currentProfile: {
-          ...state.currentProfile,
-          role,
-          updatedAt: new Date(),
-        },
-      })),
+      setRole: (role) =>
+        set((state) => ({
+          currentProfile: {
+            ...state.currentProfile,
+            role,
+            updatedAt: new Date(),
+          },
+        })),
 
-      setResponsibilities: (responsibilities) => set((state) => ({
-        currentProfile: {
-          ...state.currentProfile,
-          responsibilities,
-          updatedAt: new Date(),
-        },
-      })),
+      setResponsibilities: (responsibilities) =>
+        set((state) => ({
+          currentProfile: {
+            ...state.currentProfile,
+            responsibilities,
+            updatedAt: new Date(),
+          },
+        })),
+
+      setIcon: (icon) =>
+        set((state) => ({
+          currentProfile: {
+            ...state.currentProfile,
+            icon: icon ?? undefined,
+            updatedAt: new Date(),
+          },
+        })),
 
       // Features
-      toggleFeature: (feature) => set((state) => {
-        const features = state.currentProfile.enabledFeatures;
-        const newFeatures = features.includes(feature)
-          ? features.filter((f) => f !== feature)
-          : [...features, feature];
+      toggleFeature: (feature) =>
+        set((state) => {
+          const features = state.currentProfile.enabledFeatures;
+          const newFeatures = features.includes(feature)
+            ? features.filter((f) => f !== feature)
+            : [...features, feature];
 
-        return {
+          return {
+            currentProfile: {
+              ...state.currentProfile,
+              enabledFeatures: newFeatures,
+              updatedAt: new Date(),
+            },
+          };
+        }),
+
+      setEnabledFeatures: (features) =>
+        set((state) => ({
           currentProfile: {
             ...state.currentProfile,
-            enabledFeatures: newFeatures,
+            enabledFeatures: features,
             updatedAt: new Date(),
           },
-        };
-      }),
-
-      setEnabledFeatures: (features) => set((state) => ({
-        currentProfile: {
-          ...state.currentProfile,
-          enabledFeatures: features,
-          updatedAt: new Date(),
-        },
-      })),
+        })),
 
       // Tool Connections
-      connectTool: (toolId) => set((state) => ({
-        currentProfile: {
-          ...state.currentProfile,
-          connectedTools: state.currentProfile.connectedTools.map((t) =>
-            t.id === toolId ? { ...t, connected: true, lastSynced: new Date() } : t
-          ),
-          updatedAt: new Date(),
-        },
-      })),
-
-      disconnectTool: (toolId) => set((state) => ({
-        currentProfile: {
-          ...state.currentProfile,
-          connectedTools: state.currentProfile.connectedTools.map((t) =>
-            t.id === toolId ? { ...t, connected: false } : t
-          ),
-          updatedAt: new Date(),
-        },
-      })),
-
-      updateToolConnection: (tool) => set((state) => {
-        const exists = state.currentProfile.connectedTools.find((t) => t.id === tool.id);
-        const newTools = exists
-          ? state.currentProfile.connectedTools.map((t) => (t.id === tool.id ? tool : t))
-          : [...state.currentProfile.connectedTools, tool];
-
-        return {
+      connectTool: (toolId) =>
+        set((state) => ({
           currentProfile: {
             ...state.currentProfile,
-            connectedTools: newTools,
+            connectedTools: state.currentProfile.connectedTools.map((t) =>
+              t.id === toolId ? { ...t, connected: true, lastSynced: new Date() } : t
+            ),
             updatedAt: new Date(),
           },
-        };
-      }),
+        })),
+
+      disconnectTool: (toolId) =>
+        set((state) => ({
+          currentProfile: {
+            ...state.currentProfile,
+            connectedTools: state.currentProfile.connectedTools.map((t) =>
+              t.id === toolId ? { ...t, connected: false } : t
+            ),
+            updatedAt: new Date(),
+          },
+        })),
+
+      updateToolConnection: (tool) =>
+        set((state) => {
+          const exists = state.currentProfile.connectedTools.find((t) => t.id === tool.id);
+          const newTools = exists
+            ? state.currentProfile.connectedTools.map((t) => (t.id === tool.id ? tool : t))
+            : [...state.currentProfile.connectedTools, tool];
+
+          return {
+            currentProfile: {
+              ...state.currentProfile,
+              connectedTools: newTools,
+              updatedAt: new Date(),
+            },
+          };
+        }),
 
       // Escalation Rules
-      addEscalationRule: (rule) => set((state) => ({
-        currentProfile: {
-          ...state.currentProfile,
-          escalationRules: [...state.currentProfile.escalationRules, rule],
-          updatedAt: new Date(),
-        },
-      })),
+      addEscalationRule: (rule) =>
+        set((state) => ({
+          currentProfile: {
+            ...state.currentProfile,
+            escalationRules: [...state.currentProfile.escalationRules, rule],
+            updatedAt: new Date(),
+          },
+        })),
 
-      updateEscalationRule: (id, updates) => set((state) => ({
-        currentProfile: {
-          ...state.currentProfile,
-          escalationRules: state.currentProfile.escalationRules.map((r) =>
-            r.id === id ? { ...r, ...updates } : r
-          ),
-          updatedAt: new Date(),
-        },
-      })),
+      updateEscalationRule: (id, updates) =>
+        set((state) => ({
+          currentProfile: {
+            ...state.currentProfile,
+            escalationRules: state.currentProfile.escalationRules.map((r) =>
+              r.id === id ? { ...r, ...updates } : r
+            ),
+            updatedAt: new Date(),
+          },
+        })),
 
-      removeEscalationRule: (id) => set((state) => ({
-        currentProfile: {
-          ...state.currentProfile,
-          escalationRules: state.currentProfile.escalationRules.filter((r) => r.id !== id),
-          updatedAt: new Date(),
-        },
-      })),
+      removeEscalationRule: (id) =>
+        set((state) => ({
+          currentProfile: {
+            ...state.currentProfile,
+            escalationRules: state.currentProfile.escalationRules.filter((r) => r.id !== id),
+            updatedAt: new Date(),
+          },
+        })),
 
       // Security Settings
-      setSecuritySettings: (settings) => set((state) => ({
-        currentProfile: {
-          ...state.currentProfile,
-          securitySettings: { ...state.currentProfile.securitySettings, ...settings },
-          updatedAt: new Date(),
-        },
-      })),
+      setSecuritySettings: (settings) =>
+        set((state) => ({
+          currentProfile: {
+            ...state.currentProfile,
+            securitySettings: { ...state.currentProfile.securitySettings, ...settings },
+            updatedAt: new Date(),
+          },
+        })),
 
       // Persona Configuration
-      setBaselinePrompt: (prompt) => set((state) => ({
-        currentProfile: {
-          ...state.currentProfile,
-          baselinePrompt: prompt,
-          updatedAt: new Date(),
-        },
-      })),
+      setBaselinePrompt: (prompt) =>
+        set((state) => ({
+          currentProfile: {
+            ...state.currentProfile,
+            baselinePrompt: prompt,
+            updatedAt: new Date(),
+          },
+        })),
 
-      setCustomInstructions: (instructions) => set((state) => ({
-        currentProfile: {
-          ...state.currentProfile,
-          customInstructions: instructions,
-          updatedAt: new Date(),
-        },
-      })),
+      setCustomInstructions: (instructions) =>
+        set((state) => ({
+          currentProfile: {
+            ...state.currentProfile,
+            customInstructions: instructions,
+            updatedAt: new Date(),
+          },
+        })),
 
-      setSecurityLevel: (level) => set((state) => ({
-        currentProfile: {
-          ...state.currentProfile,
-          securityLevel: level,
-          updatedAt: new Date(),
-        },
-      })),
+      setSecurityLevel: (level) =>
+        set((state) => ({
+          currentProfile: {
+            ...state.currentProfile,
+            securityLevel: level,
+            updatedAt: new Date(),
+          },
+        })),
 
       // Custom Workflows
-      addCustomWorkflow: (workflow) => set((state) => ({
-        currentProfile: {
-          ...state.currentProfile,
-          customWorkflows: [...state.currentProfile.customWorkflows, workflow],
-          updatedAt: new Date(),
-        },
-      })),
+      addCustomWorkflow: (workflow) =>
+        set((state) => ({
+          currentProfile: {
+            ...state.currentProfile,
+            customWorkflows: [...state.currentProfile.customWorkflows, workflow],
+            updatedAt: new Date(),
+          },
+        })),
 
-      updateCustomWorkflow: (id, updates) => set((state) => ({
-        currentProfile: {
-          ...state.currentProfile,
-          customWorkflows: state.currentProfile.customWorkflows.map((w) =>
-            w.id === id ? { ...w, ...updates } : w
-          ),
-          updatedAt: new Date(),
-        },
-      })),
+      updateCustomWorkflow: (id, updates) =>
+        set((state) => ({
+          currentProfile: {
+            ...state.currentProfile,
+            customWorkflows: state.currentProfile.customWorkflows.map((w) =>
+              w.id === id ? { ...w, ...updates } : w
+            ),
+            updatedAt: new Date(),
+          },
+        })),
 
-      removeCustomWorkflow: (id) => set((state) => ({
-        currentProfile: {
-          ...state.currentProfile,
-          customWorkflows: state.currentProfile.customWorkflows.filter((w) => w.id !== id),
-          updatedAt: new Date(),
-        },
-      })),
+      removeCustomWorkflow: (id) =>
+        set((state) => ({
+          currentProfile: {
+            ...state.currentProfile,
+            customWorkflows: state.currentProfile.customWorkflows.filter((w) => w.id !== id),
+            updatedAt: new Date(),
+          },
+        })),
 
       // Wizard Navigation
       setCurrentStep: (step) => set({ currentStep: step }),
 
-      nextStep: () => set((state) => ({
-        currentStep: Math.min(state.currentStep + 1, 5)
-      })),
+      nextStep: () =>
+        set((state) => ({
+          currentStep: Math.min(state.currentStep + 1, 5),
+        })),
 
-      prevStep: () => set((state) => ({
-        currentStep: Math.max(state.currentStep - 1, 0)
-      })),
+      prevStep: () =>
+        set((state) => ({
+          currentStep: Math.max(state.currentStep - 1, 0),
+        })),
 
       completeWizard: () => set({ isWizardComplete: true }),
 
       // Profile Management
-      saveProfile: (name) => set((state) => {
-        const profileToSave: ClaudeProfile = {
-          ...state.currentProfile,
-          name: name || state.currentProfile.name,
-          updatedAt: new Date(),
-        };
-
-        const existingIndex = state.savedProfiles.findIndex(
-          (p) => p.id === profileToSave.id
-        );
-
-        const newSavedProfiles = existingIndex >= 0
-          ? state.savedProfiles.map((p, i) => (i === existingIndex ? profileToSave : p))
-          : [...state.savedProfiles, profileToSave];
-
-        return {
-          savedProfiles: newSavedProfiles,
-          currentProfile: profileToSave,
-        };
-      }),
-
-      loadProfile: (id) => set((state) => {
-        const profile = state.savedProfiles.find((p) => p.id === id);
-        if (profile) {
-          return {
-            currentProfile: { ...profile },
-            currentStep: 0,
-            isWizardComplete: false,
+      saveProfile: (name) =>
+        set((state) => {
+          const profileToSave: ClaudeProfile = {
+            ...state.currentProfile,
+            name: name || state.currentProfile.name,
+            updatedAt: new Date(),
           };
-        }
-        return state;
-      }),
 
-      deleteProfile: (id) => set((state) => ({
-        savedProfiles: state.savedProfiles.filter((p) => p.id !== id),
-      })),
+          const existingIndex = state.savedProfiles.findIndex((p) => p.id === profileToSave.id);
 
-      resetCurrentProfile: () => set({
-        currentProfile: { ...defaultProfile, id: crypto.randomUUID() },
-        currentStep: 0,
-        isWizardComplete: false,
-      }),
+          const newSavedProfiles =
+            existingIndex >= 0
+              ? state.savedProfiles.map((p, i) => (i === existingIndex ? profileToSave : p))
+              : [...state.savedProfiles, profileToSave];
+
+          return {
+            savedProfiles: newSavedProfiles,
+            currentProfile: profileToSave,
+          };
+        }),
+
+      loadProfile: (id) =>
+        set((state) => {
+          const profile = state.savedProfiles.find((p) => p.id === id);
+          if (profile) {
+            return {
+              currentProfile: { ...profile },
+              currentStep: 0,
+              isWizardComplete: false,
+            };
+          }
+          return state;
+        }),
+
+      deleteProfile: (id) =>
+        set((state) => ({
+          savedProfiles: state.savedProfiles.filter((p) => p.id !== id),
+        })),
+
+      resetCurrentProfile: () =>
+        set({
+          currentProfile: { ...defaultProfile, id: crypto.randomUUID() },
+          currentStep: 0,
+          isWizardComplete: false,
+        }),
 
       // Export Functions
       exportProfileAsJSON: () => {
@@ -392,7 +425,12 @@ export const useProfileStore = create<ProfileState>()(
         const toYAML = (obj: unknown, indent = 0): string => {
           const spaces = '  '.repeat(indent);
           if (Array.isArray(obj)) {
-            return obj.map((item) => `${spaces}- ${typeof item === 'object' ? '\n' + toYAML(item, indent + 1) : item}`).join('\n');
+            return obj
+              .map(
+                (item) =>
+                  `${spaces}- ${typeof item === 'object' ? '\n' + toYAML(item, indent + 1) : item}`
+              )
+              .join('\n');
           }
           if (typeof obj === 'object' && obj !== null) {
             return Object.entries(obj)

@@ -1,5 +1,15 @@
 import { useState } from 'react';
-import { ChevronLeft, ChevronRight, Check, User, Sliders, Link2, Shield, MessageSquare, Download } from 'lucide-react';
+import {
+  ChevronLeft,
+  ChevronRight,
+  Check,
+  User,
+  Sliders,
+  Link2,
+  Shield,
+  MessageSquare,
+  Download,
+} from 'lucide-react';
 import { useProfileStore } from '../../stores/profileStore';
 import { Card } from '../ui/Card';
 import { Badge } from '../ui/Badge';
@@ -10,6 +20,7 @@ import { ToolIntegrationSetup } from './ToolIntegrationSetup';
 import { EscalationRulesEditor } from './EscalationRulesEditor';
 import { BaselinePromptBuilder } from './BaselinePromptBuilder';
 import { ProfileExport } from './ProfileExport';
+import { ProfileCompletenessIndicator } from './ProfileCompletenessIndicator';
 
 const STEPS = [
   { id: 0, label: 'Role', icon: User, description: 'Select your role' },
@@ -73,16 +84,25 @@ export function ProfileWizard() {
   return (
     <div className="space-y-8 animate-in fade-in duration-500">
       {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div>
-          <h1 className="text-3xl font-bold text-slate-900">Profile Builder</h1>
-          <p className="text-slate-600 mt-1">
-            Build your personalized Claude enterprise profile step-by-step
-          </p>
+      <div className="flex flex-col lg:flex-row gap-6">
+        <div className="flex-1">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+            <div>
+              <h1 className="text-3xl font-bold text-slate-900">Profile Builder</h1>
+              <p className="text-slate-600 mt-1">
+                Build your personalized Claude enterprise profile step-by-step
+              </p>
+            </div>
+            <Badge variant="default" className="w-fit">
+              Step {currentStep + 1} of {STEPS.length}
+            </Badge>
+          </div>
         </div>
-        <Badge variant="default" className="w-fit">
-          Step {currentStep + 1} of {STEPS.length}
-        </Badge>
+
+        {/* Profile Completeness Sidebar */}
+        <div className="lg:w-80">
+          <ProfileCompletenessIndicator profile={currentProfile} />
+        </div>
       </div>
 
       {/* Progress Steps */}
@@ -101,26 +121,30 @@ export function ProfileWizard() {
                     isActive
                       ? 'bg-amber-100 text-amber-700 ring-2 ring-amber-500'
                       : isCompleted
-                      ? 'bg-emerald-100 text-emerald-700 cursor-pointer hover:bg-emerald-200'
-                      : 'bg-slate-100 text-slate-400 cursor-pointer hover:bg-slate-200'
+                        ? 'bg-emerald-100 text-emerald-700 cursor-pointer hover:bg-emerald-200'
+                        : 'bg-slate-100 text-slate-400 cursor-pointer hover:bg-slate-200'
                   }`}
                 >
-                  <div className={`w-10 h-10 rounded-full flex items-center justify-center ${
-                    isActive
-                      ? 'bg-amber-500 text-white'
-                      : isCompleted
-                      ? 'bg-emerald-500 text-white'
-                      : 'bg-slate-300 text-slate-500'
-                  }`}>
+                  <div
+                    className={`w-10 h-10 rounded-full flex items-center justify-center ${
+                      isActive
+                        ? 'bg-amber-500 text-white'
+                        : isCompleted
+                          ? 'bg-emerald-500 text-white'
+                          : 'bg-slate-300 text-slate-500'
+                    }`}
+                  >
                     {isCompleted ? <Check className="w-5 h-5" /> : <Icon className="w-5 h-5" />}
                   </div>
                   <span className="text-xs font-medium hidden md:block">{step.label}</span>
                 </button>
 
                 {index < STEPS.length - 1 && (
-                  <div className={`w-8 md:w-16 h-1 mx-2 rounded ${
-                    currentStep > index ? 'bg-emerald-500' : 'bg-slate-200'
-                  }`} />
+                  <div
+                    className={`w-8 md:w-16 h-1 mx-2 rounded ${
+                      currentStep > index ? 'bg-emerald-500' : 'bg-slate-200'
+                    }`}
+                  />
                 )}
               </div>
             );
@@ -129,7 +153,9 @@ export function ProfileWizard() {
       </Card>
 
       {/* Step Content */}
-      <div className={`transition-opacity duration-150 ${isTransitioning ? 'opacity-0' : 'opacity-100'}`}>
+      <div
+        className={`transition-opacity duration-150 ${isTransitioning ? 'opacity-0' : 'opacity-100'}`}
+      >
         {renderStepContent()}
       </div>
 
@@ -145,9 +171,7 @@ export function ProfileWizard() {
           Previous
         </Button>
 
-        <div className="text-sm text-slate-500">
-          {STEPS[currentStep].description}
-        </div>
+        <div className="text-sm text-slate-500">{STEPS[currentStep].description}</div>
 
         {currentStep < STEPS.length - 1 ? (
           <Button

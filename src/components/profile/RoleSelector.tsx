@@ -1,18 +1,32 @@
-import { DollarSign, TrendingUp, Code, Megaphone, Settings, Users, Shield, Headphones, BarChart3, Crown, Cpu, TestTube2 } from 'lucide-react';
+import {
+  DollarSign,
+  TrendingUp,
+  Code,
+  Megaphone,
+  Settings,
+  Users,
+  Shield,
+  Headphones,
+  BarChart3,
+  Crown,
+  Cpu,
+  TestTube2,
+} from 'lucide-react';
 import { useProfileStore } from '../../stores/profileStore';
 import { Role } from '../../types';
 import { Card } from '../ui/Card';
 import { Badge } from '../ui/Badge';
+import { ProfileIconSelector } from './ProfileIconSelector';
 import { roleProfilesData as roleProfiles } from '../../data/role-profiles';
 
 const roleIcons: Record<string, React.ComponentType<{ className?: string }>> = {
-  'Finance': DollarSign,
-  'Sales': TrendingUp,
-  'Engineering': Code,
-  'Marketing': Megaphone,
-  'Operations': Settings,
-  'HR': Users,
-  'Legal': Shield,
+  Finance: DollarSign,
+  Sales: TrendingUp,
+  Engineering: Code,
+  Marketing: Megaphone,
+  Operations: Settings,
+  HR: Users,
+  Legal: Shield,
   'Customer Support': Headphones,
   'Data Science': BarChart3,
   'Executive / Leadership': Crown,
@@ -21,13 +35,13 @@ const roleIcons: Record<string, React.ComponentType<{ className?: string }>> = {
 };
 
 const roleDescriptions: Record<string, string> = {
-  'Finance': 'Budget analysis, financial reporting, forecasting',
-  'Sales': 'Pipeline management, proposals, customer communication',
-  'Engineering': 'Code review, documentation, technical planning',
-  'Marketing': 'Campaign creation, content strategy, analytics',
-  'Operations': 'Process optimization, workflow automation',
-  'HR': 'Recruiting, onboarding, policy documentation',
-  'Legal': 'Contract review, compliance, risk assessment',
+  Finance: 'Budget analysis, financial reporting, forecasting',
+  Sales: 'Pipeline management, proposals, customer communication',
+  Engineering: 'Code review, documentation, technical planning',
+  Marketing: 'Campaign creation, content strategy, analytics',
+  Operations: 'Process optimization, workflow automation',
+  HR: 'Recruiting, onboarding, policy documentation',
+  Legal: 'Contract review, compliance, risk assessment',
   'Customer Support': 'Ticket handling, knowledge base, escalation',
   'Data Science': 'Analysis, modeling, visualization',
   'Executive / Leadership': 'Strategy, reporting, decision support',
@@ -51,23 +65,31 @@ const ROLES: Role[] = [
 ];
 
 export function RoleSelector() {
-  const { currentProfile, setRole } = useProfileStore();
+  const { currentProfile, setRole, setIcon } = useProfileStore();
   const selectedRole = currentProfile.role;
 
   return (
     <div className="space-y-6">
-      <div className="text-center mb-8">
-        <h2 className="text-2xl font-bold text-slate-900">Select Your Role</h2>
-        <p className="text-slate-600 mt-2">
-          Choose the role that best describes your primary function. This will customize your Claude experience.
-        </p>
+      <div className="flex flex-col lg:flex-row gap-6 mb-8">
+        <div className="flex-1">
+          <h2 className="text-2xl font-bold text-slate-900">Select Your Role</h2>
+          <p className="text-slate-600 mt-2">
+            Choose the role that best describes your primary function. This will customize your
+            Claude experience.
+          </p>
+        </div>
+
+        {/* Profile Icon Selector in sidebar */}
+        <div className="lg:w-80">
+          <ProfileIconSelector currentIcon={currentProfile.icon} onIconChange={setIcon} />
+        </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {ROLES.map((role) => {
           const Icon = roleIcons[role] || Users;
           const isSelected = selectedRole === role;
-          const profile = roleProfiles.find(p => p.role === role);
+          const profile = roleProfiles.find((p) => p.role === role);
 
           return (
             <Card
@@ -80,25 +102,29 @@ export function RoleSelector() {
               onClick={() => setRole(role)}
             >
               <div className="flex items-start gap-4">
-                <div className={`p-3 rounded-xl ${
-                  isSelected ? 'bg-amber-500 text-white' : 'bg-slate-100 text-slate-600'
-                }`}>
+                <div
+                  className={`p-3 rounded-xl ${
+                    isSelected ? 'bg-amber-500 text-white' : 'bg-slate-100 text-slate-600'
+                  }`}
+                >
                   <Icon className="w-6 h-6" />
                 </div>
 
                 <div className="flex-1">
                   <div className="flex items-center justify-between">
-                    <h3 className={`font-semibold ${isSelected ? 'text-amber-900' : 'text-slate-900'}`}>
+                    <h3
+                      className={`font-semibold ${isSelected ? 'text-amber-900' : 'text-slate-900'}`}
+                    >
                       {role}
                     </h3>
                     {isSelected && (
-                      <Badge variant="default" className="bg-amber-500">Selected</Badge>
+                      <Badge variant="default" className="bg-amber-500">
+                        Selected
+                      </Badge>
                     )}
                   </div>
 
-                  <p className="text-sm text-slate-500 mt-1">
-                    {roleDescriptions[role]}
-                  </p>
+                  <p className="text-sm text-slate-500 mt-1">{roleDescriptions[role]}</p>
 
                   {profile && (
                     <div className="mt-3 flex flex-wrap gap-1">
@@ -128,20 +154,27 @@ export function RoleSelector() {
             <div>
               <h4 className="text-sm font-medium text-slate-700 mb-2">Common Requests</h4>
               <ul className="space-y-1 text-sm text-slate-600">
-                {roleProfiles.find(p => p.role === selectedRole)?.commonRequests.slice(0, 4).map((req, i) => (
-                  <li key={i} className="flex items-center gap-2">
-                    <div className="w-1.5 h-1.5 rounded-full bg-amber-500" />
-                    {req.request}
-                  </li>
-                ))}
+                {roleProfiles
+                  .find((p) => p.role === selectedRole)
+                  ?.commonRequests.slice(0, 4)
+                  .map((req, i) => (
+                    <li key={i} className="flex items-center gap-2">
+                      <div className="w-1.5 h-1.5 rounded-full bg-amber-500" />
+                      {req.request}
+                    </li>
+                  ))}
               </ul>
             </div>
             <div>
               <h4 className="text-sm font-medium text-slate-700 mb-2">Enabled Features</h4>
               <div className="flex flex-wrap gap-2">
-                {roleProfiles.find(p => p.role === selectedRole)?.features.enabled.map((f, i) => (
-                  <Badge key={i} variant="secondary">{f}</Badge>
-                )) || <span className="text-sm text-slate-500">All features available</span>}
+                {roleProfiles
+                  .find((p) => p.role === selectedRole)
+                  ?.features.enabled.map((f, i) => (
+                    <Badge key={i} variant="secondary">
+                      {f}
+                    </Badge>
+                  )) || <span className="text-sm text-slate-500">All features available</span>}
               </div>
             </div>
           </div>

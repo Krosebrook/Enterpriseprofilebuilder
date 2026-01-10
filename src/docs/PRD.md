@@ -208,21 +208,6 @@ Provide 50-200 employees across Finance, Sales, Engineering, Marketing, and Oper
 *   **Fine-Tuning Pipeline**: Custom models trained on internal documentation.
 *   **Voice Interface**: Voice-controlled agents for mobile users.
 
-### 📋 Next 5 Full Features (Detailed PRDs Available)
-
-Comprehensive Product Requirements Documents have been created for the next 5 major features spanning Q1-Q3 2026. These features represent a $2.5M investment with an expected $4M+ annual business value and 178% ROI.
-
-**[📂 View Complete PRD Suite →](../../docs/prd/next-5-features/)**
-
-**Quick Overview:**
-1. **[Real-time Collaboration System](../../docs/prd/next-5-features/FEATURE_01_REALTIME_COLLABORATION.md)** (Q2 2026) - Google Docs-style collaborative editing for profiles and agents
-2. **[Advanced Analytics Dashboard](../../docs/prd/next-5-features/FEATURE_02_ADVANCED_ANALYTICS.md)** (Q2 2026) - Comprehensive usage, cost, performance, and ROI analytics
-3. **[Voice Interface & Commands](../../docs/prd/next-5-features/FEATURE_03_VOICE_INTERFACE.md)** (Q3 2026) - Multimodal voice interaction with Claude AI
-4. **[Custom Model Fine-tuning Pipeline](../../docs/prd/next-5-features/FEATURE_04_MODEL_FINETUNING.md)** (Q3 2026) - Enterprise-grade model training on company-specific data
-5. **[Multi-Agent Orchestration Platform](../../docs/prd/next-5-features/FEATURE_05_MULTI_AGENT_ORCHESTRATION.md)** (Q1 2026) - Complex workflow automation with multiple coordinated agents
-
-Each PRD includes detailed requirements, technical architecture, implementation roadmap, budget, ROI analysis, testing strategy, and success metrics.
-
 ---
 
 ## 📝 APPROVAL & SIGN-OFF

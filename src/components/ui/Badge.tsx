@@ -1,43 +1,30 @@
-import { cn } from './utils';
+import React from 'react';
 
-export type BadgeVariant =
-  | 'default'
-  | 'success'
-  | 'warning'
-  | 'danger'
-  | 'info'
-  | 'outline'
-  | 'secondary';
-
-export interface BadgeProps extends React.HTMLAttributes<HTMLSpanElement> {
-  variant?: BadgeVariant;
+interface BadgeProps {
+  children: React.ReactNode;
+  variant?: 'default' | 'success' | 'warning' | 'danger' | 'info' | 'outline';
+  size?: 'sm' | 'md';
+  className?: string;
 }
 
-/**
- * Badge component for displaying status and labels
- * @param variant - Visual style variant
- * @param className - Additional CSS classes
- * @param children - Badge content
- */
-export function Badge({ variant = 'default', className, ...props }: BadgeProps) {
-  const variantClasses = {
-    default: 'bg-slate-100 text-slate-900',
-    success: 'bg-green-100 text-green-800',
-    warning: 'bg-yellow-100 text-yellow-800',
-    danger: 'bg-red-100 text-red-800',
-    info: 'bg-blue-100 text-blue-800',
-    outline: 'border border-slate-300 text-slate-700 bg-transparent',
-    secondary: 'bg-slate-200 text-slate-800',
+export function Badge({ children, variant = 'default', size = 'md', className = '' }: BadgeProps) {
+  const variants = {
+    default: "bg-slate-100 text-slate-700 border-slate-200",
+    success: "bg-green-100 text-green-700 border-green-200",
+    warning: "bg-amber-100 text-amber-700 border-amber-200",
+    danger: "bg-red-100 text-red-700 border-red-200",
+    info: "bg-blue-100 text-blue-700 border-blue-200",
+    outline: "bg-transparent border-slate-300 text-slate-600",
+  };
+
+  const sizes = {
+    sm: "px-2 py-0.5 text-xs",
+    md: "px-2.5 py-0.5 text-sm",
   };
 
   return (
-    <span
-      className={cn(
-        'inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold transition-colors',
-        variantClasses[variant],
-        className
-      )}
-      {...props}
-    />
+    <span className={`inline-flex items-center font-medium rounded border ${variants[variant]} ${sizes[size]} ${className}`}>
+      {children}
+    </span>
   );
 }

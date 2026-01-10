@@ -1,19 +1,19 @@
 import React from 'react';
-import {
-  LayoutDashboard,
-  ShieldCheck,
-  Sparkles,
-  Hammer,
-  Users,
-  BookOpen,
-  HelpCircle,
+import { 
+  LayoutDashboard, 
+  ShieldCheck, 
+  Sparkles, 
+  Hammer, 
+  Users, 
+  BookOpen, 
+  HelpCircle, 
   Rocket,
   ChevronLeft,
   FileText, // Icon for Operations Manual
   Library, // Icon for Reference Library
   Globe, // Icon for Ecosystem Explorer
   Puzzle, // Icon for Integrations
-  UserCog // Icon for Profile Builder
+  Bot // Icon for Agent Builder
 } from 'lucide-react';
 import { useNavigation } from '../../contexts/NavigationContext';
 import { Section } from '../../types';
@@ -22,18 +22,18 @@ interface SidebarProps {
   className?: string;
 }
 
-const NAV_ITEMS: { id: Section | 'integrations'; label: string; icon: React.ElementType }[] = [
+const NAV_ITEMS: { id: Section | 'integrations' | 'agents'; label: string; icon: React.ElementType }[] = [
   { id: 'overview', label: 'Overview', icon: LayoutDashboard },
-  { id: 'profile', label: 'Profile Builder', icon: UserCog }, // Profile Builder - prominent placement
   { id: 'ecosystem', label: 'Ecosystem Explorer', icon: Globe },
   { id: 'integrations', label: 'App Marketplace', icon: Puzzle },
+  { id: 'agents', label: 'Agent Builder', icon: Bot }, // Added Agent Builder
   { id: 'baseline', label: 'System Baseline', icon: ShieldCheck },
   { id: 'features', label: 'Feature Guides', icon: Sparkles },
   { id: 'tools', label: 'MCP Tools', icon: Hammer },
   { id: 'roles', label: 'Role Profiles', icon: Users },
   { id: 'best-practices', label: 'Best Practices', icon: BookOpen },
   { id: 'operations', label: 'Operations Manual', icon: FileText },
-  { id: 'reference', label: 'Reference Library', icon: Library },
+  { id: 'reference', label: 'Reference Library', icon: Library }, 
   { id: 'faq', label: 'FAQ', icon: HelpCircle },
   { id: 'deployment', label: 'Deployment', icon: Rocket },
 ];

@@ -32,15 +32,15 @@ export function EcosystemMap() {
       {platforms.map((platform, i) => {
         const angle = (i / platforms.length) * 2 * Math.PI - Math.PI / 2; // Start from top
         const radius = 225; // Half of 450
-        const xCoordinate = Math.cos(angle) * radius;
-        const yCoordinate = Math.sin(angle) * radius;
+        const x = Math.cos(angle) * radius;
+        const y = Math.sin(angle) * radius;
 
         return (
           <div 
             key={platform.id}
             className="absolute top-1/2 left-1/2 w-32 p-3 bg-white dark:bg-slate-800 rounded-lg shadow-lg border border-slate-200 dark:border-slate-700 hover:scale-105 transition-transform cursor-pointer z-20"
             style={{ 
-              transform: `translate(calc(-50% + ${xCoordinate}px), calc(-50% + ${yCoordinate}px))` 
+              transform: `translate(calc(-50% + ${x}px), calc(-50% + ${y}px))` 
             }}
           >
             <div className="flex items-center gap-2 mb-1">
@@ -62,8 +62,8 @@ export function EcosystemMap() {
          {platforms.map((platform, i) => {
             const angle = (i / platforms.length) * 2 * Math.PI - Math.PI / 2;
             const radius = 225;
-            const xCoordinate = Math.cos(angle) * radius;
-            const yCoordinate = Math.sin(angle) * radius;
+            const x = Math.cos(angle) * radius;
+            const y = Math.sin(angle) * radius;
             
             // Center of container is 50%, 50%
             // SVG uses absolute coordinates. We need to map relative 0,0 center to svg center.
@@ -75,8 +75,8 @@ export function EcosystemMap() {
                 key={i}
                 x1="50%" 
                 y1="50%" 
-                x2={`calc(50% + ${xCoordinate*0.9}px)`} // Stop slightly before the card
-                y2={`calc(50% + ${yCoordinate*0.9}px)`} 
+                x2={`calc(50% + ${x*0.9}px)`} // Stop slightly before the card
+                y2={`calc(50% + ${y*0.9}px)`} 
                 stroke="#CBD5E1" 
                 strokeWidth="1" 
                 strokeDasharray="4 4"

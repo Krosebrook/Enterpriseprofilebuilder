@@ -1,4 +1,6 @@
+import React from 'react';
 import { useNavigation } from '../contexts/NavigationContext';
+import { useToast } from '../contexts/ToastContext';
 
 // Legacy Sections (to be refactored later if needed, but keeping for now as they work)
 import { BaselinePrompt } from './sections/BaselinePrompt';
@@ -17,19 +19,16 @@ import { OperationsManual } from '../features/operations/OperationsManual';
 import { ReferenceLibrary } from '../features/library/ReferenceLibrary';
 import { EcosystemExplorer } from '../features/ecosystem/EcosystemExplorer';
 import { IntegrationMarketplace } from '../features/integrations/IntegrationMarketplace';
-
-// Profile Builder
-import { ProfileWizard } from './profile';
+import { AgentBuilder } from '../features/agents/AgentBuilder';
 
 export function ContentViewer() {
   const { activeSection, selectedRole, searchQuery } = useNavigation();
+  const { addToast } = useToast();
 
   const renderSection = () => {
     switch (activeSection) {
       case 'overview':
         return <Dashboard />;
-      case 'profile':
-        return <ProfileWizard />;
       case 'ecosystem':
         return <EcosystemExplorer />;
       case 'baseline':
@@ -52,8 +51,10 @@ export function ContentViewer() {
         return <OperationsManual />;
       case 'reference':
         return <ReferenceLibrary />;
-      case 'integrations':
+      case 'integrations': // New Route
         return <IntegrationMarketplace />;
+      case 'agents': // Phase 11
+        return <AgentBuilder />;
       default:
         return <Dashboard />;
     }

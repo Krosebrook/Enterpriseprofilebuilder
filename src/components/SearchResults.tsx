@@ -1,5 +1,6 @@
+import React from 'react';
 import { SearchResult, Section } from '../types';
-import { FileText, ArrowRight } from 'lucide-react';
+import { FileText, ArrowRight, CornerDownRight } from 'lucide-react';
 import { useNavigation } from '../contexts/NavigationContext';
 
 interface SearchResultsProps {

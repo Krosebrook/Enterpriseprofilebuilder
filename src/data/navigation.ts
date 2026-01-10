@@ -35,6 +35,13 @@ export const navigationData: NavigationItem[] = [
     badge: '9'
   },
   {
+    id: 'agents',
+    label: 'Agent Builder',
+    description: 'Design autonomous AI agents',
+    icon: 'Bot',
+    badge: 'Beta'
+  },
+  {
     id: 'roles',
     label: 'Role Profiles',
     description: 'Department-specific guidance',

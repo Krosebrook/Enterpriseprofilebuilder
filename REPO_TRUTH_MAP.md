@@ -15,8 +15,8 @@
 ### Key Metrics
 - **Framework**: React 18.3.1 + Vite 6.3.5 + TypeScript 5.3.3 (Strict Mode)
 - **Package Manager**: npm 10.8.2
-- **Source Files**: ~12,177 lines of TypeScript/TSX code
-- **Dependencies**: 37 production + 14 development packages
+- **Source Files**: 12,177 lines of TypeScript/TSX code (verified)
+- **Dependencies**: 52 production + 15 development packages (verified)
 - **Testing**: Playwright E2E (2 test files)
 - **CI/CD**: GitHub Actions (5-job pipeline + security scanning)
 - **Dev Server**: Port 3000 with auto-open

@@ -1,0 +1,224 @@
+name: Security Scanning
+
+on:
+  push:
+    branches: [ main, develop, copilot/** ]
+  pull_request:
+    branches: [ main, develop ]
+  schedule:
+    # Run daily at 2 AM UTC
+    - cron: '0 2 * * *'
+
+permissions:
+  contents: read
+  security-events: write
+  actions: read
+
+jobs:
+  secret-scanning:
+    name: Secret Scanning
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Full history for better scanning
+      
+      - name: Run Gitleaks
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITLEAKS_LICENSE: ${{ secrets.GITLEAKS_LICENSE }}
+      
+      - name: Check for hardcoded secrets
+        run: |
+          echo "Checking for common secret patterns..."
+          
+          # Check for hardcoded API keys
+          if grep -r -i "api[_-]key\s*=\s*['\"][a-zA-Z0-9]" --include="*.ts" --include="*.tsx" --include="*.js" --include="*.jsx" src/; then
+            echo "❌ Found hardcoded API keys in source code"
+            exit 1
+          fi
+          
+          # Check for hardcoded passwords
+          if grep -r -i "password\s*=\s*['\"][^$]" --include="*.ts" --include="*.tsx" --include="*.js" --include="*.jsx" src/; then
+            echo "❌ Found hardcoded passwords in source code"
+            exit 1
+          fi
+          
+          # Check for hardcoded tokens
+          if grep -r -i "token\s*=\s*['\"][a-zA-Z0-9]" --include="*.ts" --include="*.tsx" --include="*.js" --include="*.jsx" src/; then
+            echo "❌ Found hardcoded tokens in source code"
+            exit 1
+          fi
+          
+          # Check for private keys
+          if grep -r "BEGIN.*PRIVATE KEY" --include="*.ts" --include="*.tsx" --include="*.js" --include="*.jsx" src/; then
+            echo "❌ Found private keys in source code"
+            exit 1
+          fi
+          
+          echo "✅ No hardcoded secrets detected"
+      
+      - name: Check .env files are not committed
+        run: |
+          if git ls-files | grep -E "^\.env$|^\.env\.local$|^\.env\.production$"; then
+            echo "❌ .env files should not be committed!"
+            echo "Found:"
+            git ls-files | grep -E "^\.env"
+            exit 1
+          fi
+          echo "✅ No .env files committed"
+
+  dependency-scanning:
+    name: Dependency Scanning
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      
+      - name: Install dependencies
+        run: npm ci || npm install
+      
+      - name: Run npm audit
+        run: |
+          echo "Running npm audit..."
+          
+          # Get audit results (allow to continue even if vulnerabilities found)
+          set +e
+          AUDIT_RESULT=$(npm audit --json)
+          AUDIT_EXIT_CODE=$?
+          set -e
+          
+          # Parse results
+          CRITICAL=$(echo $AUDIT_RESULT | jq '.metadata.vulnerabilities.critical // 0')
+          HIGH=$(echo $AUDIT_RESULT | jq '.metadata.vulnerabilities.high // 0')
+          MODERATE=$(echo $AUDIT_RESULT | jq '.metadata.vulnerabilities.moderate // 0')
+          LOW=$(echo $AUDIT_RESULT | jq '.metadata.vulnerabilities.low // 0')
+          
+          echo "Vulnerability Summary:"
+          echo "  Critical: $CRITICAL"
+          echo "  High: $HIGH"
+          echo "  Moderate: $MODERATE"
+          echo "  Low: $LOW"
+          
+          # Fail only on critical or high severity
+          if [ "$CRITICAL" -gt 0 ] || [ "$HIGH" -gt 0 ]; then
+            echo "❌ Found critical or high severity vulnerabilities"
+            npm audit
+            exit 1
+          fi
+          
+          echo "✅ No critical or high severity vulnerabilities found"
+
+  code-quality:
+    name: Code Quality & Security Linting
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      
+      - name: Install dependencies
+        run: npm ci || npm install
+      
+      - name: Check for console.log statements
+        run: |
+          echo "Checking for console.log in production code..."
+          if grep -r "console\.log" --include="*.ts" --include="*.tsx" src/ | grep -v "logger.ts" | grep -v "\.test\." | grep -v "\.spec\."; then
+            echo "⚠️  Found console.log statements (consider using logger instead)"
+            # Don't fail, just warn
+          else
+            echo "✅ No console.log statements found"
+          fi
+      
+      - name: Check for TODO/FIXME security notes
+        run: |
+          echo "Checking for security-related TODOs..."
+          if grep -r -i "TODO.*security\|FIXME.*security\|TODO.*auth\|FIXME.*auth" --include="*.ts" --include="*.tsx" src/; then
+            echo "⚠️  Found security-related TODO/FIXME comments"
+          else
+            echo "✅ No security-related TODOs found"
+          fi
+      
+      - name: Verify env.config usage
+        run: |
+          echo "Checking that hardcoded credentials are not used..."
+          if grep -r "gloqchibrcklsjsznvjg\|eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9" --include="*.ts" --include="*.tsx" src/ | grep -v "env.config.ts" | grep -v "info.tsx"; then
+            echo "⚠️  Found potential hardcoded Supabase credentials outside of fallback config"
+          else
+            echo "✅ No hardcoded credentials found outside fallback"
+          fi
+
+  security-headers:
+    name: Check Security Headers
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Check for CSP configuration
+        run: |
+          echo "Checking for Content Security Policy configuration..."
+          if grep -r "Content-Security-Policy" --include="*.ts" --include="*.tsx" --include="*.html" .; then
+            echo "✅ CSP configuration found"
+          else
+            echo "⚠️  No CSP configuration found (consider adding)"
+          fi
+      
+      - name: Check for security-related meta tags
+        run: |
+          echo "Checking for security meta tags in HTML..."
+          if test -f "index.html"; then
+            if ! grep -q "X-Frame-Options\|Content-Security-Policy" index.html; then
+              echo "⚠️  Consider adding security headers to index.html"
+            else
+              echo "✅ Security meta tags found"
+            fi
+          fi
+
+  validate-env-example:
+    name: Validate .env.example
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Check .env.example exists
+        run: |
+          if [ ! -f ".env.example" ]; then
+            echo "❌ .env.example file is missing"
+            exit 1
+          fi
+          echo "✅ .env.example exists"
+      
+      - name: Verify no secrets in .env.example
+        run: |
+          echo "Checking .env.example for placeholder values..."
+          if grep -E "your_.*_here|<.*>|CHANGE_ME|sk_live|sk_test" .env.example; then
+            echo "✅ .env.example contains placeholders (good)"
+          else
+            echo "⚠️  .env.example might contain real values"
+          fi
+          
+          # Check for common secret patterns
+          if grep -E "[0-9a-f]{32,}|[A-Za-z0-9+/]{40,}==?" .env.example | grep -v "VITE_SUPABASE_ANON_KEY"; then
+            echo "❌ .env.example might contain real secrets"
+            exit 1
+          fi
+          
+          echo "✅ .env.example validation passed"

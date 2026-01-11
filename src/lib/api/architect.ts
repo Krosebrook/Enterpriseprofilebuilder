@@ -1,4 +1,6 @@
 import { sendChatRequest } from "./chat";
+import { validate, validators } from "../validation";
+import { logger } from "../logger";
 
 export interface ArchitectureRequest {
   platform: string;
@@ -15,13 +17,21 @@ export interface ArchitectureResponse {
 }
 
 export async function generateArchitecture(req: ArchitectureRequest): Promise<ArchitectureResponse> {
+  // Validate input
+  const validatedReq = validate(req, validators.architectureRequest, 'ArchitectureRequest');
+  
+  logger.debug('Generating architecture', {
+    platform: validatedReq.platform,
+    model: validatedReq.model,
+    featureCount: validatedReq.features.length,
+  });
   const prompt = `
     As a Senior Solution Architect for Anthropic, design a high-level architecture for the following stack:
     
-    Platform: ${req.platform}
-    Model: ${req.model}
-    Key Features: ${req.features.join(", ")}
-    Use Case: ${req.useCase}
+    Platform: ${validatedReq.platform}
+    Model: ${validatedReq.model}
+    Key Features: ${validatedReq.features.join(", ")}
+    Use Case: ${validatedReq.useCase}
 
     Please provide a structured response in JSON format with the following keys:
     - summary: A 2-sentence executive summary.
@@ -48,12 +58,12 @@ export async function generateArchitecture(req: ArchitectureRequest): Promise<Ar
     try {
         return JSON.parse(content);
     } catch (e) {
-        console.error("Failed to parse architect JSON", content);
+        logger.error("Failed to parse architect JSON", e as Error, { content });
         throw new Error("Failed to generate architecture.");
     }
 
   } catch (error) {
-    console.error("Architecture Generation Error:", error);
+    logger.error("Architecture Generation Error", error as Error);
     // Fallback Mock Response if API fails (graceful degradation)
     return {
       summary: "High-availability deployment leveraging Claude Enterprise capabilities with robust security boundaries.",

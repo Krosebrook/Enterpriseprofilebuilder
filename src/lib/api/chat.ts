@@ -1,4 +1,6 @@
-import { projectId } from "../../utils/supabase/info";
+import { getEnvConfig } from "../../config/env.config";
+import { validate, validators } from "../validation";
+import { logger } from "../logger";
 
 export interface ChatRequest {
   prompt: string;
@@ -10,29 +12,40 @@ export interface ChatRequest {
 }
 
 export async function sendChatRequest(request: ChatRequest) {
+  // Validate input
+  const validatedRequest = validate(request, validators.chatRequest, 'ChatRequest');
+  
+  // Get configuration from environment
+  const envConfig = getEnvConfig();
+  const { projectId, anonKey } = envConfig.supabase;
+  
   const url = `https://${projectId}.supabase.co/functions/v1/make-server-0864fd03/chat`;
   
-  // Get anon key from env or use a placeholder if testing locally without it (though it won't work on Supabase)
-  // In this environment, we might need to rely on the fact that the proxy handles it or we need to pass it.
-  // The system prompt says: "When sending requests to the server, use Authorization: Bearer ${publicAnonKey}"
-  // I need publicAnonKey.
-  
-  // I'll import it.
-  const { publicAnonKey } = await import("../../utils/supabase/info");
+  logger.debug('Sending chat request', {
+    url,
+    model: validatedRequest.model,
+    hasSystemPrompt: !!validatedRequest.systemPrompt,
+    promptLength: validatedRequest.prompt.length,
+  });
 
   const response = await fetch(url, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      "Authorization": `Bearer ${publicAnonKey}`
+      "Authorization": `Bearer ${anonKey}`
     },
-    body: JSON.stringify(request),
+    body: JSON.stringify(validatedRequest),
   });
 
   if (!response.ok) {
     const error = await response.json().catch(() => ({ error: response.statusText }));
+    logger.error('Chat request failed', new Error(error.error || response.statusText), {
+      status: response.status,
+      statusText: response.statusText,
+    });
     throw new Error(error.error || "Failed to send chat request");
   }
 
+  logger.debug('Chat request successful');
   return response;
 }

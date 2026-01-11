@@ -9,7 +9,7 @@ import { defineConfig, devices } from '@playwright/test';
  * See https://playwright.dev/docs/test-configuration
  */
 export default defineConfig({
-  testDir: './tests/e2e',
+  testDir: './src/tests/e2e',
   
   /* Run tests in files in parallel */
   fullyParallel: true,
@@ -93,7 +93,7 @@ export default defineConfig({
   },
   
   /* Global setup */
-  globalSetup: require.resolve('./tests/e2e/setup.ts'),
+  globalSetup: require.resolve('./src/tests/e2e/setup.ts'),
   
   /* Test timeout */
   timeout: 30 * 1000,

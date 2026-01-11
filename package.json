@@ -64,6 +64,8 @@
       },
       "scripts": {
           "dev": "vite",
-          "build": "vite build"
+          "build": "vite build",
+          "smoke-test": "bash scripts/smoke-test.sh",
+          "test": "echo 'No tests configured yet' && exit 0"
       }
   }

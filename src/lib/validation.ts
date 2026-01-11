@@ -63,6 +63,12 @@ export function sanitizeString(input: string): string {
 
 /**
  * Sanitize HTML to remove dangerous tags and attributes
+ * 
+ * WARNING: This is a basic sanitization function suitable for simple use cases.
+ * For production applications with user-generated HTML content, use a 
+ * dedicated library like DOMPurify for comprehensive XSS protection.
+ * 
+ * @see https://github.com/cure53/DOMPurify
  */
 export function sanitizeHtml(input: string): string {
   // Remove script tags

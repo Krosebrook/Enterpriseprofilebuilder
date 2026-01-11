@@ -162,9 +162,21 @@ export function loadEnvConfig(): EnvConfig {
     
     if (usingHardcodedFallback) {
       logger.warn(
-        'Using fallback Supabase configuration. ' +
-        'For production, set environment variables in .env.local'
+        '⚠️  SECURITY WARNING: Using fallback Supabase configuration with hardcoded credentials! ' +
+        'This is only for backward compatibility during migration. ' +
+        'For production, MUST set environment variables in .env.local. ' +
+        'See .env.example for required variables.'
       );
+      
+      // In production, fail if using fallback
+      if (typeof window !== 'undefined' && 
+          window.location.hostname !== 'localhost' && 
+          window.location.hostname !== '127.0.0.1') {
+        throw new EnvConfigError(
+          'Production deployment detected with fallback credentials. ' +
+          'Environment variables MUST be configured. See .env.example'
+        );
+      }
     }
     
     // Supabase Configuration

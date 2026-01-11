@@ -90,16 +90,26 @@ jobs:
       - name: Run npm audit
         run: |
           echo "Running npm audit..."
-          npm audit --audit-level=moderate || true
           
-          # Check for critical and high vulnerabilities
+          # Get audit results (allow to continue even if vulnerabilities found)
+          set +e
           AUDIT_RESULT=$(npm audit --json)
+          AUDIT_EXIT_CODE=$?
+          set -e
+          
+          # Parse results
           CRITICAL=$(echo $AUDIT_RESULT | jq '.metadata.vulnerabilities.critical // 0')
           HIGH=$(echo $AUDIT_RESULT | jq '.metadata.vulnerabilities.high // 0')
+          MODERATE=$(echo $AUDIT_RESULT | jq '.metadata.vulnerabilities.moderate // 0')
+          LOW=$(echo $AUDIT_RESULT | jq '.metadata.vulnerabilities.low // 0')
           
-          echo "Critical vulnerabilities: $CRITICAL"
-          echo "High vulnerabilities: $HIGH"
+          echo "Vulnerability Summary:"
+          echo "  Critical: $CRITICAL"
+          echo "  High: $HIGH"
+          echo "  Moderate: $MODERATE"
+          echo "  Low: $LOW"
           
+          # Fail only on critical or high severity
           if [ "$CRITICAL" -gt 0 ] || [ "$HIGH" -gt 0 ]; then
             echo "❌ Found critical or high severity vulnerabilities"
             npm audit

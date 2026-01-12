@@ -24,23 +24,23 @@
 ### Key Deliverables & Status
 
 #### 1. Agent Architecture (Core)
-- [ ] **Data Model:** Define `Agent`, `Tool`, `Memory` interfaces.
-- [ ] **State Management:** Implement `useAgentStore` for CRUD operations.
-- [ ] **Persistence:** LocalStorage sync (MVP) -> Supabase (Future).
+- [x] **Data Model:** Define `Agent`, `Tool`, `Memory` interfaces.
+- [x] **State Management:** Implement `useAgentStore` for CRUD operations.
+- [x] **Persistence:** LocalStorage sync (MVP) -> Supabase (Future).
 
 #### 2. Agent Builder UI
-- [ ] **Configuration Form:** Identity (Name, Role, Goal), Model Parameters.
-- [ ] **Tool Selector:** Interface to toggle `src/features/integrations` tools.
-- [ ] **Layout:** Split-pane design (Config vs. Preview).
+- [x] **Configuration Form:** Identity (Name, Role, Goal), Model Parameters.
+- [x] **Tool Selector:** Interface to toggle `src/features/integrations` tools.
+- [x] **Layout:** Split-pane design (Config vs. Preview).
 
 #### 3. Execution Engine & Playground
-- [ ] **Playground UI:** Chat interface for testing agents.
-- [ ] **Simulation Logic:** Mock ReAct loop for validating tool selection.
+- [x] **Playground UI:** Chat interface for testing agents.
+- [x] **Simulation Logic:** Mock ReAct loop for validating tool selection.
 - [ ] **Real Execution:** Connection to LLM via Edge Functions (Pending).
 
 ---
 
 ## 📋 Next Steps (Immediate)
-1.  **Scaffold Feature Directory:** Create `src/features/agents`.
-2.  **Implement Store:** Build `useAgentStore` with Zustand.
-3.  **Build UI Components:** Develop the Builder and Playground views.
+1.  **Refine Execution:** Replace mock logic with real Claude API calls in `executor.ts`.
+2.  **Add More Tools:** Implement real API calls for Slack/GitHub (currently mocked).
+3.  **Governance:** Add permission gates for tool usage.

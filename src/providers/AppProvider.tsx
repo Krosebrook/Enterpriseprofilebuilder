@@ -1,6 +1,7 @@
 import React, { ReactNode } from 'react';
 import { NavigationProvider } from '../contexts/NavigationContext';
 import { ToastProvider } from '../contexts/ToastContext';
+import { QueryProvider } from '../lib/queryClient';
 
 interface AppProviderProps {
   children: ReactNode;
@@ -8,10 +9,12 @@ interface AppProviderProps {
 
 export function AppProvider({ children }: AppProviderProps) {
   return (
-    <NavigationProvider>
-      <ToastProvider>
-        {children}
-      </ToastProvider>
-    </NavigationProvider>
+    <QueryProvider>
+      <NavigationProvider>
+        <ToastProvider>
+          {children}
+        </ToastProvider>
+      </NavigationProvider>
+    </QueryProvider>
   );
 }

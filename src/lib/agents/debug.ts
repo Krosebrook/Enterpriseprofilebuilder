@@ -19,7 +19,8 @@ class AgentDebugger {
   constructor() {
     // Check if debug mode is enabled
     this.enabled = localStorage.getItem('agent-debug-mode') === 'true' || 
-                   import.meta.env.DEV === true;
+                   (typeof import.meta !== 'undefined' && 
+                    import.meta.env?.DEV === true);
   }
 
   log(level: 'info' | 'warn' | 'error' | 'debug', category: string, message: string, data?: any) {

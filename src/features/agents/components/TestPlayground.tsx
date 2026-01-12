@@ -11,7 +11,7 @@ import { AgentExecutor, ExecutionStep } from '../../../lib/agents/executor';
 export function TestPlayground() {
   const { 
     messages, addMessage, isThinking, clearChat, 
-    name, role, selectedToolIds, updateConfig 
+    name, role, goal, selectedToolIds, model, temperature, executionMode, updateConfig 
   } = useAgentStore();
   
   const [input, setInput] = React.useState('');
@@ -33,29 +33,26 @@ export function TestPlayground() {
     updateConfig({ isThinking: true });
 
     try {
-      // Instantiate Executor
-      const executor = new AgentExecutor(name, role, selectedToolIds);
+      // Instantiate Executor with proper configuration
+      const executor = new AgentExecutor(
+        name, 
+        role, 
+        selectedToolIds,
+        goal,
+        model,
+        temperature,
+        {
+          useRealAPI: executionMode === 'real' || executionMode === 'dry-run',
+          dryRun: executionMode === 'dry-run',
+          maxIterations: 5
+        }
+      );
       const result = await executor.execute(userMsg);
 
-      // Add "Thinking" steps as a special system message or attach to the assistant message
-      // For now, we'll format them into the response or create a structured message
-      // But the store expects string content. 
-      // Let's format the thought process as a blockquote or similar in the content
-      // OR better yet, we can modify the store to accept 'steps' but I don't want to break the store contract.
-      // So I will append the thought process as a formatted string.
-      
-      // Actually, let's keep it simple: Just render the final response. 
-      // But wait, the user wants "Context Engineered Prompts" (from previous turn) or "Next 3 features" (this turn).
-      // The "Next 3 features" implies better functionality. 
-      // I will render the thoughts in the UI by parsing them or adding them to the message object if I could.
-      // Since I can't change the store type easily without breaking other files, I'll store the steps in a local state 
-      // map keyed by message ID? No, that's complex.
-      // I'll just append them to the content with a special delimiter or just show them.
-      
-      // Let's construct a rich response:
+      // Format the response with execution steps
       let richResponse = "";
       
-      // Thoughts
+      // Encode thoughts in a special format for parsing
       const thoughts = result.steps.filter(s => s.type === 'thought' || s.type === 'action');
       if (thoughts.length > 0) {
         richResponse += `:::thoughts\n${JSON.stringify(thoughts)}\n:::\n`;
@@ -65,8 +62,11 @@ export function TestPlayground() {
 
       addMessage({ role: 'assistant', content: richResponse });
 
-    } catch (error) {
-      addMessage({ role: 'assistant', content: "Error executing agent: " + error });
+    } catch (error: any) {
+      addMessage({ 
+        role: 'assistant', 
+        content: `Error executing agent: ${error.message || error}` 
+      });
     } finally {
       updateConfig({ isThinking: false });
     }

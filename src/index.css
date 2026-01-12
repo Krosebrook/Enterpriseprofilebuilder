@@ -1779,6 +1779,10 @@
     border-color: var(--color-blue-200);
   }
 
+  .border-blue-500 {
+    border-color: var(--color-blue-500);
+  }
+
   .border-emerald-100 {
     border-color: var(--color-emerald-100);
   }
@@ -1849,6 +1853,10 @@
 
   .border-red-200 {
     border-color: var(--color-red-200);
+  }
+
+  .border-red-500 {
+    border-color: var(--color-red-500);
   }
 
   .border-rose-100 {

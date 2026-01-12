@@ -18,6 +18,7 @@ export interface SavedAgent {
   selectedToolIds: string[];
   createdAt: number;
   updatedAt: number;
+  executionMode?: 'simulation' | 'real' | 'dry-run';
 }
 
 interface AgentStoreState {
@@ -29,6 +30,7 @@ interface AgentStoreState {
   model: string;
   temperature: number;
   selectedToolIds: string[];
+  executionMode: 'simulation' | 'real' | 'dry-run';
   
   // UI State
   activeTab: 'config' | 'tools' | 'test';
@@ -43,6 +45,7 @@ interface AgentStoreState {
   updateConfig: (updates: Partial<AgentStoreState>) => void;
   toggleTool: (toolId: string) => void;
   setActiveTab: (tab: 'config' | 'tools' | 'test') => void;
+  setExecutionMode: (mode: 'simulation' | 'real' | 'dry-run') => void;
   addMessage: (message: Omit<ChatMessage, 'id' | 'timestamp'>) => void;
   clearChat: () => void;
   
@@ -64,6 +67,7 @@ export const useAgentStore = create<AgentStoreState>()(
       model: 'claude-3-5-sonnet-20241022',
       temperature: 0.7,
       selectedToolIds: [],
+      executionMode: 'simulation',
       
       activeTab: 'config',
       messages: [],
@@ -82,6 +86,8 @@ export const useAgentStore = create<AgentStoreState>()(
       }),
 
       setActiveTab: (tab) => set({ activeTab: tab }),
+
+      setExecutionMode: (mode) => set({ executionMode: mode }),
 
       addMessage: (msg) => set((state) => ({
         messages: [
@@ -109,7 +115,8 @@ export const useAgentStore = create<AgentStoreState>()(
           temperature: state.temperature,
           selectedToolIds: state.selectedToolIds,
           createdAt: existingAgentIndex >= 0 ? state.savedAgents[existingAgentIndex].createdAt : now,
-          updatedAt: now
+          updatedAt: now,
+          executionMode: state.executionMode
         };
 
         let newSavedAgents = [...state.savedAgents];
@@ -133,6 +140,7 @@ export const useAgentStore = create<AgentStoreState>()(
         model: 'claude-3-5-sonnet-20241022',
         temperature: 0.7,
         selectedToolIds: [],
+        executionMode: 'simulation',
         messages: [],
         activeTab: 'config'
       }),
@@ -149,6 +157,7 @@ export const useAgentStore = create<AgentStoreState>()(
           model: agent.model,
           temperature: agent.temperature,
           selectedToolIds: agent.selectedToolIds,
+          executionMode: agent.executionMode || 'simulation',
           messages: [], // Clear chat when loading new agent
           activeTab: 'config'
         };

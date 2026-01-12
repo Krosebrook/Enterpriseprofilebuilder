@@ -5,12 +5,12 @@ import { Label } from '../../../components/ui/label';
 import { Input } from '../../../components/ui/input';
 import { Textarea } from '../../../components/ui/textarea';
 import { Badge } from '../../../components/ui/badge';
-import { Info } from 'lucide-react';
+import { Info, Shield, Play, TestTube } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '../../../components/ui/tooltip';
 
 export function AgentConfiguration() {
   const { 
-    name, role, goal, model, temperature, 
+    name, role, goal, model, temperature, executionMode,
     updateConfig 
   } = useAgentStore();
 
@@ -122,6 +122,83 @@ export function AgentConfiguration() {
               onChange={(e) => updateConfig({ temperature: parseFloat(e.target.value) })}
               className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-primary"
             />
+          </div>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Execution Mode</CardTitle>
+          <CardDescription>
+            Control how the agent executes actions and interacts with tools.
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="space-y-3">
+            <div 
+              className={`p-4 border-2 rounded-lg cursor-pointer transition-all ${executionMode === 'simulation' ? 'border-blue-500 bg-blue-50' : 'border-gray-200 hover:bg-gray-50'}`}
+              onClick={() => updateConfig({ executionMode: 'simulation' })}
+            >
+              <div className="flex items-start gap-3">
+                <TestTube className={`w-5 h-5 mt-0.5 ${executionMode === 'simulation' ? 'text-blue-600' : 'text-gray-400'}`} />
+                <div className="flex-1">
+                  <div className="flex items-center gap-2 mb-1">
+                    <span className="font-semibold text-gray-900">Simulation Mode</span>
+                    <Badge variant="outline" className="text-[10px]">No API Calls</Badge>
+                  </div>
+                  <p className="text-sm text-gray-600">
+                    Mock execution for testing. Tools return simulated data. No real API calls or costs.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div 
+              className={`p-4 border-2 rounded-lg cursor-pointer transition-all ${executionMode === 'dry-run' ? 'border-amber-500 bg-amber-50' : 'border-gray-200 hover:bg-gray-50'}`}
+              onClick={() => updateConfig({ executionMode: 'dry-run' })}
+            >
+              <div className="flex items-start gap-3">
+                <Shield className={`w-5 h-5 mt-0.5 ${executionMode === 'dry-run' ? 'text-amber-600' : 'text-gray-400'}`} />
+                <div className="flex-1">
+                  <div className="flex items-center gap-2 mb-1">
+                    <span className="font-semibold text-gray-900">Dry-Run Mode</span>
+                    <Badge variant="outline" className="text-[10px]">Safe Testing</Badge>
+                  </div>
+                  <p className="text-sm text-gray-600">
+                    Uses real Claude API for reasoning but simulates tool execution. Safe for production testing.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div 
+              className={`p-4 border-2 rounded-lg cursor-pointer transition-all ${executionMode === 'real' ? 'border-red-500 bg-red-50' : 'border-gray-200 hover:bg-gray-50'}`}
+              onClick={() => updateConfig({ executionMode: 'real' })}
+            >
+              <div className="flex items-start gap-3">
+                <Play className={`w-5 h-5 mt-0.5 ${executionMode === 'real' ? 'text-red-600' : 'text-gray-400'}`} />
+                <div className="flex-1">
+                  <div className="flex items-center gap-2 mb-1">
+                    <span className="font-semibold text-gray-900">Real Execution Mode</span>
+                    <Badge variant="destructive" className="text-[10px]">Production</Badge>
+                  </div>
+                  <p className="text-sm text-gray-600">
+                    Full production mode. Real Claude API calls and actual tool execution. Incurs costs and makes real changes.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="mt-4 p-3 bg-gray-50 rounded-md border border-gray-200">
+            <div className="flex gap-2 text-xs text-gray-600">
+              <Info className="w-4 h-4 shrink-0 text-gray-400" />
+              <span>
+                {executionMode === 'simulation' && 'Simulation mode is great for initial testing without API costs.'}
+                {executionMode === 'dry-run' && 'Dry-run mode lets you test agent reasoning while preventing actual tool execution.'}
+                {executionMode === 'real' && '⚠️ Real mode will execute tools and make actual changes. Use with caution.'}
+              </span>
+            </div>
           </div>
         </CardContent>
       </Card>

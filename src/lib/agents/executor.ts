@@ -1,5 +1,6 @@
 import { Tool } from './framework';
 import { toolRegistry } from '../../features/agents/tools';
+import { RealAgentExecutor } from './react-executor';
 
 export interface ExecutionStep {
   type: 'thought' | 'action' | 'observation' | 'answer';
@@ -12,20 +13,66 @@ export interface ExecutionResult {
   finalResponse: string;
 }
 
+export interface AgentExecutorOptions {
+  useRealAPI?: boolean;
+  dryRun?: boolean;
+  maxIterations?: number;
+}
+
 export class AgentExecutor {
   private tools: Tool[];
   private agentName: string;
   private agentRole: string;
+  private agentGoal: string;
+  private model: string;
+  private temperature: number;
+  private options: AgentExecutorOptions;
 
-  constructor(agentName: string, agentRole: string, toolIds: string[]) {
+  constructor(
+    agentName: string, 
+    agentRole: string, 
+    toolIds: string[],
+    agentGoal: string = 'Assist the user with their requests',
+    model: string = 'claude-3-5-sonnet-20241022',
+    temperature: number = 0.7,
+    options: AgentExecutorOptions = {}
+  ) {
     this.agentName = agentName;
     this.agentRole = agentRole;
+    this.agentGoal = agentGoal;
+    this.model = model;
+    this.temperature = temperature;
+    this.options = { useRealAPI: false, dryRun: false, ...options };
     this.tools = toolIds
       .map(id => toolRegistry[id])
       .filter(t => t !== undefined);
   }
 
   async execute(userInput: string): Promise<ExecutionResult> {
+    // If real API is enabled, use the new RealAgentExecutor
+    if (this.options.useRealAPI) {
+      const realExecutor = new RealAgentExecutor({
+        agentName: this.agentName,
+        agentRole: this.agentRole,
+        agentGoal: this.agentGoal,
+        toolIds: this.tools.map(t => t.name),
+        model: this.model,
+        temperature: this.temperature,
+        maxIterations: this.options.maxIterations,
+        dryRun: this.options.dryRun
+      });
+      
+      return await realExecutor.execute(userInput);
+    }
+
+    // Otherwise, fall back to mock/simulation mode
+    return await this.executeMockMode(userInput);
+  }
+
+  /**
+   * Legacy mock mode execution (simulation for testing without API)
+   */
+  private async executeMockMode(userInput: string): Promise<ExecutionResult> {
     const steps: ExecutionStep[] = [];
     
     // 1. Thought
@@ -43,7 +90,7 @@ Available Tools: ${this.tools.map(t => t.name).join(', ') || 'None'}.`;
 
     if (lowerInput.includes('slack') && this.tools.find(t => t.name === 'slack')) {
       selectedTool = this.tools.find(t => t.name === 'slack');
-      toolParams = { message: userInput, channel: '#general' }; // simplified extraction
+      toolParams = { message: userInput, channel: '#general' };
     } else if (lowerInput.includes('jira') && this.tools.find(t => t.name === 'jira')) {
       selectedTool = this.tools.find(t => t.name === 'jira');
       toolParams = { action: 'search', query: userInput };
@@ -96,7 +143,7 @@ Available Tools: ${this.tools.map(t => t.name).join(', ') || 'None'}.`;
 
       steps.push({
         type: 'answer',
-        content: `I understand. As a **${this.agentRole}**, I can help you with that conceptually. (Enable tools like Slack or Jira for real actions).`
+        content: `I understand. As a **${this.agentRole}**, I can help you with that conceptually. (Enable Real API mode for actual tool execution).`
       });
     }
 

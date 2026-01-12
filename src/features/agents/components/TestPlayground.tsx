@@ -1,11 +1,12 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import { useAgentStore } from '../hooks/useAgentStore';
 import { Button } from '../../../components/ui/button';
 import { Input } from '../../../components/ui/input';
-import { Send, Trash2, Bot, User, Terminal, Loader2 } from 'lucide-react';
+import { Send, Trash2, Bot, User, Terminal, Loader2, ChevronDown, ChevronRight, Activity, Database, CheckCircle2 } from 'lucide-react';
 import { ScrollArea } from '../../../components/ui/scroll-area';
 import { Badge } from '../../../components/ui/badge';
 import { integrations } from '../../../data/integrations';
+import { AgentExecutor, ExecutionStep } from '../../../lib/agents/executor';
 
 export function TestPlayground() {
   const { 
@@ -31,46 +32,44 @@ export function TestPlayground() {
     addMessage({ role: 'user', content: userMsg });
     updateConfig({ isThinking: true });
 
-    // Simulate Agent Delay and Thought Process
-    setTimeout(() => {
-      // 1. Generate "Thought" (Simulated)
-      const activeTools = integrations.filter(i => selectedToolIds.includes(i.id));
-      const hasTools = activeTools.length > 0;
-      
-      let thoughtProcess = `Analyzing request: "${userMsg}"\n`;
-      thoughtProcess += `Context: Acting as ${role}\n`;
-      
-      if (hasTools) {
-        thoughtProcess += `Available Tools: ${activeTools.map(t => t.name).join(', ')}\n`;
-        thoughtProcess += `Decision: Checking if any tool matches the intent...`;
-      } else {
-        thoughtProcess += `No tools available. Relying on internal knowledge.`;
-      }
+    try {
+      // Instantiate Executor
+      const executor = new AgentExecutor(name, role, selectedToolIds);
+      const result = await executor.execute(userMsg);
 
-      // 2. Generate "Response" (Simulated)
-      let response = '';
-      if (userMsg.toLowerCase().includes('hello') || userMsg.toLowerCase().includes('hi')) {
-        response = `Hello! I am **${name}**, your ${role}. How can I assist you today?`;
-      } else if (hasTools && (userMsg.toLowerCase().includes('slack') || userMsg.toLowerCase().includes('message'))) {
-        if (selectedToolIds.includes('slack')) {
-          response = `I can help with that. I'll use the **Slack** tool to draft a message. What channel should I send it to?`;
-        } else {
-          response = `I notice you mentioned Slack, but I don't have access to the Slack tool. Please enable it in the Tools tab.`;
-        }
-      } else if (hasTools && (userMsg.toLowerCase().includes('jira') || userMsg.toLowerCase().includes('ticket'))) {
-         if (selectedToolIds.includes('jira')) {
-          response = `I'll check **Jira** for you. Are you looking for a specific ticket or creating a new one?`;
-        } else {
-          response = `I see you're asking about Jira tickets. Please enable the Jira tool so I can access the project board.`;
-        }
-      } else {
-        response = `I understand. As a **${role}**, I can help you plan that out. Here is a preliminary approach based on my training...`;
+      // Add "Thinking" steps as a special system message or attach to the assistant message
+      // For now, we'll format them into the response or create a structured message
+      // But the store expects string content. 
+      // Let's format the thought process as a blockquote or similar in the content
+      // OR better yet, we can modify the store to accept 'steps' but I don't want to break the store contract.
+      // So I will append the thought process as a formatted string.
+      
+      // Actually, let's keep it simple: Just render the final response. 
+      // But wait, the user wants "Context Engineered Prompts" (from previous turn) or "Next 3 features" (this turn).
+      // The "Next 3 features" implies better functionality. 
+      // I will render the thoughts in the UI by parsing them or adding them to the message object if I could.
+      // Since I can't change the store type easily without breaking other files, I'll store the steps in a local state 
+      // map keyed by message ID? No, that's complex.
+      // I'll just append them to the content with a special delimiter or just show them.
+      
+      // Let's construct a rich response:
+      let richResponse = "";
+      
+      // Thoughts
+      const thoughts = result.steps.filter(s => s.type === 'thought' || s.type === 'action');
+      if (thoughts.length > 0) {
+        richResponse += `:::thoughts\n${JSON.stringify(thoughts)}\n:::\n`;
       }
+      
+      richResponse += result.finalResponse;
 
+      addMessage({ role: 'assistant', content: richResponse });
+
+    } catch (error) {
+      addMessage({ role: 'assistant', content: "Error executing agent: " + error });
+    } finally {
       updateConfig({ isThinking: false });
-      addMessage({ role: 'assistant', content: response });
-
-    }, 1500);
+    }
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -78,6 +77,17 @@ export function TestPlayground() {
       e.preventDefault();
       handleSend();
     }
+  };
+
+  // Helper to parse content for thoughts
+  const parseContent = (content: string) => {
+    const thoughtMatch = content.match(/:::thoughts\n([\s\S]*?)\n:::/);
+    if (thoughtMatch) {
+      const steps = JSON.parse(thoughtMatch[1]) as ExecutionStep[];
+      const cleanContent = content.replace(thoughtMatch[0], '').trim();
+      return { steps, cleanContent };
+    }
+    return { steps: [], cleanContent: content };
   };
 
   return (
@@ -112,46 +122,72 @@ export function TestPlayground() {
             </div>
           )}
           
-          {messages.map((msg) => (
-            <div 
-              key={msg.id} 
-              className={`flex gap-3 ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
-            >
-              {msg.role === 'assistant' && (
-                <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center border border-primary/20 shrink-0">
-                  <Bot className="w-4 h-4 text-primary" />
+          {messages.map((msg) => {
+            const { steps, cleanContent } = parseContent(msg.content);
+            
+            return (
+              <div 
+                key={msg.id} 
+                className={`flex gap-3 ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
+              >
+                {msg.role === 'assistant' && (
+                  <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center border border-primary/20 shrink-0">
+                    <Bot className="w-4 h-4 text-primary" />
+                  </div>
+                )}
+                
+                <div className={`max-w-[90%] space-y-2`}>
+                  {/* Render Thoughts if any */}
+                  {steps.length > 0 && (
+                    <div className="bg-white border rounded-md p-2 text-xs text-gray-500 space-y-2 mb-2">
+                       <div className="flex items-center gap-1 font-semibold text-gray-400 uppercase tracking-wider text-[10px]">
+                         <Activity className="w-3 h-3" /> Agent Reasoning
+                       </div>
+                       {steps.map((step, idx) => (
+                         <div key={idx} className="pl-2 border-l-2 border-gray-200">
+                           <div className="font-medium text-[10px] text-gray-400 mb-0.5 uppercase">{step.type}</div>
+                           <div className="whitespace-pre-wrap">{step.content}</div>
+                           {step.metadata && (
+                             <pre className="mt-1 bg-gray-50 p-1 rounded text-[10px] overflow-x-auto">
+                               {JSON.stringify(step.metadata, null, 2)}
+                             </pre>
+                           )}
+                         </div>
+                       ))}
+                    </div>
+                  )}
+
+                  <div className={`
+                    rounded-lg p-3 text-sm shadow-sm
+                    ${msg.role === 'user' 
+                      ? 'bg-primary text-primary-foreground ml-auto w-fit' 
+                      : 'bg-white border text-gray-800'}
+                  `}>
+                    <p className="whitespace-pre-wrap">{cleanContent}</p>
+                    {msg.role === 'assistant' && selectedToolIds.length > 0 && (
+                      <div className="mt-2 pt-2 border-t border-gray-100 flex gap-1 flex-wrap">
+                        <span className="text-[10px] text-gray-400 mr-1">Active Tools:</span>
+                        {integrations
+                          .filter(i => selectedToolIds.includes(i.id))
+                          .map(t => (
+                            <Badge key={t.id} variant="secondary" className="text-[9px] px-1 h-4">
+                              {t.name}
+                            </Badge>
+                          ))
+                        }
+                      </div>
+                    )}
+                  </div>
                 </div>
-              )}
-              
-              <div className={`
-                max-w-[80%] rounded-lg p-3 text-sm
-                ${msg.role === 'user' 
-                  ? 'bg-primary text-primary-foreground' 
-                  : 'bg-white border shadow-sm text-gray-800'}
-              `}>
-                <p className="whitespace-pre-wrap">{msg.content}</p>
-                {msg.role === 'assistant' && selectedToolIds.length > 0 && (
-                  <div className="mt-2 pt-2 border-t border-gray-100 flex gap-1 flex-wrap">
-                    <span className="text-[10px] text-gray-400 mr-1">Active Tools:</span>
-                    {integrations
-                      .filter(i => selectedToolIds.includes(i.id))
-                      .map(t => (
-                        <Badge key={t.id} variant="secondary" className="text-[9px] px-1 h-4">
-                          {t.name}
-                        </Badge>
-                      ))
-                    }
+
+                {msg.role === 'user' && (
+                  <div className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center shrink-0">
+                    <User className="w-4 h-4 text-gray-500" />
                   </div>
                 )}
               </div>
-
-              {msg.role === 'user' && (
-                <div className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center shrink-0">
-                  <User className="w-4 h-4 text-gray-500" />
-                </div>
-              )}
-            </div>
-          ))}
+            );
+          })}
 
           {isThinking && (
             <div className="flex gap-3 justify-start">
@@ -159,10 +195,13 @@ export function TestPlayground() {
                 <Loader2 className="w-4 h-4 text-primary animate-spin" />
               </div>
               <div className="bg-white border shadow-sm rounded-lg p-3">
-                <div className="flex space-x-1 h-5 items-center">
-                  <div className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce [animation-delay:-0.3s]"></div>
-                  <div className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce [animation-delay:-0.15s]"></div>
-                  <div className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce"></div>
+                <div className="flex items-center gap-2 text-xs text-gray-500">
+                  <span className="animate-pulse">Thinking</span>
+                  <div className="flex space-x-1 h-2 items-center">
+                    <div className="w-1 h-1 bg-gray-400 rounded-full animate-bounce [animation-delay:-0.3s]"></div>
+                    <div className="w-1 h-1 bg-gray-400 rounded-full animate-bounce [animation-delay:-0.15s]"></div>
+                    <div className="w-1 h-1 bg-gray-400 rounded-full animate-bounce"></div>
+                  </div>
                 </div>
               </div>
             </div>

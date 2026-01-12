@@ -1248,8 +1248,8 @@
     max-width: var(--container-7xl);
   }
 
-  .max-w-\[80\%\] {
-    max-width: 80%;
+  .max-w-\[90\%\] {
+    max-width: 90%;
   }
 
   .max-w-\[calc\(100\%-20px\)\] {
@@ -2619,6 +2619,10 @@
 
   .pl-0 {
     padding-left: calc(var(--spacing) * 0);
+  }
+
+  .pl-2 {
+    padding-left: calc(var(--spacing) * 2);
   }
 
   .pl-3 {

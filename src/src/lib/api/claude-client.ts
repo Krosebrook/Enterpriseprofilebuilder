@@ -21,6 +21,7 @@ import Anthropic from '@anthropic-ai/sdk';
 import { logger } from '../logger';
 import { AppError, ErrorCode } from '../errors';
 import { securePipeline } from '@/security/prompt-injection-defense';
+import { ClientRateLimiter, RATE_LIMITS, RateLimitError } from '../../../lib/rateLimiter';
 
 // ═══════════════════════════════════════════════════════════
 // Type Definitions
@@ -97,11 +98,13 @@ const CLAUDE_CONFIG = {
 export class ClaudeClient {
   private client: Anthropic;
   private metrics: Map<string, number> = new Map();
+  private rateLimiter: ClientRateLimiter;
   
   constructor(apiKey?: string) {
     this.client = new Anthropic({
       apiKey: apiKey || process.env.ANTHROPIC_API_KEY
     });
+    this.rateLimiter = new ClientRateLimiter(RATE_LIMITS);
   }
   
   /**

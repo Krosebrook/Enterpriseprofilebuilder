@@ -8,6 +8,7 @@ import { ErrorBoundary } from './components/ErrorBoundary';
 import { SkipToMainContent } from './lib/accessibility';
 import { useFeaturePreloading, useInitialPreload } from './hooks/useFeaturePreloading';
 import { initPerformanceMonitoring } from './lib/performance';
+import { FeedbackWidget } from './components/Feedback/FeedbackWidget';
 
 function AppContent() {
   const { toasts, removeToast } = useToast();
@@ -31,6 +32,7 @@ function AppContent() {
           </main>
         </ErrorBoundary>
         <ToastContainer toasts={toasts} onRemove={removeToast} />
+        <FeedbackWidget />
       </MainLayout>
     </>
   );

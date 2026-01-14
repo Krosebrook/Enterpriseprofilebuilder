@@ -9,10 +9,10 @@ interface ToastProps {
 
 export function Toast({ toast, onRemove }: ToastProps) {
   const icons = {
-    success: <CheckCircle className="w-5 h-5 text-green-500" aria-hidden="true" />,
-    error: <AlertCircle className="w-5 h-5 text-red-500" aria-hidden="true" />,
-    info: <Info className="w-5 h-5 text-blue-500" aria-hidden="true" />,
-    warning: <AlertTriangle className="w-5 h-5 text-amber-500" aria-hidden="true" />,
+    success: <CheckCircle className="w-5 h-5 text-green-500" />,
+    error: <AlertCircle className="w-5 h-5 text-red-500" />,
+    info: <Info className="w-5 h-5 text-blue-500" />,
+    warning: <AlertTriangle className="w-5 h-5 text-amber-500" />,
   };
 
   const styles = {
@@ -22,20 +22,8 @@ export function Toast({ toast, onRemove }: ToastProps) {
     warning: "border-amber-200 bg-amber-50",
   };
 
-  const roleMap = {
-    success: 'status',
-    error: 'alert',
-    info: 'status',
-    warning: 'alert',
-  };
-
   return (
-    <div 
-      className={`flex items-start gap-3 p-4 rounded-lg border shadow-lg max-w-sm w-full animate-in slide-in-from-right fade-in duration-300 ${styles[toast.type]}`}
-      role={roleMap[toast.type]}
-      aria-live={toast.type === 'error' ? 'assertive' : 'polite'}
-      aria-atomic="true"
-    >
+    <div className={`flex items-start gap-3 p-4 rounded-lg border shadow-lg max-w-sm w-full animate-in slide-in-from-right fade-in duration-300 ${styles[toast.type]}`}>
       <div className="flex-shrink-0 mt-0.5">
         {icons[toast.type]}
       </div>
@@ -45,9 +33,8 @@ export function Toast({ toast, onRemove }: ToastProps) {
       <button 
         onClick={() => onRemove(toast.id)}
         className="flex-shrink-0 text-slate-400 hover:text-slate-600 transition-colors"
-        aria-label={`Dismiss ${toast.type} notification`}
       >
-        <X className="w-4 h-4" aria-hidden="true" />
+        <X className="w-4 h-4" />
       </button>
     </div>
   );

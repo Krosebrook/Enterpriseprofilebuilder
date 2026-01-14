@@ -1,7 +1,7 @@
 import { Section } from '../types';
 import { navigationData } from '../data/navigation';
 import { BookOpen, Settings, Zap, Wrench, Users, Lightbulb, HelpCircle, CheckSquare, ChevronLeft } from 'lucide-react';
-import { Badge } from './ui/Badge';
+import { Badge } from './ui/badge';
 import { Tooltip } from './ui/Tooltip';
 
 interface NavigationProps {

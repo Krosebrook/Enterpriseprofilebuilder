@@ -16,7 +16,7 @@
  * @since 2025-12-11
  */
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { 
   CheckCircle2, 
   AlertCircle, 
@@ -27,11 +27,10 @@ import {
   Users,
   DollarSign,
   Shield,
-  Zap,
   Calendar
 } from 'lucide-react';
-import { Card } from './ui/Card';
-import { Badge } from './ui/Badge';
+import { Card } from './ui/card';
+import { Badge } from './ui/badge';
 import { ProgressBar } from './ui/ProgressBar';
 
 /**
@@ -107,7 +106,7 @@ interface TeamRole {
  * Executive Dashboard Component
  */
 export function ExecutiveDashboard() {
-  const [status, setStatus] = useState<ProductionStatus>(getProductionStatus());
+  const [status] = useState<ProductionStatus>(getProductionStatus());
   const [selectedView, setSelectedView] = useState<'overview' | 'risks' | 'budget' | 'team'>('overview');
 
   // Calculate days until launch
@@ -115,7 +114,7 @@ export function ExecutiveDashboard() {
     (status.launchDate.getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24)
   );
 
-  const getStatusColor = (progress: number): 'success' | 'warning' | 'danger' => {
+  const _getStatusColor = (progress: number): 'success' | 'warning' | 'danger' => {
     if (progress >= 90) return 'success';
     if (progress >= 70) return 'warning';
     return 'danger';
@@ -193,7 +192,7 @@ export function ExecutiveDashboard() {
           {/* Critical Path Items */}
           <div>
             <h2 className="text-2xl text-slate-900 mb-4">
-              Critical Path Items ({status.criticalItems.filter(i => i.status !== 'done').length} Active)
+              Critical Path Items ({status.criticalItems.filter(item => item.status !== 'done').length} Active)
             </h2>
             <div className="space-y-3">
               {status.criticalItems.map(item => (
@@ -588,7 +587,7 @@ function BudgetCard({
   title,
   amount,
   subtitle,
-  color
+  color: _color
 }: {
   title: string;
   amount: number;

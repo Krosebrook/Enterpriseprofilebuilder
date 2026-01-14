@@ -2,7 +2,7 @@ import { DollarSign, TrendingUp, Code, Megaphone, Settings as SettingsIcon, User
 import { useNavigation } from '../../contexts/NavigationContext';
 import { Role } from '../../types';
 import { SectionHeader } from '../common/SectionHeader';
-import { Card } from '../ui/Card';
+import { Card } from '../ui/card';
 
 export function RoleProfiles() {
   const { selectedRole } = useNavigation();
@@ -194,7 +194,7 @@ export function RoleProfiles() {
 
   const filteredProfiles = selectedRole === 'All' 
     ? profiles 
-    : profiles.filter(p => p.role === selectedRole);
+    : profiles.filter(profile => profile.role === selectedRole);
 
   return (
     <div className="space-y-8 animate-in fade-in duration-500">
@@ -215,7 +215,7 @@ export function RoleProfiles() {
              blue: { bg: 'bg-blue-50', border: 'border-blue-200', text: 'text-blue-700', icon: 'text-blue-600' },
              purple: { bg: 'bg-indigo-50', border: 'border-indigo-200', text: 'text-indigo-700', icon: 'text-indigo-600' },
              orange: { bg: 'bg-amber-50', border: 'border-amber-200', text: 'text-amber-700', icon: 'text-amber-600' }
-          }[profile.color as string] || { bg: 'bg-slate-50', border: 'border-slate-200', text: 'text-slate-700', icon: 'text-slate-600' };
+          }[profile.color] || { bg: 'bg-slate-50', border: 'border-slate-200', text: 'text-slate-700', icon: 'text-slate-600' };
 
           return (
             <div key={profile.role} className="space-y-6">
@@ -257,9 +257,9 @@ export function RoleProfiles() {
                      <div>
                         <div className="text-xs font-bold text-emerald-600 uppercase tracking-wider mb-2">Enabled Features</div>
                         <div className="flex flex-wrap gap-2">
-                           {profile.features.enabled.map((f, i) => (
-                              <span key={i} className="px-2 py-1 bg-emerald-50 text-emerald-700 rounded text-xs border border-emerald-100 font-medium">
-                                 {f}
+                           {profile.features.enabled.map((featureName, index) => (
+                              <span key={index} className="px-2 py-1 bg-emerald-50 text-emerald-700 rounded text-xs border border-emerald-100 font-medium">
+                                 {featureName}
                               </span>
                            ))}
                         </div>
@@ -268,9 +268,9 @@ export function RoleProfiles() {
                         <div>
                            <div className="text-xs font-bold text-rose-600 uppercase tracking-wider mb-2">Restricted</div>
                            <div className="flex flex-wrap gap-2">
-                              {profile.features.disabled.map((f, i) => (
-                                 <span key={i} className="px-2 py-1 bg-rose-50 text-rose-700 rounded text-xs border border-rose-100 font-medium">
-                                    {f}
+                              {profile.features.disabled.map((featureName, index) => (
+                                 <span key={index} className="px-2 py-1 bg-rose-50 text-rose-700 rounded text-xs border border-rose-100 font-medium">
+                                    {featureName}
                                  </span>
                               ))}
                            </div>

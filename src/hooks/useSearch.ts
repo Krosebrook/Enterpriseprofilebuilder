@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { Section, SearchResult } from '../types';
 import { featuresData } from '../data/features';
 import { bestPracticesData } from '../data/best-practices';
@@ -6,21 +6,48 @@ import { mcpServersData } from '../data/mcp-servers';
 import { faqData } from '../data/faq';
 import { deploymentData } from '../data/deployment';
 
+/**
+ * Custom hook for searching across all application content
+ * @param query - Search query string
+ * @returns Object containing search results and loading state
+ */
 export function useSearch(query: string) {
   const [isSearching, setIsSearching] = useState(false);
 
+  // Calculate search results without side effects
   const results = useMemo(() => {
     if (!query || query.trim().length < 2) {
       return [];
     }
 
-    setIsSearching(true);
     const lowerQuery = query.toLowerCase();
     const searchResults: SearchResult[] = [];
 
-    // Helper to add results
-    const addResult = (id: string, title: string, content: string, section: Section, path: string[]) => {
-      searchResults.push({ id, title, content, section, path });
+    // Helper to add results with relevance scoring
+    const addResult = (
+      id: string,
+      title: string,
+      content: string,
+      section: Section,
+      path: string[]
+    ) => {
+      // Calculate relevance score based on match quality
+      let relevance = 0;
+      const lowerTitle = title.toLowerCase();
+      const lowerContent = content.toLowerCase();
+
+      // Exact title match gets highest score
+      if (lowerTitle === lowerQuery) {
+        relevance = 100;
+      } else if (lowerTitle.startsWith(lowerQuery)) {
+        relevance = 80;
+      } else if (lowerTitle.includes(lowerQuery)) {
+        relevance = 60;
+      } else if (lowerContent.includes(lowerQuery)) {
+        relevance = 40;
+      }
+
+      searchResults.push({ id, title, content, section, path, relevance });
     };
 
     // 1. Search Features
@@ -73,10 +100,24 @@ export function useSearch(query: string) {
        });
     });
 
-    // Simulate network delay for realistic feel
-    setTimeout(() => setIsSearching(false), 300);
+    // Sort by relevance (highest first)
+    return searchResults.sort((a, b) => b.relevance - a.relevance);
+  }, [query]);
 
-    return searchResults;
+  // Handle loading state changes in useEffect (not useMemo)
+  useEffect(() => {
+    if (!query || query.trim().length < 2) {
+      setIsSearching(false);
+      return;
+    }
+
+    setIsSearching(true);
+
+    // Simulate network delay for realistic feel
+    const timeoutId = setTimeout(() => setIsSearching(false), 300);
+
+    // Cleanup timeout on unmount or query change
+    return () => clearTimeout(timeoutId);
   }, [query]);
 
   return { results, isSearching };

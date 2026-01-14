@@ -1,8 +1,8 @@
 import React from 'react';
-import { Card } from '../../../components/ui/Card';
+import { Card } from '../../../components/ui/card';
 import { DeploymentPhase } from '../../../types';
 import { CheckCircle, Circle, Clock, ChevronDown, ChevronRight, AlertTriangle } from 'lucide-react';
-import { Badge } from '../../../components/ui/Badge';
+import { Badge } from '../../../components/ui/badge';
 import { ProgressBar } from '../../../components/ui/ProgressBar';
 
 interface PhaseCardProps {

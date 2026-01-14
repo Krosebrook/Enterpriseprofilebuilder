@@ -38,13 +38,13 @@ export const trackSearch = (query: string, resultCount: number) => {
 export const getROIAnalytics = () => {
   // In a real app, this would fetch from an API
   // We'll return the mock data with slight random variance to simulate "live" updates
-  const variance = () => 1 + (Math.random() * 0.05 - 0.025); // +/- 2.5%
+  const calculateVariance = () => 1 + (Math.random() * 0.05 - 0.025); // +/- 2.5%
   
   return {
-    users: Math.floor(ANALYTICS_DATA.totalUsers * variance()),
-    activeUsers: Math.floor(ANALYTICS_DATA.activeUsers7d * variance()),
-    timeSaved: +(ANALYTICS_DATA.avgTimeSavedPerUser * variance()).toFixed(1),
-    savings: Math.floor(ANALYTICS_DATA.projectedAnnualSavings * variance()),
+    users: Math.floor(ANALYTICS_DATA.totalUsers * calculateVariance()),
+    activeUsers: Math.floor(ANALYTICS_DATA.activeUsers7d * calculateVariance()),
+    timeSaved: +(ANALYTICS_DATA.avgTimeSavedPerUser * calculateVariance()).toFixed(1),
+    savings: Math.floor(ANALYTICS_DATA.projectedAnnualSavings * calculateVariance()),
     cost: ANALYTICS_DATA.implementationCost,
     roi: +(ANALYTICS_DATA.projectedAnnualSavings / ANALYTICS_DATA.implementationCost).toFixed(1),
     paybackMonths: +(ANALYTICS_DATA.implementationCost / (ANALYTICS_DATA.projectedAnnualSavings / 12)).toFixed(1)

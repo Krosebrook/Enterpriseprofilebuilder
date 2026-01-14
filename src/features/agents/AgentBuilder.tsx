@@ -109,7 +109,7 @@ export function AgentBuilder() {
 
           <Tabs 
             value={activeTab} 
-            onValueChange={(v) => setActiveTab(v as any)} 
+            onValueChange={(v) => setActiveTab(v)} 
             className="flex-1 flex flex-col"
           >
             <TabsList className="grid w-full grid-cols-2">

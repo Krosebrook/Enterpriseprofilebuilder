@@ -1,9 +1,4 @@
-import React from 'react';
 import { useNavigation } from '../contexts/NavigationContext';
-import { useToast } from '../contexts/ToastContext';
-import { FeatureErrorBoundary } from './ErrorBoundary/FeatureErrorBoundary';
-import { SuspenseWrapper } from './LoadingStates/SuspenseWrapper';
-import { AgentCardSkeleton } from './LoadingStates/SkeletonLoader';
 
 // Legacy Sections (to be refactored later if needed, but keeping for now as they work)
 import { BaselinePrompt } from './sections/BaselinePrompt';
@@ -15,127 +10,47 @@ import { FAQ } from './sections/FAQ';
 import { Governance } from './sections/Governance';
 import { governanceData } from '../data/governance';
 
-// Always-loaded features
+// New Feature Modules (Max Depth Refactor)
 import { Dashboard } from '../features/dashboard/Dashboard';
 import { Deployment } from '../features/deployment/Deployment';
 import { OperationsManual } from '../features/operations/OperationsManual';
 import { ReferenceLibrary } from '../features/library/ReferenceLibrary';
-
-// Lazy-loaded heavy features (code splitting)
-const EcosystemExplorer = React.lazy(() => import('../features/ecosystem/EcosystemExplorer').then(m => ({ default: m.EcosystemExplorer })));
-const IntegrationMarketplace = React.lazy(() => import('../features/integrations/IntegrationMarketplace').then(m => ({ default: m.IntegrationMarketplace })));
-const AgentBuilder = React.lazy(() => import('../features/agents/AgentBuilder').then(m => ({ default: m.AgentBuilder })));
+import { EcosystemExplorer } from '../features/ecosystem/EcosystemExplorer';
+import { IntegrationMarketplace } from '../features/integrations/IntegrationMarketplace';
 
 export function ContentViewer() {
   const { activeSection, selectedRole, searchQuery } = useNavigation();
-  const { addToast } = useToast();
 
   const renderSection = () => {
     switch (activeSection) {
       case 'overview':
-        return (
-          <FeatureErrorBoundary featureName="Dashboard">
-            <Dashboard />
-          </FeatureErrorBoundary>
-        );
-      
+        return <Dashboard />;
       case 'ecosystem':
-        return (
-          <SuspenseWrapper featureName="Ecosystem Explorer" fallback={<div className="p-6"><AgentCardSkeleton /></div>}>
-            <EcosystemExplorer />
-          </SuspenseWrapper>
-        );
-      
+        return <EcosystemExplorer />;
       case 'baseline':
-        return (
-          <FeatureErrorBoundary featureName="Baseline Prompt">
-            <BaselinePrompt />
-          </FeatureErrorBoundary>
-        );
-      
+        return <BaselinePrompt />;
       case 'features':
-        return (
-          <FeatureErrorBoundary featureName="Feature Guides">
-            <FeatureGuides />
-          </FeatureErrorBoundary>
-        );
-      
+        return <FeatureGuides />;
       case 'tools':
-        return (
-          <FeatureErrorBoundary featureName="Tools & Connectors">
-            <ToolsConnectors />
-          </FeatureErrorBoundary>
-        );
-      
+        return <ToolsConnectors />;
       case 'roles':
-        return (
-          <FeatureErrorBoundary featureName="Role Profiles">
-            <RoleProfiles selectedRole={selectedRole} />
-          </FeatureErrorBoundary>
-        );
-      
+        return <RoleProfiles selectedRole={selectedRole} />;
       case 'best-practices':
-        return (
-          <FeatureErrorBoundary featureName="Best Practices">
-            <BestPractices />
-          </FeatureErrorBoundary>
-        );
-      
+        return <BestPractices />;
       case 'faq':
-        return (
-          <FeatureErrorBoundary featureName="FAQ">
-            <FAQ searchQuery={searchQuery} />
-          </FeatureErrorBoundary>
-        );
-      
+        return <FAQ searchQuery={searchQuery} />;
       case 'deployment':
-        return (
-          <FeatureErrorBoundary featureName="Deployment">
-            <Deployment />
-          </FeatureErrorBoundary>
-        );
-      
+        return <Deployment />;
       case 'governance':
-        return (
-          <FeatureErrorBoundary featureName="Governance">
-            <Governance data={governanceData} />
-          </FeatureErrorBoundary>
-        );
-      
+        return <Governance data={governanceData} />;
       case 'operations':
-        return (
-          <FeatureErrorBoundary featureName="Operations Manual">
-            <OperationsManual />
-          </FeatureErrorBoundary>
-        );
-      
+        return <OperationsManual />;
       case 'reference':
-        return (
-          <FeatureErrorBoundary featureName="Reference Library">
-            <ReferenceLibrary />
-          </FeatureErrorBoundary>
-        );
-      
-      case 'integrations':
-        return (
-          <SuspenseWrapper featureName="Integration Marketplace" fallback={<div className="p-6"><AgentCardSkeleton /></div>}>
-            <IntegrationMarketplace />
-          </SuspenseWrapper>
-        );
-      
-      case 'agents':
-        return (
-          <SuspenseWrapper featureName="Agent Builder" fallback={<div className="p-6"><AgentCardSkeleton /></div>}>
-            <AgentBuilder />
-          </SuspenseWrapper>
-        );
-      
+        return <ReferenceLibrary />;
+      case 'integrations': // New Route
+        return <IntegrationMarketplace />;
       default:
-        return (
-          <FeatureErrorBoundary featureName="Dashboard">
-            <Dashboard />
-          </FeatureErrorBoundary>
-        );
+        return <Dashboard />;
     }
   };
 

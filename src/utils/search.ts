@@ -3,7 +3,7 @@ import { faqData } from '../data/faq';
 import { featuresData } from '../data/features';
 import { mcpServersData } from '../data/mcp-servers';
 import { roleProfilesData } from '../data/role-profiles';
-import { platforms, models, features as ecosystemFeatures, mcpServers as ecosystemServers, skills } from '../data/ecosystem';
+import { platforms, models, skills } from '../data/ecosystem';
 
 /**
  * Performs a fuzzy search across all content
@@ -20,7 +20,7 @@ export function searchContent(query: string): SearchResult[] {
   faqData.forEach((faq) => {
     const questionMatch = faq.question.toLowerCase().includes(normalizedQuery);
     const answerMatch = faq.answer.toLowerCase().includes(normalizedQuery);
-    const tagMatch = faq.tags.some(tag => tag.toLowerCase().includes(normalizedQuery));
+    const tagMatch = faq.tags.some((tag: string) => tag.toLowerCase().includes(normalizedQuery));
 
     if (questionMatch || answerMatch || tagMatch) {
       results.push({
@@ -37,12 +37,12 @@ export function searchContent(query: string): SearchResult[] {
   // Search Features
   featuresData.forEach((feature) => {
     const nameMatch = feature.name.toLowerCase().includes(normalizedQuery);
-    const descMatch = feature.description.toLowerCase().includes(normalizedQuery);
+    const descriptionMatch = feature.description.toLowerCase().includes(normalizedQuery);
     const useCaseMatch = [...feature.whenToUse, ...feature.whenNotToUse].some(
       item => item.toLowerCase().includes(normalizedQuery)
     );
 
-    if (nameMatch || descMatch || useCaseMatch) {
+    if (nameMatch || descriptionMatch || useCaseMatch) {
       results.push({
         id: feature.id,
         title: feature.name,
@@ -57,12 +57,12 @@ export function searchContent(query: string): SearchResult[] {
   // Search MCP Servers
   mcpServersData.forEach((server) => {
     const nameMatch = server.name.toLowerCase().includes(normalizedQuery);
-    const descMatch = server.description.toLowerCase().includes(normalizedQuery);
+    const descriptionMatch = server.description.toLowerCase().includes(normalizedQuery);
     const useCaseMatch = server.useCases.some(
-      useCase => useCase.toLowerCase().includes(normalizedQuery)
+      (useCase: string) => useCase.toLowerCase().includes(normalizedQuery)
     );
 
-    if (nameMatch || descMatch || useCaseMatch) {
+    if (nameMatch || descriptionMatch || useCaseMatch) {
       results.push({
         id: server.id,
         title: server.name,
@@ -77,12 +77,12 @@ export function searchContent(query: string): SearchResult[] {
   // Search Role Profiles
   roleProfilesData.forEach((profile) => {
     const roleMatch = profile.role.toLowerCase().includes(normalizedQuery);
-    const respMatch = profile.responsibilities.toLowerCase().includes(normalizedQuery);
-    const capMatch = profile.capabilities.some(
-      cap => cap.toLowerCase().includes(normalizedQuery)
+    const responsibilitiesMatch = profile.responsibilities.toLowerCase().includes(normalizedQuery);
+    const capabilitiesMatch = profile.capabilities.some(
+      capability => capability.toLowerCase().includes(normalizedQuery)
     );
 
-    if (roleMatch || respMatch || capMatch) {
+    if (roleMatch || responsibilitiesMatch || capabilitiesMatch) {
       results.push({
         id: profile.role,
         title: `${profile.role} Role Profile`,
@@ -124,13 +124,13 @@ export function searchContent(query: string): SearchResult[] {
 
   // Search Ecosystem Skills
   skills.forEach((skill) => {
-    if (skill.name.toLowerCase().includes(normalizedQuery) || skill.description.toLowerCase().includes(normalizedQuery)) {
+    if (skill.name.toLowerCase().includes(normalizedQuery) || (skill.description && skill.description.toLowerCase().includes(normalizedQuery))) {
       results.push({
         id: `ecosystem-skill-${skill.id}`,
         title: skill.name,
         section: 'ecosystem',
-        content: skill.description,
-        relevance: calculateRelevance(normalizedQuery, skill.name, skill.description, []),
+        content: skill.description || '',
+        relevance: calculateRelevance(normalizedQuery, skill.name, skill.description || '', []),
         path: ['Ecosystem', 'Skills', skill.name]
       });
     }

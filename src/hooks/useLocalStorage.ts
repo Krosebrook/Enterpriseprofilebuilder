@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 
 export function useLocalStorage<T>(key: string, initialValue: T): [T, (value: T | ((val: T) => T)) => void] {
   // Get from local storage then parse stored json or return initialValue
-  const readValue = (): T => {
+  const readStoredValue = (): T => {
     if (typeof window === 'undefined') {
       return initialValue;
     }
@@ -16,7 +16,7 @@ export function useLocalStorage<T>(key: string, initialValue: T): [T, (value: T 
     }
   };
 
-  const [storedValue, setStoredValue] = useState<T>(readValue);
+  const [storedValue, setStoredValue] = useState<T>(readStoredValue);
 
   // Return a wrapped version of useState's setter function that ...
   // ... persists the new value to localStorage.
@@ -36,7 +36,7 @@ export function useLocalStorage<T>(key: string, initialValue: T): [T, (value: T 
   };
 
   useEffect(() => {
-    setStoredValue(readValue());
+    setStoredValue(readStoredValue());
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

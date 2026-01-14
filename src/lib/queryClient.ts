@@ -13,9 +13,10 @@ export const queryClient = new QueryClient({
       gcTime: 10 * 60 * 1000,
       
       // Retry failed requests
-      retry: (failureCount, error: any) => {
+      retry: (failureCount: number, error: unknown) => {
         // Don't retry on 4xx errors
-        if (error?.status >= 400 && error?.status < 500) {
+        const err = error as { status?: number };
+        if (err.status && err.status >= 400 && err.status < 500) {
           return false;
         }
         // Retry up to 3 times for 5xx or network errors
@@ -23,7 +24,7 @@ export const queryClient = new QueryClient({
       },
       
       // Retry delay with exponential backoff
-      retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
+      retryDelay: (attemptIndex: number) => Math.min(1000 * 2 ** attemptIndex, 30000),
       
       // Refetch on window focus (useful for keeping data fresh)
       refetchOnWindowFocus: process.env.NODE_ENV === 'production',

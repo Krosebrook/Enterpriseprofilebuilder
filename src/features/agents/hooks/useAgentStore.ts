@@ -119,7 +119,7 @@ export const useAgentStore = create<AgentStoreState>()(
           executionMode: state.executionMode
         };
 
-        let newSavedAgents = [...state.savedAgents];
+        const newSavedAgents = [...state.savedAgents];
         if (existingAgentIndex >= 0) {
           newSavedAgents[existingAgentIndex] = agentData;
         } else {

@@ -71,9 +71,9 @@ export function EvidenceViewer() {
   );
 
   return (
-    <div className="flex h-[calc(100vh-100px)] min-h-[600px] border rounded-lg overflow-hidden bg-white shadow-sm">
+    <div className="flex flex-col lg:flex-row h-[calc(100vh-100px)] min-h-[600px] border rounded-lg overflow-hidden bg-white shadow-sm">
       {/* Left Navigation / Sidebar */}
-      <div className="w-64 bg-slate-50 border-r flex flex-col">
+      <div className="w-full lg:w-64 bg-slate-50 border-r flex flex-col">
         <div className="p-4 border-b">
           <h2 className="font-semibold text-slate-800 flex items-center gap-2">
             <Shield className="w-4 h-4 text-[#E97132]" />
@@ -132,42 +132,48 @@ export function EvidenceViewer() {
         {/* Split View */}
         <div className="flex-1 flex overflow-hidden">
           {/* List View */}
-          <div className="w-1/3 border-r bg-slate-50/30 flex flex-col">
+          <div className="w-full lg:w-1/3 border-r bg-slate-50/30 flex flex-col">
             <ScrollArea className="flex-1">
               <div className="p-3 space-y-2">
-                {filteredEvidence.map(item => (
-                  <div 
-                    key={item.id}
-                    onClick={() => setSelectedItem(item)}
-                    className={`
-                      p-3 rounded-lg border cursor-pointer transition-all
-                      ${selectedItem?.id === item.id 
-                        ? 'bg-white border-[#E97132] shadow-sm ring-1 ring-[#E97132]/10' 
-                        : 'bg-white border-slate-200 hover:border-slate-300 hover:bg-slate-50'}
-                    `}
-                  >
-                    <div className="flex justify-between items-start mb-1">
-                      <span className="font-mono text-[10px] text-slate-400">{item.id}</span>
-                      <Badge variant={
-                        item.status === 'verified' ? 'success' : 
-                        item.status === 'flagged' ? 'destructive' : 'warning'
-                      } className="text-[10px] px-1 h-4">
-                        {item.status}
-                      </Badge>
-                    </div>
-                    <h4 className="text-sm font-medium text-slate-900 line-clamp-1 mb-1">{item.title}</h4>
-                    <p className="text-xs text-slate-500 flex items-center gap-1">
-                      <Clock className="w-3 h-3" />
-                      {new Date(item.timestamp).toLocaleDateString()}
-                    </p>
+                {filteredEvidence.length === 0 ? (
+                  <div className="text-center py-8 text-slate-400">
+                    <p className="text-sm">No evidence found.</p>
                   </div>
-                ))}
+                ) : (
+                  filteredEvidence.map(item => (
+                    <div 
+                      key={item.id}
+                      onClick={() => setSelectedItem(item)}
+                      className={`
+                        p-3 rounded-lg border cursor-pointer transition-all
+                        ${selectedItem?.id === item.id 
+                          ? 'bg-white border-[#E97132] shadow-sm ring-1 ring-[#E97132]/10' 
+                          : 'bg-white border-slate-200 hover:border-slate-300 hover:bg-slate-50'}
+                      `}
+                    >
+                      <div className="flex justify-between items-start mb-1">
+                        <span className="font-mono text-[10px] text-slate-400">{item.id}</span>
+                        <Badge variant={
+                          item.status === 'verified' ? 'success' : 
+                          item.status === 'flagged' ? 'destructive' : 'warning'
+                        } className="text-[10px] px-1 h-4">
+                          {item.status}
+                        </Badge>
+                      </div>
+                      <h4 className="text-sm font-medium text-slate-900 line-clamp-1 mb-1">{item.title}</h4>
+                      <p className="text-xs text-slate-500 flex items-center gap-1">
+                        <Clock className="w-3 h-3" />
+                        {new Date(item.timestamp).toLocaleDateString()}
+                      </p>
+                    </div>
+                  ))
+                )}
               </div>
             </ScrollArea>
           </div>
 
           {/* Detail View */}
-          <div className="flex-1 bg-white p-8 overflow-y-auto">
+          <div className="hidden lg:block flex-1 bg-white p-8 overflow-y-auto">
             {selectedItem ? (
               <div className="max-w-2xl mx-auto space-y-8">
                 <div>

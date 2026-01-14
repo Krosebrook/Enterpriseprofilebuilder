@@ -46,12 +46,9 @@ export enum ErrorCode {
   
   // Rate limiting
   RATE_LIMIT_EXCEEDED = 'RATE_LIMIT_EXCEEDED',
-
+  
   // Configuration errors
-  INVALID_CONFIG = 'INVALID_CONFIG',
-
-  // Internal errors
-  INTERNAL_ERROR = 'INTERNAL_ERROR'
+  INVALID_CONFIG = 'INVALID_CONFIG'
 }
 
 /**

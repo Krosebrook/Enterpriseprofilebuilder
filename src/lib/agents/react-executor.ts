@@ -285,39 +285,52 @@ You must follow the ReAct (Reasoning + Acting) pattern:
 
     const endpoint = `https://${this.projectId}.supabase.co/functions/v1/make-server-0864fd03/chat`;
     
-    const response = await fetch(endpoint, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${this.publicAnonKey}`
-      },
-      body: JSON.stringify({
-        prompt,
-        systemPrompt,
-        model: this.config.model,
-        temperature: this.config.temperature,
-        maxTokens: 2048,
-        stream: false
-      })
-    });
+    try {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 60000); // 60s timeout
 
-    if (!response.ok) {
-      const errorText = await response.text();
-      throw new Error(`Claude API error: ${response.status} - ${errorText}`);
-    }
+      const response = await fetch(endpoint, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${this.publicAnonKey}`
+        },
+        body: JSON.stringify({
+          prompt,
+          systemPrompt,
+          model: this.config.model,
+          temperature: this.config.temperature,
+          maxTokens: 2048,
+          stream: false
+        }),
+        signal: controller.signal
+      });
 
-    const data = await response.json();
-    
-    // Handle Claude API response format
-    if (data.content && Array.isArray(data.content) && data.content[0]?.text) {
-      return data.content[0].text;
-    } else if (data.error) {
-      throw new Error(`Claude API returned error: ${data.error}`);
-    } else if (typeof data === 'string') {
-      return data;
+      clearTimeout(timeoutId);
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(`Claude API error: ${response.status} - ${errorText}`);
+      }
+
+      const data = await response.json();
+      
+      // Handle Claude API response format
+      if (data.content && Array.isArray(data.content) && data.content[0]?.text) {
+        return data.content[0].text;
+      } else if (data.error) {
+        throw new Error(`Claude API returned error: ${data.error}`);
+      } else if (typeof data === 'string') {
+        return data;
+      }
+      
+      throw new Error('Unexpected response format from Claude API');
+    } catch (error: any) {
+      if (error.name === 'AbortError') {
+        throw new Error('Claude API request timed out after 60 seconds');
+      }
+      throw error;
     }
-    
-    throw new Error('Unexpected response format from Claude API');
   }
 
   /**

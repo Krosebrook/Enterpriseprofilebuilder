@@ -3,6 +3,7 @@ import { cn } from "./utils";
 import { Badge } from "./badge";
 import { Button } from "./button";
 import { Check, Plus, Info, ChevronRight } from "lucide-react";
+import { ImageWithFallback } from "../figma/ImageWithFallback";
 
 export interface PlatformCardProps {
   id: string;
@@ -51,7 +52,7 @@ export function PlatformCard({
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-lg bg-slate-50 border border-slate-100 flex items-center justify-center overflow-hidden">
             {logoUrl ? (
-              <img src={logoUrl} alt={name} className="w-8 h-8 object-contain" />
+              <ImageWithFallback src={logoUrl} alt={name} className="w-8 h-8 object-contain" />
             ) : (
               <div className="text-lg font-bold text-slate-400">{name.charAt(0)}</div>
             )}

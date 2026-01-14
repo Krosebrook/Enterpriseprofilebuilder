@@ -19,7 +19,7 @@ export function AgentLibrary({ onEdit, onCreate }: AgentLibraryProps) {
 
   // Filter and sort agents
   const filteredAgents = useMemo(() => {
-    const filtered = savedAgents.filter(agent => 
+    let filtered = savedAgents.filter(agent => 
       agent.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       agent.role.toLowerCase().includes(searchQuery.toLowerCase()) ||
       agent.goal.toLowerCase().includes(searchQuery.toLowerCase())

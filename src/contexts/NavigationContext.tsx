@@ -1,8 +1,9 @@
-import { createContext, useContext, useState, type ReactNode } from 'react';
+import React, { createContext, useContext, useState, ReactNode } from 'react';
 import { Section, Role } from '../types';
 import { useLocalStorage } from '../hooks/useLocalStorage';
 import { trackPageView } from '../utils/analytics';
 import { addToViewHistory } from '../utils/storage';
+import { trackEvents } from '../lib/analytics';
 
 interface NavigationContextType {
   activeSection: Section;
@@ -32,11 +33,23 @@ export function NavigationProvider({ children }: { children: ReactNode }) {
     // Analytics & History
     trackPageView(section, selectedRole);
     addToViewHistory(section);
+    
+    // New analytics system
+    trackEvents.sectionViewed(section);
   };
 
   const handleRoleChange = (role: Role) => {
     setSelectedRole(role);
     trackPageView(activeSection, role);
+  };
+
+  const handleSearchChange = (query: string) => {
+    setSearchQuery(query);
+    
+    // Track search if user has typed at least 3 characters
+    if (query.length >= 3) {
+      trackEvents.searchPerformed(query, 0); // resultsCount would be updated by search component
+    }
   };
 
   return (
@@ -47,7 +60,7 @@ export function NavigationProvider({ children }: { children: ReactNode }) {
         selectedRole,
         setSelectedRole: handleRoleChange,
         searchQuery,
-        setSearchQuery,
+        setSearchQuery: handleSearchChange,
         isSidebarCollapsed,
         toggleSidebar: () => setIsSidebarCollapsed(prev => !prev),
         setSidebarCollapsed: setIsSidebarCollapsed,

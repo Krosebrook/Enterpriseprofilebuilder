@@ -28,12 +28,30 @@ export function AgentBuilder() {
   const [viewMode, setViewMode] = useState<ViewMode>('library');
 
   const handleSave = () => {
-    saveCurrentAgent();
-    addToast({
-      title: "Agent Saved",
-      description: `${name} has been saved to your library.`,
-      type: "success"
-    });
+    if (!name || name.trim() === '') {
+      addToast({
+        title: "Validation Error",
+        description: "Agent Name is required.",
+        type: "error"
+      });
+      return;
+    }
+
+    try {
+      saveCurrentAgent();
+      addToast({
+        title: "Agent Saved",
+        description: `${name} has been saved to your library.`,
+        type: "success"
+      });
+    } catch (error) {
+      console.error("Failed to save agent:", error);
+      addToast({
+        title: "Save Failed",
+        description: "An error occurred while saving the agent.",
+        type: "error"
+      });
+    }
   };
 
   const handleCreateNew = () => {

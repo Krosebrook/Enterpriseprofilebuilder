@@ -9,6 +9,7 @@ import { Tool } from './framework';
 import { toolRegistry } from '../../features/agents/tools';
 import { executeToolWithGovernance, governanceManager } from './governance';
 import { agentDebugger } from './debug';
+import { projectId, publicAnonKey } from '../../utils/supabase/info';
 
 export interface ExecutionStep {
   type: 'thought' | 'action' | 'observation' | 'answer';
@@ -52,16 +53,8 @@ export class RealAgentExecutor {
       .map(id => toolRegistry[id])
       .filter(t => t !== undefined);
 
-    // Import Supabase credentials dynamically
-    try {
-      const info = require('../../utils/supabase/info');
-      this.projectId = info.projectId;
-      this.publicAnonKey = info.publicAnonKey;
-    } catch (e) {
-      console.warn('Supabase info not available, using defaults');
-      this.projectId = '';
-      this.publicAnonKey = '';
-    }
+    this.projectId = projectId;
+    this.publicAnonKey = publicAnonKey;
   }
 
   /**

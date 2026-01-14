@@ -1,11 +1,44 @@
 # User Flows & System Architecture Map
 
 ## Overview
-This document maps the critical user flows, page interactions, and system logic for the **Enterprise Claude Profile Builder**. It reflects the current state (Phase 11) and provides a guide for testing and development.
+This document maps the critical user flows, page interactions, and system logic for the **Enterprise Claude Profile Builder**. It reflects the current state (Phase 11) and aligns with the **Project Organization Master** index.
 
 ---
 
-## 1. AI Agent Builder (Phase 11)
+## 1. Quick Start Guide (By Role)
+
+### 👨‍💼 Executive / Leadership Flow
+**Goal:** Assess ROI and strategic value.
+1.  **Entry:** Dashboard (`/`) or ROI Calculator (`/operations`).
+2.  **Action:** Review "Strategic Insight" card in `ROIFramework`.
+3.  **Interaction:** Adjust "Adoption Rate" slider to see projected savings.
+4.  **Outcome:** Validate business case for Phase 1 pilot.
+
+### 👨‍💻 Technical Lead Flow
+**Goal:** Verify architecture and integration readiness.
+1.  **Entry:** **"Deployment"** sidebar link.
+2.  **View:** `Deployment.tsx` dashboard.
+3.  **Action:** Check off "Core Architecture" phase tasks.
+4.  **Deep Dive:** Navigate to **"Agent Builder"** (`/agents`) to test the new Phase 11 Runtime.
+5.  **Outcome:** Sign off on technical readiness.
+
+### 🎨 Designer Flow
+**Goal:** Validate UI patterns against Design System.
+1.  **Entry:** **"Ecosystem Explorer"** (`/ecosystem`).
+2.  **Action:** Verify card layouts and badge styles match `INT_PLATFORM_EXPLORER_FIGMA_GUIDELINES.md`.
+3.  **Outcome:** Ensure visual consistency across new modules.
+
+### 💼 Sales Flow
+**Goal:** Customize demo for a prospect.
+1.  **Entry:** **"Agent Builder"** (`/agents`).
+2.  **Action:** Create a "Sales Assistant" agent.
+3.  **Config:** Set Role to "Sales Rep" and enable "CRM" tool (simulated).
+4.  **Test:** Use Playground to demonstrate "Summarize recent deals".
+5.  **Outcome:** tailored demo for client meeting.
+
+---
+
+## 2. AI Agent Builder (Phase 11)
 **Goal:** Enable users to design, configure, and test autonomous agents.
 
 ### Flow A: Create New Agent
@@ -27,6 +60,7 @@ This document maps the critical user flows, page interactions, and system logic 
     - **Logic:** Updates `selectedToolIds` in store.
 7.  **Save:**
     - User clicks **"Save Agent"**.
+    - **Validation:** Check if name is empty.
     - **System:** `saveCurrentAgent()` persists data to `savedAgents` array (localStorage).
     - Toast notification confirms success.
 
@@ -53,7 +87,7 @@ This document maps the critical user flows, page interactions, and system logic 
 
 ---
 
-## 2. Integration Marketplace (Phase 10)
+## 3. Integration Marketplace (Phase 10)
 **Goal:** Manage connections to external tools.
 
 ### Flow: Browse & Configure
@@ -62,10 +96,11 @@ This document maps the critical user flows, page interactions, and system logic 
 3.  **Action:** User views available integrations (Slack, GitHub, etc.).
 4.  **Logic:** Data sourced from `src/data/integrations.ts`.
 5.  **Status:** 'active' integrations are usable in Agent Builder.
+6.  **Install:** Clicking "Install" adds ID to `installedIntegrations` store and shows Success Toast.
 
 ---
 
-## 3. Deployment Dashboard
+## 4. Deployment Dashboard
 **Goal:** Track rollout progress.
 
 ### Flow: View Progress
@@ -76,7 +111,7 @@ This document maps the critical user flows, page interactions, and system logic 
 
 ---
 
-## 4. Ecosystem Explorer
+## 5. Ecosystem Explorer
 **Goal:** Visualize the Claude stack.
 
 ### Flow: Exploration

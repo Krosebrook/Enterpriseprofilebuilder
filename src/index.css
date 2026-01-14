@@ -2545,10 +2545,6 @@
     padding-inline: calc(var(--spacing) * 2);
   }
 
-  .px-2\.5 {
-    padding-inline: calc(var(--spacing) * 2.5);
-  }
-
   .px-3 {
     padding-inline: calc(var(--spacing) * 3);
   }
@@ -3058,6 +3054,10 @@
 
   .text-purple-600 {
     color: var(--color-purple-600);
+  }
+
+  .text-purple-700 {
+    color: var(--color-purple-700);
   }
 
   .text-purple-800 {
@@ -3720,6 +3720,12 @@
   }
 
   @media (hover: hover) {
+    .hover\:bg-amber-200:hover {
+      background-color: var(--color-amber-200);
+    }
+  }
+
+  @media (hover: hover) {
     .hover\:bg-amber-500:hover {
       background-color: var(--color-amber-500);
     }
@@ -3728,6 +3734,12 @@
   @media (hover: hover) {
     .hover\:bg-amber-700:hover {
       background-color: var(--color-amber-700);
+    }
+  }
+
+  @media (hover: hover) {
+    .hover\:bg-blue-200:hover {
+      background-color: var(--color-blue-200);
     }
   }
 
@@ -3750,6 +3762,18 @@
   }
 
   @media (hover: hover) {
+    .hover\:bg-gray-200:hover {
+      background-color: var(--color-gray-200);
+    }
+  }
+
+  @media (hover: hover) {
+    .hover\:bg-green-200:hover {
+      background-color: var(--color-green-200);
+    }
+  }
+
+  @media (hover: hover) {
     .hover\:bg-indigo-50:hover {
       background-color: var(--color-indigo-50);
     }
@@ -3768,8 +3792,20 @@
   }
 
   @media (hover: hover) {
+    .hover\:bg-orange-200:hover {
+      background-color: var(--color-orange-200);
+    }
+  }
+
+  @media (hover: hover) {
     .hover\:bg-primary\/90:hover {
       background-color: color-mix(in oklab, oklch(.205 0 0) 90%, transparent);
+    }
+  }
+
+  @media (hover: hover) {
+    .hover\:bg-purple-200:hover {
+      background-color: var(--color-purple-200);
     }
   }
 
@@ -4524,6 +4560,18 @@
   }
 
   @media (prefers-color-scheme: dark) {
+    .dark\:bg-amber-900\/30 {
+      background-color: color-mix(in srgb, oklch(.414 .112 45.904) 30%, transparent);
+    }
+
+    @supports (color: color-mix(in lab, red, red)) {
+      .dark\:bg-amber-900\/30 {
+        background-color: color-mix(in oklab, var(--color-amber-900) 30%, transparent);
+      }
+    }
+  }
+
+  @media (prefers-color-scheme: dark) {
     .dark\:bg-blue-900\/20 {
       background-color: color-mix(in srgb, oklch(.379 .146 265.522) 20%, transparent);
     }
@@ -4531,6 +4579,18 @@
     @supports (color: color-mix(in lab, red, red)) {
       .dark\:bg-blue-900\/20 {
         background-color: color-mix(in oklab, var(--color-blue-900) 20%, transparent);
+      }
+    }
+  }
+
+  @media (prefers-color-scheme: dark) {
+    .dark\:bg-blue-900\/30 {
+      background-color: color-mix(in srgb, oklch(.379 .146 265.522) 30%, transparent);
+    }
+
+    @supports (color: color-mix(in lab, red, red)) {
+      .dark\:bg-blue-900\/30 {
+        background-color: color-mix(in oklab, var(--color-blue-900) 30%, transparent);
       }
     }
   }
@@ -4682,6 +4742,12 @@
   @media (prefers-color-scheme: dark) {
     .dark\:stroke-slate-700 {
       stroke: var(--color-slate-700);
+    }
+  }
+
+  @media (prefers-color-scheme: dark) {
+    .dark\:text-amber-400 {
+      color: var(--color-amber-400);
     }
   }
 

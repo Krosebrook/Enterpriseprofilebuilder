@@ -22,7 +22,7 @@ import {
   Activity, // For Analytics
   Book, // For Knowledge Base
   MessageCircle, // For Collaboration
-  FileEdit // For PRD Generator
+  FilePlus // For PRD Generator
 } from 'lucide-react';
 import { useNavigation } from '../../contexts/NavigationContext';
 import { Section } from '../../types';
@@ -36,7 +36,7 @@ const NAV_ITEMS: { id: Section; label: string; icon: React.ElementType }[] = [
   { id: 'ecosystem', label: 'Ecosystem Explorer', icon: Globe },
   { id: 'integrations', label: 'App Marketplace', icon: Puzzle },
   { id: 'agents', label: 'Agent Builder', icon: Bot },
-  { id: 'prd-generator', label: 'PRD Generator', icon: FileEdit },
+  { id: 'prd-generator', label: 'PRD Generator', icon: FilePlus },
   // Phase 2 Features
   { id: 'comparison', label: 'Feature Matrix', icon: Grid },
   { id: 'strategy', label: 'Strategy & Roadmap', icon: TrendingUp },

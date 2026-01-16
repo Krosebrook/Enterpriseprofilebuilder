@@ -45,7 +45,7 @@ export const navigationData: NavigationItem[] = [
     id: 'prd-generator',
     label: 'PRD Generator',
     description: 'Generate Product Requirements Documents',
-    icon: 'FileText',
+    icon: 'FilePlus',
     badge: 'New'
   },
   {

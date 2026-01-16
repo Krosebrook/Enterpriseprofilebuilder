@@ -49,7 +49,7 @@ export const PRD_SECTIONS: PRDSection[] = [
   {
     id: 'problemStatement',
     title: '2. Problem Statement',
-    description: 'Clear articulation of the problem being solved, who experiences it and why it\'s critical',
+    description: 'Clear articulation of the problem being solved, who experiences it, and why it\'s critical',
     required: true,
     order: 2,
   },

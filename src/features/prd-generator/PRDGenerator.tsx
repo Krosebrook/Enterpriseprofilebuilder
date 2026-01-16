@@ -56,7 +56,16 @@ export function PRDGenerator() {
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `PRD-${generatedPRD.featureIdea.substring(0, 30).replace(/[^a-z0-9]/gi, '-')}.md`;
+    
+    // Generate safe filename
+    const MAX_FILENAME_LENGTH = 30;
+    const sanitizedFeature = generatedPRD.featureIdea
+      .substring(0, MAX_FILENAME_LENGTH)
+      .replace(/[^a-z0-9]/gi, '-')
+      .replace(/-+/g, '-') // Replace consecutive hyphens with single hyphen
+      .replace(/^-|-$/g, ''); // Remove leading/trailing hyphens
+    
+    a.download = `PRD-${sanitizedFeature || 'document'}.md`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);

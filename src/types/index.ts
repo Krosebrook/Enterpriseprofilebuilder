@@ -23,7 +23,8 @@ export type Section =
   | 'settings' // Phase 4 User Settings
   | 'analytics' // Phase 5 Analytics
   | 'knowledge' // Phase 5 Knowledge Base
-  | 'collaboration'; // Phase 5 Collaboration
+  | 'collaboration' // Phase 5 Collaboration
+  | 'prd-generator'; // PRD Generator
 
 export type Role = 
   | 'All' 

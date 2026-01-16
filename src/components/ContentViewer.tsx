@@ -32,6 +32,7 @@ const FAQ = React.lazy(() => import('../features/faq/FAQ').then(m => ({ default:
 const AnalyticsDashboard = React.lazy(() => import('../features/analytics/AnalyticsDashboard').then(m => ({ default: m.AnalyticsDashboard })));
 const KnowledgeBase = React.lazy(() => import('../features/knowledge-base/KnowledgeBase').then(m => ({ default: m.KnowledgeBase })));
 const CollaborationHub = React.lazy(() => import('../features/collaboration/CollaborationHub').then(m => ({ default: m.CollaborationHub })));
+const PRDGenerator = React.lazy(() => import('../features/prd-generator/PRDGenerator').then(m => ({ default: m.PRDGenerator })));
 
 export function ContentViewer() {
   const { activeSection, selectedRole, searchQuery } = useNavigation();
@@ -190,6 +191,13 @@ export function ContentViewer() {
         return (
           <SuspenseWrapper featureName="Collaboration Hub" fallback={<div className="p-6"><AgentCardSkeleton /></div>}>
             <CollaborationHub />
+          </SuspenseWrapper>
+        );
+      
+      case 'prd-generator':
+        return (
+          <SuspenseWrapper featureName="PRD Generator" fallback={<div className="p-6"><AgentCardSkeleton /></div>}>
+            <PRDGenerator />
           </SuspenseWrapper>
         );
       

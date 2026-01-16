@@ -22,6 +22,9 @@ When generating PRDs, you must:
 
 Your output should be detailed, professional, and ready for engineering teams to use as a blueprint for implementation.`;
 
+// Configuration constants
+const CONTEXT_PREVIEW_LENGTH = 200;
+
 interface GenerationProgress {
   currentSection: string;
   progress: number;
@@ -277,10 +280,10 @@ Format each section with clear headings. Make the content specific, actionable, 
 
     // Get context from existing sections (if available)
     const problemContext = prd.sections.problemStatement 
-      ? prd.sections.problemStatement.substring(0, 200)
+      ? prd.sections.problemStatement.substring(0, CONTEXT_PREVIEW_LENGTH)
       : 'Not yet defined';
     const audienceContext = prd.sections.targetAudience
-      ? prd.sections.targetAudience.substring(0, 200)
+      ? prd.sections.targetAudience.substring(0, CONTEXT_PREVIEW_LENGTH)
       : 'Not yet defined';
 
     const prompt = `Given this feature idea: "${prd.featureIdea}"
@@ -288,8 +291,8 @@ Format each section with clear headings. Make the content specific, actionable, 
 Please regenerate the "${sectionName}" section of the PRD. Be comprehensive, specific, and actionable.
 
 Context from other sections:
-- Problem: ${problemContext}${problemContext.length >= 200 ? '...' : ''}
-- Target Audience: ${audienceContext}${audienceContext.length >= 200 ? '...' : ''}
+- Problem: ${problemContext}${problemContext.length >= CONTEXT_PREVIEW_LENGTH ? '...' : ''}
+- Target Audience: ${audienceContext}${audienceContext.length >= CONTEXT_PREVIEW_LENGTH ? '...' : ''}
 
 Generate detailed content for the ${sectionName} section:`;
 

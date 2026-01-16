@@ -8,6 +8,9 @@ import { prdGenerator } from '../../lib/prd/prdGenerator';
 import { PRDDocument, formatPRDAsMarkdown } from '../../lib/prd/prdTemplate';
 import { FileText, Download, Copy, RefreshCw, Loader2, Check } from 'lucide-react';
 
+// Configuration constants
+const MAX_FILENAME_LENGTH = 30;
+
 interface GenerationProgress {
   currentSection: string;
   progress: number;
@@ -58,7 +61,6 @@ export function PRDGenerator() {
     a.href = url;
     
     // Generate safe filename
-    const MAX_FILENAME_LENGTH = 30;
     const sanitizedFeature = generatedPRD.featureIdea
       .substring(0, MAX_FILENAME_LENGTH)
       .replace(/[^a-z0-9]/gi, '-')

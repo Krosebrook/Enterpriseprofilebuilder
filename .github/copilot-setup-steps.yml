@@ -1,0 +1,40 @@
+name: Copilot Environment Setup
+description: Sets up the development environment for GitHub Copilot agents
+
+steps:
+  - name: Checkout repository
+    uses: actions/checkout@v4
+
+  - name: Setup Node.js
+    uses: actions/setup-node@v4
+    with:
+      node-version: '18'
+      cache: 'npm'
+
+  - name: Install dependencies
+    run: npm ci
+
+  - name: Install Playwright browsers (for E2E testing)
+    run: npx playwright install --with-deps
+    continue-on-error: true
+
+  - name: Create environment file
+    run: |
+      cp .env.example .env.local
+      echo "VITE_APP_ENV=development" >> .env.local
+    continue-on-error: true
+
+  - name: Verify setup
+    run: |
+      echo "Node version: $(node --version)"
+      echo "NPM version: $(npm --version)"
+      echo "TypeScript version: $(npx tsc --version)"
+      echo "Vite version: $(npm list vite --depth=0)"
+
+  - name: Type check
+    run: npx tsc --noEmit
+    continue-on-error: true
+
+  - name: Build application
+    run: npm run build
+    continue-on-error: true

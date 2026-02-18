@@ -76,6 +76,17 @@
 
   **Note**: These workflows require GitHub secrets to be configured. See [CI/CD Pipeline documentation](docs/CI_CD_PIPELINE.md).
 
+  ## 📊 Demo Dashboard
+
+  A **Demo Readiness Auditor** for monitoring tool status during presentations:
+
+  - **Quick Start**: See [DEMO_DASHBOARD_README.md](DEMO_DASHBOARD_README.md)
+  - **Pre-Demo Checklist**: [DEMO_DASHBOARD_CHECKLIST.md](DEMO_DASHBOARD_CHECKLIST.md)
+  - **Complete Guide**: [DEMO_DASHBOARD_GUIDE.md](DEMO_DASHBOARD_GUIDE.md)
+  - **Configuration Q&A**: [DEMO_DASHBOARD_QA.md](DEMO_DASHBOARD_QA.md)
+
+  **Features**: Manual refresh, smart caching, timeout protection, visual status indicators.
+
   ## 📊 Project Status
 
   - **Version**: 0.1.0 (see [CHANGELOG](src/CHANGELOG.md) for v2.0.0 refactoring details)

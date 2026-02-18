@@ -52,7 +52,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     const Comp = asChild ? Slot : 'button';
 
     return (
-      <button
+      <Comp
         className={cn(baseStyles, variants[variant], sizes[size], className)}
         ref={ref}
         disabled={isLoading || disabled}
@@ -62,7 +62,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         {!isLoading && leftIcon && <span className="mr-2">{leftIcon}</span>}
         {children}
         {!isLoading && rightIcon && <span className="ml-2">{rightIcon}</span>}
-      </button>
+      </Comp>
     );
   }
 );

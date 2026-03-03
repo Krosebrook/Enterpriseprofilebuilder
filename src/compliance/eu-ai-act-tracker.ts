@@ -346,18 +346,18 @@ export class EUAIActTracker {
 
     // Find next deadline
     const upcomingDeadlines = obligations
-      .filter(o => o.deadline > new Date())
-      .map(o => o.deadline)
+      .filter(obligation => obligation.deadline > new Date())
+      .map(obligation => obligation.deadline)
       .sort((a, b) => a.getTime() - b.getTime());
     
     const nextDeadline = upcomingDeadlines[0];
 
     // Identify critical gaps
     const criticalGaps = obligations
-      .filter(o => o.status === ComplianceStatus.NON_COMPLIANT || 
-                   (o.status === ComplianceStatus.IN_PROGRESS && 
-                    o.deadline < new Date(Date.now() + 30 * 24 * 60 * 60 * 1000))) // 30 days
-      .map(o => o.title);
+      .filter(obligation => obligation.status === ComplianceStatus.NON_COMPLIANT || 
+                   (obligation.status === ComplianceStatus.IN_PROGRESS && 
+                    obligation.deadline < new Date(Date.now() + 30 * 24 * 60 * 60 * 1000))) // 30 days
+      .map(obligation => obligation.title);
 
     return {
       system,
@@ -405,12 +405,12 @@ export class EUAIActTracker {
 
       // Collect upcoming deadlines
       status.obligations
-        .filter(o => o.deadline > new Date())
-        .forEach(o => {
+        .filter(obligation => obligation.deadline > new Date())
+        .forEach(obligation => {
           upcomingDeadlines.push({
             system: system.name,
-            obligation: o.title,
-            deadline: o.deadline
+            obligation: obligation.title,
+            deadline: obligation.deadline
           });
         });
     });

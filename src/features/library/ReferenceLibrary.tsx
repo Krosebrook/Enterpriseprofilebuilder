@@ -2,8 +2,8 @@ import React, { useState, useMemo } from 'react';
 import { Library, FileText, Calendar, ChevronRight, Download, Filter } from 'lucide-react';
 import { referenceDocs, ReferenceDoc } from '../../data/reference-docs';
 import { SectionHeader } from '../../components/common/SectionHeader';
-import { Card } from '../../components/ui/Card';
-import { Badge } from '../../components/ui/Badge';
+import { Card } from '../../components/ui/card';
+import { Badge } from '../../components/ui/badge';
 import { useNavigation } from '../../contexts/NavigationContext';
 import { Role } from '../../types';
 

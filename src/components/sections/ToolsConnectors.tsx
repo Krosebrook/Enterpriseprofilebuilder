@@ -1,6 +1,6 @@
 import { Database, Cloud, GitBranch, MessageSquare, FileText, Palette, Users as UsersIcon, Image as ImageIcon, Sparkles, Workflow, Zap } from 'lucide-react';
 import { mcpServersData } from '../../data/mcp-servers';
-import { Card } from '../ui/Card';
+import { Card } from '../ui/card';
 import { Badge } from '../ui/badge';
 import { SectionHeader } from '../common/SectionHeader';
 

@@ -1,13 +1,12 @@
-import React from 'react';
 import { Printer } from 'lucide-react';
 import { Button } from './ui/Button';
 import { Section } from '../types';
 
 interface PrintButtonProps {
-  section: Section;
+  _section: Section;
 }
 
-export function PrintButton({ section }: PrintButtonProps) {
+export function PrintButton({ _section }: PrintButtonProps) {
   const handlePrint = () => {
     window.print();
   };

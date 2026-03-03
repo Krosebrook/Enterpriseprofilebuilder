@@ -1,7 +1,7 @@
 // Core Types
 import { LucideIcon } from 'lucide-react';
 
-export type Section = 
+export type Section =
   | 'overview'
   | 'ecosystem'
   | 'baseline'
@@ -13,17 +13,8 @@ export type Section =
   | 'deployment'
   | 'governance'
   | 'operations'
-  | 'reference' // Added reference
-  | 'integrations'
-  | 'agents' // Phase 11 Agent Builder
-  | 'comparison'
-  | 'strategy'
-  | 'roi'
-  | 'assessment'
-  | 'settings' // Phase 4 User Settings
-  | 'analytics' // Phase 5 Analytics
-  | 'knowledge' // Phase 5 Knowledge Base
-  | 'collaboration'; // Phase 5 Collaboration
+  | 'reference'
+  | 'integrations';
 
 export type Role = 
   | 'All' 

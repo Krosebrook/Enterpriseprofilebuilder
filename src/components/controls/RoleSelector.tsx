@@ -1,4 +1,3 @@
-import React from 'react';
 import { User } from 'lucide-react';
 import { useNavigation } from '../../contexts/NavigationContext';
 import { Role } from '../../types';

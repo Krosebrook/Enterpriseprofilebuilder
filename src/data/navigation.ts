@@ -42,6 +42,20 @@ export const navigationData: NavigationItem[] = [
     badge: 'Beta'
   },
   {
+    id: 'prd-generator',
+    label: 'PRD Generator',
+    description: 'Generate Product Requirements Documents',
+    icon: 'FilePlus',
+    badge: 'New'
+  },
+  {
+    id: 'demo-dashboard',
+    label: 'Demo Dashboard',
+    description: 'Monitor tool status for presentations',
+    icon: 'Activity',
+    badge: 'Demo'
+  },
+  {
     id: 'roles',
     label: 'Role Profiles',
     description: 'Department-specific guidance',

@@ -49,6 +49,13 @@ export const navigationData: NavigationItem[] = [
     badge: 'New'
   },
   {
+    id: 'demo-dashboard',
+    label: 'Demo Dashboard',
+    description: 'Monitor tool status for presentations',
+    icon: 'Activity',
+    badge: 'Demo'
+  },
+  {
     id: 'roles',
     label: 'Role Profiles',
     description: 'Department-specific guidance',

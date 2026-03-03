@@ -24,7 +24,8 @@ export type Section =
   | 'analytics' // Phase 5 Analytics
   | 'knowledge' // Phase 5 Knowledge Base
   | 'collaboration' // Phase 5 Collaboration
-  | 'prd-generator'; // PRD Generator
+  | 'prd-generator' // PRD Generator
+  | 'demo-dashboard'; // Demo Readiness Dashboard
 
 export type Role = 
   | 'All' 

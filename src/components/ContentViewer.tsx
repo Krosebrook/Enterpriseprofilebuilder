@@ -33,6 +33,7 @@ const AnalyticsDashboard = React.lazy(() => import('../features/analytics/Analyt
 const KnowledgeBase = React.lazy(() => import('../features/knowledge-base/KnowledgeBase').then(m => ({ default: m.KnowledgeBase })));
 const CollaborationHub = React.lazy(() => import('../features/collaboration/CollaborationHub').then(m => ({ default: m.CollaborationHub })));
 const PRDGenerator = React.lazy(() => import('../features/prd-generator/PRDGenerator').then(m => ({ default: m.PRDGenerator })));
+const DemoDashboard = React.lazy(() => import('../components/demo-dashboard/DemoDashboard').then(m => ({ default: m.DemoDashboard })));
 
 export function ContentViewer() {
   const { activeSection, selectedRole, searchQuery } = useNavigation();
@@ -198,6 +199,13 @@ export function ContentViewer() {
         return (
           <SuspenseWrapper featureName="PRD Generator" fallback={<div className="p-6"><AgentCardSkeleton /></div>}>
             <PRDGenerator />
+          </SuspenseWrapper>
+        );
+      
+      case 'demo-dashboard':
+        return (
+          <SuspenseWrapper featureName="Demo Dashboard" fallback={<div className="p-6"><AgentCardSkeleton /></div>}>
+            <DemoDashboard />
           </SuspenseWrapper>
         );
       

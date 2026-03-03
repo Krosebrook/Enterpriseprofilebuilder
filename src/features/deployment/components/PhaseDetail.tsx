@@ -1,7 +1,7 @@
 import React from 'react';
 import { DeploymentPhase, DeploymentTask } from '../../../types';
 import { CheckSquare, Square, AlertOctagon, User, Calendar } from 'lucide-react';
-import { Badge } from '../../../components/ui/badge';
+import { Badge } from '../../../components/ui/Badge';
 
 interface PhaseDetailProps {
   phase: DeploymentPhase;

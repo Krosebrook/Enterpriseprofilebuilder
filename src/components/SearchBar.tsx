@@ -1,3 +1,4 @@
+import React from 'react';
 import { Search, X, Loader2 } from 'lucide-react';
 
 interface SearchBarProps {

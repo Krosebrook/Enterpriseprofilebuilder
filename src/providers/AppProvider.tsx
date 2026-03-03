@@ -1,7 +1,7 @@
-import { type ReactNode } from 'react';
+import React, { ReactNode } from 'react';
 import { NavigationProvider } from '../contexts/NavigationContext';
 import { ToastProvider } from '../contexts/ToastContext';
-import { ThemeProvider } from './ThemeProvider';
+import { QueryProvider } from '../lib/queryClient';
 
 interface AppProviderProps {
   children: ReactNode;
@@ -9,12 +9,12 @@ interface AppProviderProps {
 
 export function AppProvider({ children }: AppProviderProps) {
   return (
-    <ThemeProvider>
+    <QueryProvider>
       <NavigationProvider>
         <ToastProvider>
           {children}
         </ToastProvider>
       </NavigationProvider>
-    </ThemeProvider>
+    </QueryProvider>
   );
 }

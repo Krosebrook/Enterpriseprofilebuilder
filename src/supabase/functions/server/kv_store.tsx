@@ -51,7 +51,7 @@ export const del = async (key: string): Promise<void> => {
 // Sets multiple key-value pairs in the database.
 export const mset = async (keys: string[], values: any[]): Promise<void> => {
   const supabase = client()
-  const { error } = await supabase.from("kv_store_0864fd03").upsert(keys.map((keyName, index) => ({ key: keyName, value: values[index] })));
+  const { error } = await supabase.from("kv_store_0864fd03").upsert(keys.map((k, i) => ({ key: k, value: values[i] })));
   if (error) {
     throw new Error(error.message);
   }

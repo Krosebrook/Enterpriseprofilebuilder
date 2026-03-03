@@ -12,7 +12,17 @@ import {
   FileText, // Icon for Operations Manual
   Library, // Icon for Reference Library
   Globe, // Icon for Ecosystem Explorer
-  Puzzle // Icon for Integrations
+  Puzzle, // Icon for Integrations
+  Bot, // Icon for Agent Builder
+  Grid,
+  TrendingUp,
+  Calculator,
+  ClipboardCheck,
+  Settings,
+  Activity, // For Analytics
+  Book, // For Knowledge Base
+  MessageCircle, // For Collaboration
+  FilePlus // For PRD Generator
 } from 'lucide-react';
 import { useNavigation } from '../../contexts/NavigationContext';
 import { Section } from '../../types';
@@ -21,10 +31,18 @@ interface SidebarProps {
   className?: string;
 }
 
-const NAV_ITEMS: { id: Section | 'integrations'; label: string; icon: React.ElementType }[] = [
+const NAV_ITEMS: { id: Section; label: string; icon: React.ElementType }[] = [
   { id: 'overview', label: 'Overview', icon: LayoutDashboard },
   { id: 'ecosystem', label: 'Ecosystem Explorer', icon: Globe },
-  { id: 'integrations', label: 'App Marketplace', icon: Puzzle }, // Added Integrations
+  { id: 'integrations', label: 'App Marketplace', icon: Puzzle },
+  { id: 'agents', label: 'Agent Builder', icon: Bot },
+  { id: 'prd-generator', label: 'PRD Generator', icon: FilePlus },
+  // Phase 2 Features
+  { id: 'comparison', label: 'Feature Matrix', icon: Grid },
+  { id: 'strategy', label: 'Strategy & Roadmap', icon: TrendingUp },
+  { id: 'roi', label: 'ROI Calculator', icon: Calculator },
+  { id: 'assessment', label: 'Readiness Assessment', icon: ClipboardCheck },
+  
   { id: 'baseline', label: 'System Baseline', icon: ShieldCheck },
   { id: 'features', label: 'Feature Guides', icon: Sparkles },
   { id: 'tools', label: 'MCP Tools', icon: Hammer },
@@ -34,6 +52,11 @@ const NAV_ITEMS: { id: Section | 'integrations'; label: string; icon: React.Elem
   { id: 'reference', label: 'Reference Library', icon: Library }, 
   { id: 'faq', label: 'FAQ', icon: HelpCircle },
   { id: 'deployment', label: 'Deployment', icon: Rocket },
+  // Phase 5 Features
+  { id: 'analytics', label: 'Analytics', icon: Activity },
+  { id: 'knowledge', label: 'Knowledge Base', icon: Book },
+  { id: 'collaboration', label: 'Collaboration', icon: MessageCircle },
+  { id: 'settings', label: 'Settings', icon: Settings },
 ];
 
 export function Sidebar({ className = '' }: SidebarProps) {

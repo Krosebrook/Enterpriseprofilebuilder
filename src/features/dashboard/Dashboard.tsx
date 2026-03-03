@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigation } from '../../contexts/NavigationContext';
-import { Card } from '../../components/ui/card';
+import { Card } from '../../components/ui/Card';
 import { SectionHeader } from '../../components/common/SectionHeader';
 import { 
   LayoutDashboard, 

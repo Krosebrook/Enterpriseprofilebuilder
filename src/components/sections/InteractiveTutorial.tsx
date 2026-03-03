@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { ArrowRight, CheckCircle, Play, HelpCircle, X, RotateCcw, Brain, MessageSquare } from 'lucide-react';
 import { Button } from '../ui/Button';
-import { Card } from '../ui/card';
+import { Card } from '../ui/Card';
 import { TechniqueTutorial } from '../../data/tutorials';
 
 interface InteractiveTutorialProps {

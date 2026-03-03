@@ -1,4 +1,4 @@
-import { type ReactNode } from 'react';
+import React, { ReactNode } from 'react';
 import { Sidebar } from './Sidebar';
 import { TopBar } from './TopBar';
 import { useNavigation } from '../../contexts/NavigationContext';
@@ -11,7 +11,7 @@ export function MainLayout({ children }: MainLayoutProps) {
   const { isSidebarCollapsed } = useNavigation();
 
   return (
-    <div className="flex h-screen bg-slate-50 dark:bg-slate-900 overflow-hidden transition-colors duration-300">
+    <div className="flex h-screen bg-slate-50 overflow-hidden">
       {/* Sidebar - Fixed width or collapsed */}
       <div 
         className={`flex-shrink-0 transition-all duration-300 ease-in-out ${
@@ -31,12 +31,12 @@ export function MainLayout({ children }: MainLayoutProps) {
           </div>
           
           {/* Footer */}
-          <footer className="py-6 px-8 border-t border-slate-200 dark:border-slate-700 mt-auto bg-white/50 dark:bg-slate-800/50 transition-colors duration-300">
-            <div className="flex justify-between items-center text-sm text-slate-500 dark:text-slate-400 max-w-7xl mx-auto">
+          <footer className="py-6 px-8 border-t border-slate-200 mt-auto bg-white/50">
+            <div className="flex justify-between items-center text-sm text-slate-500 max-w-7xl mx-auto">
                <span>INT Inc. Enterprise Internal</span>
                <div className="flex gap-4">
                  <span>v2.4.0</span>
-                 <a href="#" className="hover:text-amber-600 dark:hover:text-amber-400 transition-colors">Support</a>
+                 <a href="#" className="hover:text-amber-600 transition-colors">Support</a>
                </div>
             </div>
           </footer>

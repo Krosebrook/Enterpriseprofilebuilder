@@ -2,7 +2,7 @@ import { Search, Brain, FileText, Code, Upload, Eye, Mic, FolderKanban, Users, W
 import { useState } from 'react';
 import { featuresData } from '../../data/features';
 import { FeatureType } from '../../types';
-import { Card } from '../ui/card';
+import { Card } from '../ui/Card';
 import { SectionHeader } from '../common/SectionHeader';
 
 export function FeatureGuides() {

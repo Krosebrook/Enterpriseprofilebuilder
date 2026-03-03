@@ -24,7 +24,6 @@
 import { createHash } from 'crypto';
 import { logger } from '../lib/logger';
 import { AppError, ErrorCode } from '../lib/errors';
-import { alertSecurityTeam, SecurityEventType } from '../lib/monitoring';
 
 /**
  * Risk levels for prompt injection attempts
@@ -346,14 +345,8 @@ export class HITLController {
       inputLength: input.length
     });
 
-    // Send notification to security team
-    await alertSecurityTeam(SecurityEventType.HITL_REVIEW_REQUESTED, {
-      userId,
-      riskLevel,
-      patterns: [`Review ID: ${reviewId}`],
-    }).catch(error => {
-      logger.error('Failed to send security notification', error as Error);
-    });
+    // TODO: Send notification to security team
+    // await notifySecurityTeam(reviewId, riskLevel);
 
     return reviewId;
   }
@@ -362,26 +355,8 @@ export class HITLController {
    * Get approval status
    */
   public async getApprovalStatus(reviewId: string): Promise<HITLApprovalResult> {
-    const review = this.pendingReviews.get(reviewId);
-    
-    if (!review) {
-      return {
-        approved: false
-      };
-    }
-
-    // Check if review is expired (24 hours)
-    const hoursSinceReview = (Date.now() - review.timestamp.getTime()) / (1000 * 60 * 60);
-    if (hoursSinceReview > 24) {
-      // Auto-reject expired reviews
-      this.pendingReviews.delete(reviewId);
-      return {
-        approved: false
-      };
-    }
-
-    // In production, this would check approval status from database/workflow system
-    // For now, return pending status
+    // TODO: Implement approval workflow
+    // For now, return pending
     return {
       approved: false
     };
@@ -590,44 +565,12 @@ Your response:`.trim();
   }
 
   /**
-   * Execute prompt safely with Claude API integration
+   * Execute prompt safely (mock implementation)
    */
   private async executeSafely(prompt: string): Promise<string> {
-    // Check if we're in a browser environment and have the API key configured
-    const apiKey = import.meta.env.VITE_ANTHROPIC_API_KEY;
-    
-    if (!apiKey || typeof window === 'undefined') {
-      // In development or when API key not configured, return mock response
-      logger.debug('Using mock response - API key not configured or server-side environment');
-      return 'This is a mock response. Configure VITE_ANTHROPIC_API_KEY to use real Claude API.';
-    }
-
-    try {
-      // Use the chat API from our lib
-      const { sendChatRequest } = await import('../lib/api/chat');
-      
-      const response = await sendChatRequest({
-        prompt,
-        model: 'claude-3-5-sonnet-20241022',
-        temperature: 0.7,
-        maxTokens: 4096,
-      });
-
-      // Parse JSON response
-      const data = await response.json() as { text?: string; content?: string; error?: string };
-      
-      if (data.error) {
-        throw new Error(data.error);
-      }
-
-      return data.text || data.content || 'No response content';
-    } catch (error) {
-      logger.error('Failed to execute Claude API request', error as Error);
-      throw new AppError(
-        'Failed to process request with AI service',
-        ErrorCode.INTERNAL_ERROR
-      );
-    }
+    // TODO: Integrate with actual Claude API
+    // For now, return mock response
+    return 'This is a mock response. In production, this would call the Claude API with the isolated prompt.';
   }
 
   /**
@@ -636,31 +579,13 @@ Your response:`.trim();
   private logSecurityEvent(eventType: string, metadata: Record<string, unknown>): void {
     logger.warn(`Security Event: ${eventType}`, metadata);
 
-    // Send to security monitoring system
-    const eventTypeMap: Record<string, SecurityEventType> = {
-      'PROMPT_INJECTION_DETECTED': SecurityEventType.PROMPT_INJECTION_DETECTED,
-      'PROMPT_INJECTION_BLOCKED': SecurityEventType.PROMPT_INJECTION_BLOCKED,
-      'OUTPUT_VIOLATION_DETECTED': SecurityEventType.OUTPUT_VIOLATION_DETECTED,
-    };
-
-    const mappedEventType = eventTypeMap[eventType];
-    if (mappedEventType) {
-      alertSecurityTeam(mappedEventType, {
-        ...metadata,
-        timestamp: new Date().toISOString(),
-      }).catch(error => {
-        logger.error('Failed to send security alert', error as Error);
-      });
-    }
-
-    // In production, also send to Sentry
-    if (import.meta.env.PROD && typeof window !== 'undefined') {
-      // Sentry integration would go here
-      // Sentry.captureMessage(eventType, {
-      //   level: 'warning',
-      //   extra: metadata
-      // });
-    }
+    // TODO: Send to Sentry or security monitoring system
+    // if (import.meta.env.PROD) {
+    //   Sentry.captureMessage(eventType, {
+    //     level: 'warning',
+    //     extra: metadata
+    //   });
+    // }
   }
 }
 

@@ -1,26 +1,55 @@
 # Dependencies
 node_modules/
+/.pnp
+.pnp.js
+
+# Testing
+/coverage
+*.lcov
+
+# Production builds
+/build
+/dist
+*.tsbuildinfo
 
 # Environment variables
 .env
 .env.local
-.env.*.local
-.env.production
-.env.development
-
-# Build output
-dist/
+.env.development.local
+.env.test.local
+.env.production.local
+.env.staging.local
 
 # Logs
-*.log
 npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+.pnpm-debug.log*
 
-# Editor directories
-.idea/
-.vscode/
-*.swp
-*.swo
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+.history/
+
+# Misc
+.cache
+.parcel-cache
+.vercel
+.netlify
+
+# Temporary files
+/tmp
+*.tmp
+*.temp
 
 # OS files
-.DS_Store
 Thumbs.db
+.DS_Store

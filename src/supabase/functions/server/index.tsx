@@ -63,9 +63,10 @@ app.post("/make-server-0864fd03/chat", async (c) => {
       const response = await claudeService.sendMessage(prompt, systemPrompt, model, temperature, maxTokens);
       return c.json(response);
     }
-  } catch (error: any) {
+  } catch (error) {
     console.error("Chat Error:", error);
-    return c.json({ error: error.message || "Internal Server Error" }, 500);
+    const message = error instanceof Error ? error.message : "Internal Server Error";
+    return c.json({ error: message }, 500);
   }
 });
 

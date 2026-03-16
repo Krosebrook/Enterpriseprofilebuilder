@@ -22,10 +22,9 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
-          cache: 'npm'
       
       - name: Install dependencies
-        run: npm ci
+        run: npm install
       
       - name: Run ESLint
         run: npm run lint
@@ -47,10 +46,10 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
-          cache: 'npm'
+
       
       - name: Install dependencies
-        run: npm ci
+        run: npm install
       
       - name: Run TypeScript compiler
         run: npx tsc --noEmit
@@ -67,10 +66,10 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
-          cache: 'npm'
+
       
       - name: Install dependencies
-        run: npm ci
+        run: npm install
       
       - name: Run unit tests
         run: npm test
@@ -101,10 +100,10 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
-          cache: 'npm'
+
       
       - name: Install dependencies
-        run: npm ci
+        run: npm install
       
       - name: Build application
         run: npm run build
@@ -120,7 +119,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: build-${{ github.sha }}
-          path: dist/
+          path: build/
           retention-days: 7
 
   security-scan:
@@ -135,10 +134,10 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
-          cache: 'npm'
+
       
       - name: Install dependencies
-        run: npm ci
+        run: npm install
       
       - name: Run npm audit
         run: npm audit --audit-level=moderate

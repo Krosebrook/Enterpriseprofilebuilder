@@ -190,7 +190,8 @@ class AnalyticsManager {
       const key = 'analytics-events';
       const stored = localStorage.getItem(key);
       return stored ? JSON.parse(stored) : [];
-    } catch {
+    } catch (error) {
+      console.warn('Failed to read stored analytics events:', error);
       return [];
     }
   }
